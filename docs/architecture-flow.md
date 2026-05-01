@@ -158,14 +158,18 @@ does not use custom Vox rake variables. Otherwise it falls back to Rake.
 | PDK | `pdk validate --puppet-version <N>`, then `pdk test unit --puppet-version <N>` |
 | Rake | Inspects `rake -T` output, then runs `rake validate` and `rake spec` (or `rake test`) if those tasks exist. |
 
-For rake-based unit runs the adapter inserts a deterministic `fact_provider` stage between `validate` and `unit`. This stage runs a single isolated `bundle exec ruby -e "require 'facter'; ..."` inside the module's resolved bundle and parses `Gemfile.lock`, then records:
+For rake-based unit runs the adapter inserts a deterministic `fact_provider` stage between `validate` and `unit`. This stage runs a single isolated `bundle exec ruby -e "require 'facter'; require 'puppet'; ..."` inside the module's resolved bundle and parses `Gemfile.lock`, then records:
 
 - `fact_provider` — `facter`, `openfact`, or `unknown` (which gem actually wins `require 'facter'`)
 - `fact_provider_gem` — gem name and version (e.g. `facter@4.17.0`)
-- `puppet_provider` — `puppet@<v>`, `openvox@<v>`, or both if dual-resolved
+- `puppet_provider` — `puppet`, `openvox`, or `unknown` (which gem actually wins `require 'puppet'`)
+- `puppet_provider_gem` — gem name and version for the runtime-resolved provider (for example `puppet@8.17.0`)
+- `puppet_lockfile_provider` — lockfile-only summary (`puppet@<v>`, `openvox@<v>`, or both if dual-resolved)
 - `gemfile_facter` / `gemfile_openfact` — versions present in `Gemfile.lock` (or `absent`)
 - `detection_method` — `bundle_resolution`, `gemfile_lock_inference`, or `unknown`
+- `puppet_detection_method` — `bundle_resolution` or `unknown`
 - `facter_runtime_version` — the `Facter::VERSION` constant value reported by the loaded gem
+- `puppet_runtime_version` — the `Puppet.version` value reported by the loaded runtime provider
 - `enforcement` — `skipped`, `attempted`, `succeeded`, or `failed` (see Facter Load-Path Enforcement below)
 
 This approach does not depend on tests actually exercising the Facter API, does not depend on `RUBYOPT`/env-var inheritance across `system()`-spawned rspec children, and is not defeated by `rspec-puppet`'s `facter_implementation = 'rspec'` stub layer.

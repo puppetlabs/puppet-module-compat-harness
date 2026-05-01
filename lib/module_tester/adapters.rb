@@ -34,7 +34,7 @@ module ModuleTester
           command: nil,
           exit_code: 0,
           duration_seconds: 0,
-          output: 'fact_provider=unknown detection_method=skipped reason=pdk_adapter_path'
+          output: 'fact_provider=unknown puppet_provider=unknown detection_method=skipped puppet_detection_method=skipped reason=pdk_adapter_path'
         )
         downgrade_puppet_server_default_unit_failure(result, unit_stage)
         return

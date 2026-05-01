@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 module ModuleTester
-  # Deterministic fact-provider detector.
+  # Deterministic runtime provider detector for Facter and Puppet.
   #
   # Runs after `bundle install` and before unit tests. Answers the question
   # "When module test code calls `require 'facter'`, which gem actually
   # provides Facter — facter (Perforce/upstream) or openfact (OpenVox)?"
+  # It also answers the parallel Puppet question for `require 'puppet'`:
+  # does runtime resolution land on the puppet gem or OpenVox?
   #
   # Detection combines two signals, both cheap and reliable:
-  #   1. A one-shot `bundle exec ruby -e "require 'facter'; ..."` that prints
-  #      the source_location of `Facter.value`. Whichever gem path wins
-  #      `require 'facter'` in this resolved bundle is what test child
-  #      processes will see.
+  #   1. A one-shot `bundle exec ruby -e "require 'facter'; require 'puppet'; ..."`
+  #      probe that prints the source_location of `Facter.value` and
+  #      `Puppet.version`. Whichever gem path wins each `require` in this
+  #      resolved bundle is what test child processes will see.
   #   2. Parsing `Gemfile.lock` to enumerate which fact / puppet provider
   #      gems were resolved (and at what version).
   #
@@ -33,6 +35,17 @@ module ModuleTester
         puts "FACT_PROVIDER_SOURCE="
         puts "FACT_PROVIDER_LOAD_ERROR=" + e.message
       end
+
+      begin
+        require 'puppet'
+        loc = Puppet.method(:version).source_location
+        path = loc ? loc.first : ''
+        puts "PUPPET_PROVIDER_SOURCE=" + path.to_s
+        puts "PUPPET_PROVIDER_VERSION=" + Puppet.version.to_s
+      rescue LoadError => e
+        puts "PUPPET_PROVIDER_SOURCE="
+        puts "PUPPET_PROVIDER_LOAD_ERROR=" + e.message
+      end
     RUBY
 
     # Build the StageResult for the fact_provider stage and return it. Also
@@ -45,10 +58,19 @@ module ModuleTester
       lock_info = parse_gemfile_lock(lockfile_path)
       probe_info = run_resolution_probe(stage_runner, module_dir, env)
 
-      provider, provider_gem = classify_provider(probe_info, lock_info)
+      fact_provider, fact_provider_gem = classify_fact_provider(probe_info, lock_info)
+      puppet_provider, puppet_provider_gem = classify_puppet_provider(probe_info)
 
-      summary = build_summary(provider, provider_gem, probe_info, lock_info, lockfile_path,
-                              enforcement: enforcement)
+      summary = build_summary(
+        fact_provider,
+        fact_provider_gem,
+        puppet_provider,
+        puppet_provider_gem,
+        probe_info,
+        lock_info,
+        lockfile_path,
+        enforcement: enforcement
+      )
 
       stage = StageResult.new(
         name: 'fact_provider',
@@ -59,7 +81,7 @@ module ModuleTester
         output: summary
       )
 
-      maybe_emit_openfact_warning(provider, lock_info, result, enforcement: enforcement)
+      maybe_emit_openfact_warning(fact_provider, lock_info, result, enforcement: enforcement)
 
       stage
     end
@@ -126,11 +148,17 @@ module ModuleTester
       source = ''
       version = ''
       load_error = nil
+      puppet_source = ''
+      puppet_version = ''
+      puppet_load_error = nil
       stage.output.to_s.each_line do |line|
         case line
         when /^FACT_PROVIDER_SOURCE=(.*)$/ then source = Regexp.last_match(1).strip
         when /^FACT_PROVIDER_VERSION=(.*)$/ then version = Regexp.last_match(1).strip
         when /^FACT_PROVIDER_LOAD_ERROR=(.*)$/ then load_error = Regexp.last_match(1).strip
+        when /^PUPPET_PROVIDER_SOURCE=(.*)$/ then puppet_source = Regexp.last_match(1).strip
+        when /^PUPPET_PROVIDER_VERSION=(.*)$/ then puppet_version = Regexp.last_match(1).strip
+        when /^PUPPET_PROVIDER_LOAD_ERROR=(.*)$/ then puppet_load_error = Regexp.last_match(1).strip
         end
       end
 
@@ -138,20 +166,23 @@ module ModuleTester
         source: source,
         version: version,
         load_error: load_error,
+        puppet_source: puppet_source,
+        puppet_version: puppet_version,
+        puppet_load_error: puppet_load_error,
         exit_code: stage.exit_code,
         duration_seconds: stage.duration_seconds,
         command_display: stage.command
       }
     end
 
-    def classify_provider(probe_info, lock_info)
+    def classify_fact_provider(probe_info, lock_info)
       source = probe_info[:source].to_s
 
       if source.include?('/gems/openfact-')
-        return ['openfact', "openfact@#{lock_info[:openfact] || extract_version_from_path(source)}"]
+        return ['openfact', "openfact@#{lock_info[:openfact] || extract_fact_version_from_path(source)}"]
       end
       if source.include?('/gems/facter-')
-        return ['facter', "facter@#{lock_info[:facter] || extract_version_from_path(source)}"]
+        return ['facter', "facter@#{lock_info[:facter] || extract_fact_version_from_path(source)}"]
       end
 
       # Probe failed to resolve — fall back to lockfile inference.
@@ -165,24 +196,42 @@ module ModuleTester
       ['unknown', '']
     end
 
-    def extract_version_from_path(path)
+    def classify_puppet_provider(probe_info)
+      source = probe_info[:puppet_source].to_s
+
+      if source.include?('/gems/openvox-')
+        return ['openvox', "openvox@#{extract_puppet_version_from_path(source)}"]
+      end
+      if source.include?('/gems/puppet-')
+        return ['puppet', "puppet@#{extract_puppet_version_from_path(source)}"]
+      end
+
+      ['unknown', '']
+    end
+
+    def extract_fact_version_from_path(path)
       m = path.match(%r{/gems/(?:facter|openfact)-([^/]+)/})
       m ? m[1] : ''
     end
 
-    def build_summary(provider, provider_gem, probe_info, lock_info, lockfile_path,
-              enforcement: nil)
-      puppet_provider = if lock_info[:puppet] && lock_info[:openvox]
-                          "puppet@#{lock_info[:puppet]}+openvox@#{lock_info[:openvox]}"
-                        elsif lock_info[:puppet]
-                          "puppet@#{lock_info[:puppet]}"
-                        elsif lock_info[:openvox]
-                          "openvox@#{lock_info[:openvox]}"
-                        else
-                          'unknown'
-                        end
+    def extract_puppet_version_from_path(path)
+      m = path.match(%r{/gems/(?:puppet|openvox)-([^/]+)/})
+      m ? m[1] : ''
+    end
 
-      detection_method = if provider != 'unknown' && probe_info[:source].to_s.include?('/gems/')
+    def build_summary(fact_provider, fact_provider_gem, puppet_provider, puppet_provider_gem,
+                      probe_info, lock_info, lockfile_path, enforcement: nil)
+      puppet_lockfile_provider = if lock_info[:puppet] && lock_info[:openvox]
+                                   "puppet@#{lock_info[:puppet]}+openvox@#{lock_info[:openvox]}"
+                                 elsif lock_info[:puppet]
+                                   "puppet@#{lock_info[:puppet]}"
+                                 elsif lock_info[:openvox]
+                                   "openvox@#{lock_info[:openvox]}"
+                                 else
+                                   'unknown'
+                                 end
+
+      detection_method = if fact_provider != 'unknown' && probe_info[:source].to_s.include?('/gems/')
                            'bundle_resolution'
                          elsif lock_info[:available]
                            'gemfile_lock_inference'
@@ -190,17 +239,28 @@ module ModuleTester
                            'unknown'
                          end
 
+      puppet_detection_method = if puppet_provider != 'unknown' && probe_info[:puppet_source].to_s.include?('/gems/')
+                                  'bundle_resolution'
+                                else
+                                  'unknown'
+                                end
+
       parts = [
-        "fact_provider=#{provider}",
-        "fact_provider_gem=#{provider_gem.empty? ? 'unknown' : provider_gem}",
+        "fact_provider=#{fact_provider}",
+        "fact_provider_gem=#{fact_provider_gem.empty? ? 'unknown' : fact_provider_gem}",
         "puppet_provider=#{puppet_provider}",
+        "puppet_provider_gem=#{puppet_provider_gem.empty? ? 'unknown' : puppet_provider_gem}",
+        "puppet_lockfile_provider=#{puppet_lockfile_provider}",
         "gemfile_facter=#{lock_info[:facter] || 'absent'}",
         "gemfile_openfact=#{lock_info[:openfact] || 'absent'}",
         "gemfile_lock=#{File.basename(lockfile_path)}",
         "detection_method=#{detection_method}",
-        "facter_runtime_version=#{probe_info[:version].to_s.empty? ? 'unknown' : probe_info[:version]}"
+        "puppet_detection_method=#{puppet_detection_method}",
+        "facter_runtime_version=#{probe_info[:version].to_s.empty? ? 'unknown' : probe_info[:version]}",
+        "puppet_runtime_version=#{probe_info[:puppet_version].to_s.empty? ? 'unknown' : probe_info[:puppet_version]}"
       ]
       parts << "load_error=#{probe_info[:load_error]}" if probe_info[:load_error]
+      parts << "puppet_load_error=#{probe_info[:puppet_load_error]}" if probe_info[:puppet_load_error]
       parts << "enforcement=#{enforcement}" if enforcement
       parts.join(' ')
     end
