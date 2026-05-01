@@ -3,9 +3,9 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-04-22
+Last updated: 2026-05-01
 
-## Modules With Acceptance Tests (36)
+## Modules With Acceptance Tests (37)
 
 | Module | Supported Operating Systems |
 |--------|------------------------------|
@@ -34,6 +34,7 @@ Last updated: 2026-04-22
 | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | Debian 11-13, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, OracleLinux 8-10, Rocky 8-10, Alpine, FreeBSD 13-14 |
 | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | OracleLinux 8-9, RedHat 8-9, CentOS 9, AlmaLinux 8-9, Rocky 8-9, VirtuozzoLinux 7, Debian 11-12, Ubuntu 22.04-24.04, Archlinux |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | AIX 6100 and 7100, AlmaLinux 8-9, CentOS 9, Debian 11-13, FreeBSD 13-14, Gentoo, Ubuntu 22.04-24.04, OracleLinux 8-9, RedHat 8-9, Rocky 8-9, SLES 11.3, Archlinux |
+| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | Debian 11-12, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Archlinux, Gentoo |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | Debian 11-12, Ubuntu 20.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10 |
 | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | Debian 10-12, Ubuntu 22.04-24.04, RedHat 9-10, AlmaLinux 9-10, Rocky 9-10 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | EL/RedHat 9, AlmaLinux 9, Rocky 9, Debian 12-13, Ubuntu 24.04, FreeBSD, OpenBSD |
@@ -62,10 +63,11 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 
 ## Modules With Acceptance Tests but Disabled in CI
 
-These modules have acceptance tests defined but are currently excluded from the test matrix due to Docker container limitations.
+These modules have acceptance tests defined but are currently excluded from the test matrix, either due to Docker/container limitations or because CI onboarding is intentionally unit-only for now.
 
 | Module | Reason |
 |--------|--------|
 | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing. |
+| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | Acceptance tests exist upstream, but CI onboarding is intentionally limited to unit coverage at this stage. |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | Module manages kernel-level swap file operations via `swapon` and `swapoff` commands. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires full VM or bare-metal environment for acceptance testing. |
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | Module attempts to manage `/etc/resolv.conf` via symlink replacement to `/run/systemd/resolve/resolv.conf`. Docker container runtime owns `/etc/resolv.conf`, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |

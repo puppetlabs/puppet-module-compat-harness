@@ -398,6 +398,10 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-r10k",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-squid",
       "ref": "master",
       "prereqs": {
