@@ -423,6 +423,59 @@
     {
       "repo": "https://github.com/voxpupuli/puppet-telegraf",
       "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-autofs",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-boolean",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-ca_cert",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-filemapper",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-hiera",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-nodejs",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-posix_acl",
+      "ref": "master",
+      "prereqs": {
+        "apt": [
+          "acl"
+        ]
+      }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-rsyslog",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-sssd",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-staging",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-unattended_upgrades",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-wget",
+      "ref": "master"
     }
   ]
 }
