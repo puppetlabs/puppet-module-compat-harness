@@ -181,9 +181,11 @@ module ModuleTester
       # source. Bootstrap's normalize_runtime_gem_versions strips any existing
       # version constraints from the main Gemfile, so this overlay declaration
       # is the sole authority on the runtime version.
+      lines << "gem 'json', '>= 2.5.0', require: false"
+      lines << ""
+      lines << "source '#{source_url}' do"
       lines << "  gem 'puppet', '= #{puppet_version}', require: false"
       lines << "  gem 'facter', '= #{facter_version}', require: false" unless facter_version.empty?
-      lines << "  gem 'json', '>= 2.5.0', require: false"
       lines << "end"
       lines << ""
 
