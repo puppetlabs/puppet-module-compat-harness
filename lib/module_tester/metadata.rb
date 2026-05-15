@@ -64,10 +64,7 @@ module ModuleTester
     end
 
     def compare_semver(left, right)
-      return -1 if left < right
-      return 1 if left > right
-
-      0
+      left <=> right
     end
   end
 end
