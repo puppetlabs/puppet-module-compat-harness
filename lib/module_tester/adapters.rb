@@ -149,15 +149,18 @@ module ModuleTester
     end
 
     def probe_runtime_versions(module_dir, env, stage_name)
+      script = <<~'RUBY'
+        puppet = Gem::Specification.find_all_by_name('puppet').max_by(&:version)
+        abort('puppet gem not installed') unless puppet
+        expected = ENV.fetch('PUPPET_GEM_VERSION')
+        abort("puppet #{puppet.version} != #{expected}") unless puppet.version.to_s == expected
+        facter = Gem::Specification.find_all_by_name('facter').max_by(&:version)
+        puts "runtime puppet=#{puppet.version} expected=#{expected} facter=#{facter&.version || 'not-installed'}"
+      RUBY
+
       @stage.run_stage(
         stage_name,
-        [
-          'bundle',
-          'exec',
-          'ruby',
-          '-e',
-          "puppet=Gem::Specification.find_all_by_name('puppet').max_by(&:version); abort('puppet gem not installed') unless puppet; expected=ENV.fetch('PUPPET_GEM_VERSION'); abort(\"puppet #{puppet.version} != #{expected}\") unless puppet.version.to_s == expected; facter=Gem::Specification.find_all_by_name('facter').max_by(&:version); puts \"runtime puppet=#{puppet.version} expected=#{expected} facter=#{facter&.version || 'not-installed'}\""
-        ],
+        ['bundle', 'exec', 'ruby', '-e', script],
         module_dir,
         env
       )
