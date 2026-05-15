@@ -68,7 +68,9 @@ module ModuleTester
       else
         # Some modules expose unit specs only via nested paths and do not
         # advertise spec/test tasks in a way rake task listing can parse.
-        unit_specs = Dir.glob(File.join(module_dir, 'spec', '**', '*_spec.rb')).sort
+        # Use absolute paths so rspec doesn't re-resolve them relative to
+        # its CWD (module_dir), which would double-prefix the path.
+        unit_specs = Dir.glob(File.join(module_dir, 'spec', '**', '*_spec.rb')).map { |p| File.expand_path(p) }.sort
         return if unit_specs.empty?
 
         unit_stage = @stage.run_stage('unit', ['bundle', 'exec', 'rspec', *unit_specs], module_dir, env)
