@@ -42,6 +42,12 @@ module ModuleTester
 
       return unless File.exist?(File.join(module_dir, 'Rakefile')) && @stage.command_available?('bundle')
 
+      # Apply the same precedence guard pattern used for facter/openfact.
+      # When both json and json_pure are present, prefer native json before
+      # any rake task discovery runs, then record a probe stage for logs.
+      json_enforcement = enforce_json_load_path(module_dir, env, profile)
+      result[:stages] << JsonProviderDetector.detect(@stage, module_dir, env, enforcement: json_enforcement)
+
       tasks, rake_tasks_stage = @stage.rake_tasks(module_dir, env)
       result[:stages] << rake_tasks_stage
       if tasks.include?('validate')
@@ -294,6 +300,54 @@ module ModuleTester
       bundle_path = env.fetch('BUNDLE_PATH', File.join(module_dir, 'vendor', 'bundle')).to_s
       pattern = File.join(bundle_path, '**', "facter-#{facter_version}", 'lib')
       Dir.glob(pattern).first
+    end
+
+    # Best-effort enforcement: when both json and json_pure are present,
+    # prepend native json's lib dir and preload json via RUBYOPT so later
+    # requires resolve to the native gem instead of json_pure.
+    #
+    # Returns an enforcement status string:
+    #   'skipped'   — not applicable (no json_pure in bundle, or not private source mode)
+    #   'attempted' — tried but could not locate native json gem path
+    #   'succeeded' — RUBYOPT updated successfully
+    def enforce_json_load_path(module_dir, env, profile)
+      return 'skipped' unless profile.fetch('gem_source_mode', '') == 'private'
+
+      lockfile_path = FactProviderDetector.resolve_lockfile_path(module_dir, env)
+      lock_info = JsonProviderDetector.parse_gemfile_lock(lockfile_path)
+      return 'skipped' unless lock_info[:json_pure] && lock_info[:json]
+
+      json_lib = find_json_gem_lib(module_dir, env)
+      return 'attempted' unless json_lib && File.directory?(json_lib)
+
+      existing_rubyopt = env.fetch('RUBYOPT', '').to_s
+      rubyopt = "-I#{json_lib} #{existing_rubyopt}".strip
+      rubyopt = "-rjson #{rubyopt}" unless rubyopt.include?('-rjson')
+      env['RUBYOPT'] = rubyopt.strip
+
+      'succeeded'
+    end
+
+    # Locate the installed native json gem's lib/ directory within the bundle path.
+    def find_json_gem_lib(module_dir, env)
+      if @stage.command_available?('bundle')
+        stage = @stage.run_stage(
+          'json_gem_path',
+          ['bundle', 'show', 'json'],
+          module_dir, env
+        )
+        if stage.exit_code == 0
+          gem_root = stage.output.to_s.strip.lines.last&.strip
+          if gem_root && !gem_root.empty?
+            lib_path = File.join(gem_root, 'lib')
+            return lib_path if File.directory?(lib_path)
+          end
+        end
+      end
+
+      bundle_path = env.fetch('BUNDLE_PATH', File.join(module_dir, 'vendor', 'bundle')).to_s
+      pattern = File.join(bundle_path, '**', 'json-*', 'lib')
+      Dir.glob(pattern).sort.reverse.find { |path| File.directory?(path) }
     end
   end
 end
