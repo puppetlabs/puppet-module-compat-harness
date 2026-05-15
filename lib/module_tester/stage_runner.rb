@@ -74,15 +74,19 @@ module ModuleTester
     def rake_tasks(module_dir, env)
       # Use -AT to include undocumented tasks (like spec/test) that many
       # modules rely on via puppetlabs_spec_helper/voxpupuli-test.
+      # Returns [task_names, stage_result] so callers can record the
+      # diagnostic stage in the compatibility report and surface the
+      # log artifact when discovery fails.
       listing = run_stage('rake_tasks', ['bundle', 'exec', 'rake', '-AT'], module_dir, env)
-      return [] unless listing.status == 'passed'
+      return [[], listing] unless listing.status == 'passed'
 
-      listing.output.to_s.lines.filter_map do |line|
+      tasks = listing.output.to_s.lines.filter_map do |line|
         stripped = line.strip
         next unless stripped.start_with?('rake ')
 
         stripped.split[1]
       end
+      [tasks, listing]
     end
 
     def command_available?(name)

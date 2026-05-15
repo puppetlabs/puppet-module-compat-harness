@@ -42,7 +42,8 @@ module ModuleTester
 
       return unless File.exist?(File.join(module_dir, 'Rakefile')) && @stage.command_available?('bundle')
 
-      tasks = @stage.rake_tasks(module_dir, env)
+      tasks, rake_tasks_stage = @stage.rake_tasks(module_dir, env)
+      result[:stages] << rake_tasks_stage
       if tasks.include?('validate')
         validate_stage = @stage.run_stage('validate', ['bundle', 'exec', 'rake', 'validate'], module_dir, env)
         result[:stages] << validate_stage
@@ -66,16 +67,22 @@ module ModuleTester
         result[:stages] << unit_stage
         downgrade_puppet_server_default_unit_failure(result, unit_stage)
       else
-        # Some modules expose unit specs only via nested paths and do not
-        # advertise spec/test tasks in a way rake task listing can parse.
-        # Use absolute paths so rspec doesn't re-resolve them relative to
-        # its CWD (module_dir), which would double-prefix the path.
-        unit_specs = Dir.glob(File.join(module_dir, 'spec', '**', '*_spec.rb')).map { |p| File.expand_path(p) }.sort
-        return if unit_specs.empty?
-
-        unit_stage = @stage.run_stage('unit', ['bundle', 'exec', 'rspec', *unit_specs], module_dir, env)
-        result[:stages] << unit_stage
-        downgrade_puppet_server_default_unit_failure(result, unit_stage)
+        # No rake spec/test task was discovered. Record an explicit
+        # failure stage that surfaces the discovered task list so the
+        # root cause is visible in the compatibility report and the
+        # rake_tasks log artifact can be downloaded for diagnosis.
+        available = tasks.empty? ? '(none discovered)' : tasks.sort.uniq.join(', ')
+        message = "No 'spec' or 'test' rake task found for module. " \
+                  "Available rake tasks: #{available}. " \
+                  "See rake_tasks stage log (.stage-rake_tasks.log) for full `rake -AT` output."
+        result[:stages] << StageResult.new(
+          name: 'unit',
+          status: 'failed',
+          command: nil,
+          exit_code: -1,
+          duration_seconds: 0,
+          output: message
+        )
       end
     end
 
@@ -83,7 +90,8 @@ module ModuleTester
       return unless @options[:allow_acceptance]
       return unless File.exist?(File.join(module_dir, 'Rakefile')) && @stage.command_available?('bundle')
 
-      tasks = @stage.rake_tasks(module_dir, env)
+      tasks, rake_tasks_stage = @stage.rake_tasks(module_dir, env)
+      result[:stages] << rake_tasks_stage
       return unless result[:capability]['has_acceptance']
       return unless tasks.include?('beaker')
 
