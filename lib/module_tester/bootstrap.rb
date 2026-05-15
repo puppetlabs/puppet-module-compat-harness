@@ -177,12 +177,12 @@ module ModuleTester
       lines << "eval_gemfile 'Gemfile'"
       lines << ""
       lines << "source '#{source_url}' do"
-      unless gem_declared_in_gemfile?(module_dir, 'puppet')
-        lines << "  gem 'puppet', '= #{puppet_version}', require: false"
-      end
-      if !facter_version.empty? && !gem_declared_in_gemfile?(module_dir, 'facter')
-        lines << "  gem 'facter', '= #{facter_version}', require: false"
-      end
+      # Always pin puppet/facter to the exact target version from the puppetcore
+      # source. Bootstrap's normalize_runtime_gem_versions strips any existing
+      # version constraints from the main Gemfile, so this overlay declaration
+      # is the sole authority on the runtime version.
+      lines << "  gem 'puppet', '= #{puppet_version}', require: false"
+      lines << "  gem 'facter', '= #{facter_version}', require: false" unless facter_version.empty?
       lines << "end"
       lines << ""
 
@@ -194,26 +194,24 @@ module ModuleTester
       gemfile_path = File.join(module_dir, 'Gemfile')
       return unless File.exist?(gemfile_path)
 
+      _ = profile # version comes from overlay; main Gemfile only needs constraints stripped
       original = File.read(gemfile_path)
       updated = original.dup
       changes = []
 
-      puppet_version = profile.fetch('puppet_core_version').to_s
-      updated, puppet_changed = force_gem_requirement(updated, 'puppet', "= #{puppet_version}")
-      if !gem_declared_in_content?(updated, 'puppet')
-        updated << "\n# Added by compatibility harness to enforce Puppet Core target\ngem 'puppet', '= #{puppet_version}', require: false\n"
-        puppet_changed = true
-      end
-      changes << "puppet==#{puppet_version}" if puppet_changed
+      # Strip version constraints from any existing puppet/facter declarations
+      # in the main Gemfile so they don't conflict with the exact-version pin
+      # added by the split-source overlay (Gemfile.puppetcore). We do NOT add
+      # puppet/facter to the main Gemfile here — those gems come from the
+      # private puppetcore source via the overlay, not from rubygems.org.
+      %w[puppet facter].each do |gem_name|
+        next unless gem_declared_in_content?(updated, gem_name)
 
-      facter_version = profile.fetch('facter_version', '').to_s
-      if !facter_version.empty?
-        updated, facter_changed = force_gem_requirement(updated, 'facter', "= #{facter_version}")
-        if !gem_declared_in_content?(updated, 'facter')
-          updated << "\n# Added by compatibility harness to align Facter with Puppet Core\ngem 'facter', '= #{facter_version}', require: false\n"
-          facter_changed = true
+        new_content, changed = strip_gem_version_constraint(updated, gem_name)
+        if changed
+          updated = new_content
+          changes << "#{gem_name}=unconstrained (overlay pins exact version)"
         end
-        changes << "facter==#{facter_version}" if facter_changed
       end
 
       return if updated == original
@@ -250,6 +248,36 @@ module ModuleTester
 
     def gem_declared_in_content?(content, gem_name)
       content.match?(/^\s*gem\s+['\"]#{Regexp.escape(gem_name)}['\"]/)
+    end
+
+    # Strip any version constraint(s) from a `gem 'name', '...'` declaration by
+    # commenting out the entire line. This removes it from Bundler's dependency
+    # resolution entirely, allowing the split-source overlay (Gemfile.puppetcore)
+    # to be the sole authority for puppet/facter via the puppetcore source.
+    # Prevents source-binding conflicts and version-requirement conflicts.
+    #
+    # Handles forms:
+    #   gem 'puppet'
+    #   gem 'puppet', '>= 6.0'
+    #   gem 'puppet', '>= 6.0', '< 9.0'
+    #   gem 'puppet', '>= 6.0', require: false
+    #   gem "puppet", "~> 8.0", :require => false
+    def strip_gem_version_constraint(content, gem_name)
+      changed = false
+      pattern = /^(\s*)gem\s+['\"]#{Regexp.escape(gem_name)}['\"].*$/
+
+      updated = content.gsub(pattern) do
+        indent = Regexp.last_match(1)
+        original_line = Regexp.last_match(0)
+        if original_line !~ /^\s*#/  # only comment if not already commented
+          changed = true
+          "#{indent}# Pinned by compatibility harness in Gemfile.puppetcore\n#{indent}# #{original_line.lstrip}"
+        else
+          original_line
+        end
+      end
+
+      [updated, changed]
     end
   end
 end
