@@ -72,7 +72,9 @@ module ModuleTester
     end
 
     def rake_tasks(module_dir, env)
-      listing = run_stage('rake_tasks', ['bundle', 'exec', 'rake', '-T'], module_dir, env)
+      # Use -AT to include undocumented tasks (like spec/test) that many
+      # modules rely on via puppetlabs_spec_helper/voxpupuli-test.
+      listing = run_stage('rake_tasks', ['bundle', 'exec', 'rake', '-AT'], module_dir, env)
       return [] unless listing.status == 'passed'
 
       listing.output.to_s.lines.filter_map do |line|

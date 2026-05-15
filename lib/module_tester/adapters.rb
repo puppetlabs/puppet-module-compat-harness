@@ -64,6 +64,15 @@ module ModuleTester
         unit_stage = @stage.run_stage('unit', ['bundle', 'exec', 'rake', 'test'], module_dir, env)
         result[:stages] << unit_stage
         downgrade_puppet_server_default_unit_failure(result, unit_stage)
+      else
+        # Some modules expose unit specs only via nested paths and do not
+        # advertise spec/test tasks in a way rake task listing can parse.
+        unit_specs = Dir.glob(File.join(module_dir, 'spec', '**', '*_spec.rb')).sort
+        return if unit_specs.empty?
+
+        unit_stage = @stage.run_stage('unit', ['bundle', 'exec', 'rspec', *unit_specs], module_dir, env)
+        result[:stages] << unit_stage
+        downgrade_puppet_server_default_unit_failure(result, unit_stage)
       end
     end
 
