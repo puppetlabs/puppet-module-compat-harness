@@ -34,6 +34,8 @@ module ModuleTester
     def configure_source(module_dir, env, result, profile)
       return unless profile.fetch('gem_source_mode') == 'private'
 
+      normalize_runtime_gem_versions(module_dir, profile, result)
+
       source_url = ENV.fetch('PUPPET_CORE_SOURCE_URL', DEFAULT_PUPPET_CORE_SOURCE_URL).strip
       result[:stages] << StageResult.new(
         name: 'bundle_config_source',
@@ -175,13 +177,79 @@ module ModuleTester
       lines << "eval_gemfile 'Gemfile'"
       lines << ""
       lines << "source '#{source_url}' do"
-      lines << "  gem 'puppet', '= #{puppet_version}', require: false"
-      lines << "  gem 'facter', '= #{facter_version}', require: false" unless facter_version.empty?
+      unless gem_declared_in_gemfile?(module_dir, 'puppet')
+        lines << "  gem 'puppet', '= #{puppet_version}', require: false"
+      end
+      if !facter_version.empty? && !gem_declared_in_gemfile?(module_dir, 'facter')
+        lines << "  gem 'facter', '= #{facter_version}', require: false"
+      end
       lines << "end"
       lines << ""
 
       File.write(overlay_gemfile, lines.join("\n"))
       overlay_gemfile
+    end
+
+    def normalize_runtime_gem_versions(module_dir, profile, result)
+      gemfile_path = File.join(module_dir, 'Gemfile')
+      return unless File.exist?(gemfile_path)
+
+      original = File.read(gemfile_path)
+      updated = original.dup
+      changes = []
+
+      puppet_version = profile.fetch('puppet_core_version').to_s
+      updated, puppet_changed = force_gem_requirement(updated, 'puppet', "= #{puppet_version}")
+      if !gem_declared_in_content?(updated, 'puppet')
+        updated << "\n# Added by compatibility harness to enforce Puppet Core target\ngem 'puppet', '= #{puppet_version}', require: false\n"
+        puppet_changed = true
+      end
+      changes << "puppet==#{puppet_version}" if puppet_changed
+
+      facter_version = profile.fetch('facter_version', '').to_s
+      if !facter_version.empty?
+        updated, facter_changed = force_gem_requirement(updated, 'facter', "= #{facter_version}")
+        if !gem_declared_in_content?(updated, 'facter')
+          updated << "\n# Added by compatibility harness to align Facter with Puppet Core\ngem 'facter', '= #{facter_version}', require: false\n"
+          facter_changed = true
+        end
+        changes << "facter==#{facter_version}" if facter_changed
+      end
+
+      return if updated == original
+
+      backup_path = File.join(module_dir, 'Gemfile.before-runtime-normalize')
+      File.write(backup_path, original)
+      File.write(gemfile_path, updated)
+
+      result[:stages] << StageResult.new(
+        name: 'bootstrap_runtime_gem_normalize',
+        status: 'passed',
+        command: nil,
+        exit_code: 0,
+        duration_seconds: 0,
+        output: "Normalized runtime gem requirements in Gemfile: #{changes.join(', ')}"
+      )
+    rescue StandardError => e
+      result[:stages] << StageResult.new(
+        name: 'bootstrap_runtime_gem_normalize',
+        status: 'failed',
+        command: nil,
+        exit_code: 1,
+        duration_seconds: 0,
+        output: "Failed to normalize runtime gem requirements: #{e.message}"
+      )
+    end
+
+    def gem_declared_in_gemfile?(module_dir, gem_name)
+      gemfile_path = File.join(module_dir, 'Gemfile')
+      return false unless File.exist?(gemfile_path)
+
+      gem_declared_in_content?(File.read(gemfile_path), gem_name)
+    end
+
+    def gem_declared_in_content?(content, gem_name)
+      content.match?(/^\s*gem\s+['\"]#{Regexp.escape(gem_name)}['\"]/)
     end
   end
 end

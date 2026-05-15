@@ -55,6 +55,7 @@ module ModuleTester
       # depend on tests actually calling the Facter API.
       enforcement = enforce_facter_load_path(module_dir, env, profile)
       result[:stages] << FactProviderDetector.detect(@stage, module_dir, env, result, enforcement: enforcement)
+      result[:stages] << probe_runtime_versions(module_dir, env, 'unit_runtime_probe')
 
       if tasks.include?('spec')
         unit_stage = @stage.run_stage('unit', ['bundle', 'exec', 'rake', 'spec'], module_dir, env)
@@ -143,7 +144,23 @@ module ModuleTester
         output: diag_lines.join("\n")
       )
 
+      result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
       result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
+    end
+
+    def probe_runtime_versions(module_dir, env, stage_name)
+      @stage.run_stage(
+        stage_name,
+        [
+          'bundle',
+          'exec',
+          'ruby',
+          '-e',
+          "puppet=Gem::Specification.find_all_by_name('puppet').max_by(&:version); abort('puppet gem not installed') unless puppet; expected=ENV.fetch('PUPPET_GEM_VERSION'); abort(\"puppet #{puppet.version} != #{expected}\") unless puppet.version.to_s == expected; facter=Gem::Specification.find_all_by_name('facter').max_by(&:version); puts \"runtime puppet=#{puppet.version} expected=#{expected} facter=#{facter&.version || 'not-installed'}\""
+        ],
+        module_dir,
+        env
+      )
     end
 
     def downgrade_puppet_server_default_unit_failure(result, unit_stage)

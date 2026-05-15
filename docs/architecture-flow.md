@@ -28,7 +28,7 @@ flowchart TD
         C["1 · Clone module repo"]
         D["2 · Discover capabilities<br/>& evaluate metadata.json"]
         A["3 · Verify gem source auth"]
-        B["4 · Bootstrap<br/>bundle install"]
+        B["4 · Bootstrap<br/>normalize Gemfile puppet/facter pins<br/>bundle install"]
         GC{"Gem conflict<br/>detected?"}
         BR["Patch Gemfile<br/>swap to Puppet Core gems<br/>bundle install retry"]
         G["5 · Enforce guardrails<br/>gem source · puppet version"]
@@ -40,6 +40,7 @@ flowchart TD
             PDK["pdk validate<br/>pdk test unit"]
             FE["Facter load-path enforcement<br/>RUBYOPT -I prepend<br/>(private source only)"]
             FP["fact_provider detection<br/>require probe"]
+            RPB["runtime probe<br/>assert puppet gem == target"]
             Rake["bundle exec rake<br/>validate + spec / test"]
         end
 
@@ -80,7 +81,7 @@ flowchart TD
 
     TM -- unit --> UP
     UP -- yes --> PDK
-    UP -- no --> FE --> FP --> Rake
+    UP -- no --> FE --> FP --> RPB --> Rake
     PDK & Rake --> CL
 
     TM -- acceptance --> AK
@@ -145,7 +146,7 @@ the result is classified immediately.
 | **Clone** | `git clone --depth 1` at the pinned ref. |
 | **Discover capabilities** | Detects whether the module uses Vox-style rake vars (`uses_vox_vars`) and whether acceptance tests exist (`has_acceptance`). Also reads `metadata.json` to check declared Puppet version constraints. |
 | **Verify auth** | Confirms that the required gem source (public or private Puppet Core) is reachable. An auth failure marks the result `inconclusive` immediately. |
-| **Bootstrap** | `bundle install` into a local vendor path. If a Puppet Core gem version conflict is detected, the runner attempts an automatic Gemfile patch and retries once. |
+| **Bootstrap** | Normalizes module `Gemfile` runtime pins (`puppet`/`facter`) to the target profile version in the workspace clone, then runs `bundle install` into a local vendor path. If a Puppet Core gem version conflict is detected, the runner attempts an automatic Gemfile patch and retries once. |
 | **Guardrails** | Asserts that the installed `puppet` gem matches the expected exact version, and (if configured) that no OpenVox alternative gems were resolved. |
 
 ### Unit Test Path
@@ -185,6 +186,8 @@ When `gem_source_mode` is `private` (Puppet Core profiles) and the resolved bund
 3. This causes `require 'facter'` to resolve to the Perforce Facter gem instead of OpenFact in all subsequent stages (`validate`, `fact_provider`, `unit`), including child processes spawned by `rake spec` via `system()`.
 
 The enforcement is **best-effort and non-failing**: if the facter gem path cannot be located, the pipeline continues without modification and the existing OpenFact warning fires as usual. The `enforcement` field in the `fact_provider` summary records the outcome.
+
+After `fact_provider`, the adapter runs `unit_runtime_probe` (`bundle exec ruby -e ...`) to assert the runtime-resolved `puppet` gem exactly matches `PUPPET_GEM_VERSION` immediately before unit execution. This ensures module-defined Gemfile constraints cannot silently change the tested Puppet Core version.
 
 ### Acceptance Test Path
 
