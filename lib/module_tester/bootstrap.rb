@@ -183,6 +183,7 @@ module ModuleTester
       # is the sole authority on the runtime version.
       lines << "  gem 'puppet', '= #{puppet_version}', require: false"
       lines << "  gem 'facter', '= #{facter_version}', require: false" unless facter_version.empty?
+      lines << "  gem 'json', '>= 2.5.0', require: false"
       lines << "end"
       lines << ""
 
