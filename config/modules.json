@@ -43,6 +43,18 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-augeasproviders_grub",
+      "ref": "master",
+      "prereqs": {
+        "apt": [
+          "libaugeas-dev",
+          "augeas-tools",
+          "pkg-config",
+          "build-essential"
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_shellvar",
       "ref": "master",
       "prereqs": {
@@ -76,16 +88,16 @@
       }
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-augeasproviders_grub",
-      "ref": "master",
-      "prereqs": {
-        "apt": [
-          "libaugeas-dev",
-          "augeas-tools",
-          "pkg-config",
-          "build-essential"
-        ]
-      }
+      "repo": "https://github.com/voxpupuli/puppet-autofs",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-boolean",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-ca_cert",
+      "ref": "master"
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-chrony",
@@ -106,6 +118,10 @@
       "ref": "master"
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-corosync",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-cron",
       "ref": "master",
       "acceptance": {
@@ -118,10 +134,6 @@
           }
         ]
       }
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-corosync",
-      "ref": "master"
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-dnsquery",
@@ -150,6 +162,10 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-extlib",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-filemapper",
       "ref": "master"
     },
     {
@@ -183,6 +199,10 @@
       "ref": "master"
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-hiera",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-jira",
       "ref": "master"
     },
@@ -201,76 +221,6 @@
       }
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-logrotate",
-      "ref": "master",
-      "acceptance": {
-        "enabled": true,
-        "targets": [
-          {
-              "name": "el9-systemd",
-              "setfile": "el9-systemd",
-              "docker_mode": "systemd"
-          }
-        ]
-      }
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-nginx",
-      "ref": "master",
-      "acceptance": {
-        "enabled": true,
-        "targets": [
-          {
-            "name": "el9-systemd",
-            "setfile": "el9-systemd",
-            "docker_mode": "systemd"
-          }
-        ]
-      }
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-python",
-      "ref": "master",
-      "acceptance": {
-        "enabled": true,
-        "targets": [
-          {
-            "name": "el9",
-            "setfile": "el9"
-          }
-        ]
-      }
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-selinux",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-systemd",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-windows_firewall",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-windowsfeature",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-yum",
-      "ref": "master",
-      "acceptance": {
-        "enabled": true,
-        "targets": [
-          {
-            "name": "el9",
-            "setfile": "el9"
-          }
-        ]
-      }
-    },
-    {
       "repo": "https://github.com/voxpupuli/puppet-kibana",
       "ref": "master"
     },
@@ -281,6 +231,20 @@
         "apt": [
           "augeas-lenses",
           "libaugeas0"
+        ]
+      }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-logrotate",
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
         ]
       }
     },
@@ -314,6 +278,24 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-nginx",
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-nodejs",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-openldap",
       "ref": "master",
       "prereqs": {
@@ -339,16 +321,39 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-posix_acl",
+      "ref": "master",
+      "prereqs": {
+        "apt": [
+          "acl"
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-postfix",
       "ref": "master",
       "prereqs": {
         "apt": [
-            "libaugeas-dev",
-            "augeas-tools",
-            "pkg-config",
-            "build-essential"
+          "libaugeas-dev",
+          "augeas-tools",
+          "pkg-config",
+          "build-essential"
         ]
       },
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-prometheus",
+      "ref": "master",
       "acceptance": {
         "enabled": true,
         "targets": [
@@ -365,18 +370,21 @@
       "ref": "master"
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-prometheus",
+      "repo": "https://github.com/voxpupuli/puppet-python",
       "ref": "master",
       "acceptance": {
         "enabled": true,
         "targets": [
           {
-            "name": "el9-systemd",
-            "setfile": "el9-systemd",
-            "docker_mode": "systemd"
+            "name": "el9",
+            "setfile": "el9"
           }
         ]
       }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-r10k",
+      "ref": "master"
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-redis",
@@ -398,7 +406,11 @@
       }
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-r10k",
+      "repo": "https://github.com/voxpupuli/puppet-rsyslog",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-selinux",
       "ref": "master"
     },
     {
@@ -412,6 +424,14 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-sssd",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-staging",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-swap_file",
       "ref": "master",
       "prereqs": {
@@ -421,52 +441,11 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-systemd",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-telegraf",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-autofs",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-boolean",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-ca_cert",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-filemapper",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-hiera",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-nodejs",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-posix_acl",
-      "ref": "master",
-      "prereqs": {
-        "apt": [
-          "acl"
-        ]
-      }
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-rsyslog",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-sssd",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-staging",
       "ref": "master"
     },
     {
@@ -476,6 +455,27 @@
     {
       "repo": "https://github.com/voxpupuli/puppet-wget",
       "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-windows_firewall",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-windowsfeature",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-yum",
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
+        ]
+      }
     }
   ]
 }

@@ -21,13 +21,25 @@ This file is for coding agents working in this repository.
 
 1. Inspect the target module repository first (do not skip this step).
 2. Add a module object under `modules` in `config/modules.json`.
-3. Set `repo` (required), optionally `ref`, `id`, `os`, and `prereqs`.
-4. Default behavior when omitted:
+3. **Insert the new module in alphabetical position** by repo name (the segment after the final `/`, lowercase, case-insensitive). The `modules` array must remain sorted alphabetically at all times because GitHub Actions renders matrix jobs in the order they appear in `modules.json`; alphabetical order makes individual jobs easy to locate in the CI panel.
+4. Set `repo` (required), optionally `ref`, `id`, `os`, and `prereqs`.
+5. Default behavior when omitted:
    - `ref`: treated as `main` by runner logic.
    - `os`: defaults to `ubuntu-latest` in workflow behavior.
    - `id`: derived from repo name.
-5. Validate against schema before proposing completion.
-6. Update [Available Acceptance Tests](./docs/available-acceptance-tests.md) documentation with information about the module being added. Make sure to update the 'last updated' date as well.
+6. Validate against schema before proposing completion.
+7. Update [Available Acceptance Tests](./docs/available-acceptance-tests.md) documentation with information about the module being added. Make sure to update the 'last updated' date as well.
+
+### Alphabetical Ordering Rule
+
+- Sort key: the last path segment of `repo` (e.g. `puppet-archive` from `https://github.com/voxpupuli/puppet-archive`), compared case-insensitively.
+- This applies to every entry — new additions, reorderings, and any cleanup edits.
+- If you discover existing entries out of order during an edit, fix the order in the same change.
+- Quick re-sort one-liner (run from repo root):
+
+  ```bash
+  python -c "import json; p='config/modules.json'; d=json.load(open(p)); d['modules'].sort(key=lambda m: m['repo'].rsplit('/',1)[-1].lower()); json.dump(d, open(p,'w',newline='\n'), indent=2); open(p,'a').write('\n')"
+  ```
 
 ## Decision Rules
 
