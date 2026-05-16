@@ -9,6 +9,10 @@ Run compatibility tests for Vox Pupuli (and other community) modules against Pup
 
 - Windows native setup: [README_Windows.md](README_Windows.md)
 
+## Known incompatibilities
+
+Some modules have been tested and determined to be incompatible with Puppet Core 8. See [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md) for the list and details.
+
 ## What is implemented
 
 - Ruby CLI runner: `bin/puppet-module-tester`

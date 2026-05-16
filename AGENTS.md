@@ -163,3 +163,11 @@ When you need a narrow CI run, use workflow input `modules_json` with only new o
 - Keep README user-focused and free from agent-operational instructions.
 - Keep CONTRIBUTING focused on contributor process and schema rules.
 - Put agent-specific process updates in this file.
+
+## Adding New Incompatibilities
+
+When a module is determined to be incompatible:
+
+1. Add an entry to the table in [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md) with module name, Puppet Core version tested, status, and detailed reason
+2. Remove the module from `config/modules.json` so it is no longer included in test runs
+3. Include migration path guidance if applicable

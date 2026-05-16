@@ -1,4 +1,4 @@
-{
+﻿{
   "modules": [
     {
       "repo": "https://github.com/voxpupuli/puppet-alternatives",
@@ -425,10 +425,6 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-sssd",
-      "ref": "master"
-    },
-    {
-      "repo": "https://github.com/voxpupuli/puppet-staging",
       "ref": "master"
     },
     {
