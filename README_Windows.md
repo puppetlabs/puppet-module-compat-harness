@@ -4,9 +4,11 @@ This guide covers running the compatibility runner natively on Windows (no WSL).
 
 ## 1) Prerequisites
 
-- RubyInstaller Ruby (x64 UCRT) installed (example: Ruby 3.2.x)
+- RubyInstaller Ruby (x64 UCRT) installed (Ruby 3.2.x recommended)
 - Git installed
+- Python 3.8+ (for validation and reporting scripts)
 - Administrative PowerShell access (for one-time long-path setting)
+- **Acceptance tests require Docker** — see [Acceptance Tests](#8-acceptance-tests) below for Windows limitations
 
 Validate basics:
 
@@ -15,6 +17,7 @@ ruby -v
 bundle -v
 git --version
 ridk version
+python --version
 ```
 
 ## 2) Enable long paths (one-time)
@@ -52,9 +55,31 @@ Verify `libffi`:
 ridk exec bash -lc "pkg-config --modversion libffi"
 ```
 
-## 4) Configure local credentials
+## 4) Set up Python virtual environment (optional, for validation scripts)
 
-Use `.puppet-module-tester.local.yml` for local settings:
+To run module configuration validation (`scripts/validate_modules_config.py`):
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install --upgrade pip jsonschema
+```
+
+Deactivate the environment later with:
+
+```powershell
+deactivate
+```
+
+## 5) Configure local credentials
+
+Copy the example configuration:
+
+```powershell
+Copy-Item .puppet-module-tester.local.yml.example .puppet-module-tester.local.yml
+```
+
+Edit `.puppet-module-tester.local.yml`:
 
 ```yaml
 puppet_core_api_key: "<YOUR_API_KEY>"
@@ -62,16 +87,30 @@ puppet_core_source_url: "https://rubygems-puppetcore.puppet.com"
 puppet_core_auth_header: "X-Api-Key"
 puppet_compat_metadata_mode: "warn"
 puppet_compat_target: "8-latest-maintained"
-puppet_compat_workspace_dir: "C:/Temp/pmt-workspace"
-puppet_compat_bundle_path: "C:/Temp/pmt-bundle"
-puppet_compat_output_dir: "results/local"
+# Optional: override workspace and bundle paths (auto-defaults to C:/Temp if omitted)
+# puppet_compat_workspace_dir: "C:/Temp/pmt-workspace"
+# puppet_compat_bundle_path: "C:/Temp/pmt-bundle"
+# puppet_compat_output_dir: "results/local"
 ```
 
 Never commit this file.
 
-Recommended on Windows: keep `puppet_compat_workspace_dir` and `puppet_compat_bundle_path` under a short root like `C:/Temp` to avoid deep-path failures in Ruby/Bundler toolchains.
+**Note on paths:** Keep `puppet_compat_workspace_dir` and `puppet_compat_bundle_path` under a short root like `C:/Temp` to avoid deep-path failures in Ruby/Bundler toolchains.
 
-## 5) Run locally
+## 6) Validate module configuration (optional)
+
+To validate `config/modules.json` against the schema:
+
+```powershell
+# Activate Python venv first if created above
+.\.venv\Scripts\Activate.ps1
+
+python scripts/validate_modules_config.py --config config/modules.json --schema config/modules.schema.json
+```
+
+Expected output: `OK: config/modules.json is valid against config/modules.schema.json`
+
+## 7) Run unit tests locally
 
 From repo root:
 
@@ -83,8 +122,25 @@ Reports are written to:
 
 - `results/local/compatibility-report.json`
 - `results/local/compatibility-summary.md`
+- `results/local/artifacts/<module>/` — stage logs per module
 
-## 6) If bootstrap fails
+## 8) Acceptance tests
+
+Acceptance tests require Docker to build and run a Linux container with Beaker. **On Windows, this typically requires one of:**
+
+- **WSL2 (Windows Subsystem for Linux 2)** with Docker Desktop configured for WSL2 backend
+- **Hyper-V** with Docker Desktop
+- A separate Linux VM with Docker accessible from Windows
+
+To run acceptance tests (after Docker is configured):
+
+```powershell
+ruby scripts/run_local.rb --allow-acceptance
+```
+
+**Note:** Without Docker configured, the runner will skip acceptance tests and report them as inconclusive. Unit tests will still run.
+
+## 9) If bootstrap fails
 
 1. Clean the module bundle and rerun:
 
