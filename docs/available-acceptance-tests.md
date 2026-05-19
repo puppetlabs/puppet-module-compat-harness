@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-05-15
+Last updated: 2026-05-19
 
 ## Modules With Acceptance Tests (46)
 
@@ -82,3 +82,4 @@ These modules have acceptance tests defined but cannot currently be run in CI du
 | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing. |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | Module manages kernel-level swap file operations via `swapon` and `swapoff` commands. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires full VM or bare-metal environment for acceptance testing. |
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | Module attempts to manage `/etc/resolv.conf` via symlink replacement to `/run/systemd/resolve/resolv.conf`. Docker container runtime owns `/etc/resolv.conf`, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |
+| [puppet-wget](https://github.com/voxpupuli/puppet-wget) | Acceptance tests target only Debian 8-9, Ubuntu 16.04-18.04, and RHEL 6-7 — none of which match any available setfile. The spec also hardcodes `su - vagrant` to run puppet apply as a Vagrant user, which is not present in Docker-based SUT containers. Requires either new legacy setfiles or upstream test modernization. |
