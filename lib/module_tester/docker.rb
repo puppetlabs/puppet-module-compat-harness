@@ -32,6 +32,16 @@ module ModuleTester
       FileUtils.mkdir_p(build_dir)
       dockerfile_path = File.join(build_dir, 'Dockerfile')
       File.write(dockerfile_path, dockerfile)
+
+      if install_puppetserver
+        repo_root = File.expand_path(File.join(__dir__, '..', '..'))
+        spec_src = File.join(repo_root, 'config', 'compat-rpms', 'openvox-server.spec')
+        spec_dst = File.join(build_dir, 'openvox-server.spec')
+        return [image_tag, Result.failed_stage('build_sut_image', "Compatibility spec missing: #{spec_src}")] unless File.exist?(spec_src)
+
+        FileUtils.cp(spec_src, spec_dst)
+      end
+
       return [image_tag, Result.failed_stage('build_sut_image', "Docker build directory missing: #{build_dir}")] unless Dir.exist?(build_dir)
       return [image_tag, Result.failed_stage('build_sut_image', "Dockerfile missing: #{dockerfile_path}")] unless File.exist?(dockerfile_path)
 
@@ -125,7 +135,7 @@ module ModuleTester
         
         if install_puppetserver
           lines << "RUN dnf install -y rpm-build rpmdevtools || yum install -y rpm-build rpmdevtools"
-          lines << "COPY config/compat-rpms/openvox-server.spec /tmp/openvox-server.spec"
+          lines << "COPY openvox-server.spec /tmp/openvox-server.spec"
           lines << <<~'RUN_BUILD_RPM'.strip
             RUN mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS} \
              && cp /tmp/openvox-server.spec /root/rpmbuild/SPECS/ \
