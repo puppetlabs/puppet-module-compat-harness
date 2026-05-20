@@ -228,7 +228,16 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-hiera",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-jira",
