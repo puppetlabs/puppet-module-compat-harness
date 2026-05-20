@@ -374,6 +374,16 @@
           "php-fpm",
           "libmemcached-dev"
         ]
+      },
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
       }
     },
     {
@@ -382,6 +392,15 @@
       "prereqs": {
         "apt": [
           "acl"
+        ]
+      },
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
         ]
       }
     },
@@ -440,7 +459,17 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-r10k",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-redis",
@@ -463,7 +492,17 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-rsyslog",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-selinux",
@@ -502,7 +541,16 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-unattended_upgrades",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "ubuntu24",
+            "setfile": "ubuntu24"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-wget",
