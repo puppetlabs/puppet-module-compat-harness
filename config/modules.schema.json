@@ -130,7 +130,6 @@
             "systemd"
           ],
           "default": "sshd"
-        }
         },
         "install_puppetserver": {
           "type": "boolean",
