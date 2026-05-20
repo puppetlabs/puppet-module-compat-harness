@@ -19,7 +19,7 @@ This file is for coding agents working in this repository.
 
 ## Module Addition Workflow (Agent)
 
-1. Inspect the target module repository first (do not skip this step).
+1. Inspect the target module repository first (do not skip this step). If the module is not present locally, agents MUST fetch and analyze the remote repository (e.g., via GitHub API or by cloning/downloading the repo) to discover acceptance tests and other required files. Acceptance test discovery must NOT be limited to the local workspace.
 2. Add a module object under `modules` in `config/modules.json`.
 3. **Insert the new module in alphabetical position** by repo name (the segment after the final `/`, lowercase, case-insensitive). The `modules` array must remain sorted alphabetically at all times because GitHub Actions renders matrix jobs in the order they appear in `modules.json`; alphabetical order makes individual jobs easy to locate in the CI panel.
 4. Set `repo` (required), optionally `ref`, `id`, `os`, and `prereqs`.
@@ -55,7 +55,8 @@ This file is for coding agents working in this repository.
 
 ## Mandatory Prereq Discovery
 
-Before proposing a new module entry, agents must fetch and analyze the target repository at the selected `ref` (or default branch if `ref` is omitted).
+
+Before proposing a new module entry, agents must fetch and analyze the target repository at the selected `ref` (or default branch if `ref` is omitted). This includes searching for acceptance tests (e.g., files under `spec/acceptance/` or similar) in the remote repository if not present locally. Agents must not assume the absence of acceptance tests based solely on the local workspace contents.
 
 Minimum files/signals to inspect:
 
