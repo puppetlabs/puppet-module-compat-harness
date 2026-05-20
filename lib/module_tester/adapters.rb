@@ -118,7 +118,8 @@ module ModuleTester
           @options[:beaker_setfile],
           profile.fetch('puppet_major'),
           puppet_core_api_key,
-          docker_mode: docker_mode
+          docker_mode: docker_mode,
+          install_puppetserver: @options[:install_puppetserver]
         )
         result[:stages] << build_stage
         return if build_stage.status != 'passed'

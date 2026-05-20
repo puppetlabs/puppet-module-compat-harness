@@ -234,7 +234,8 @@
         "targets": [
           {
             "name": "el9",
-            "setfile": "el9"
+            "setfile": "el9",
+            "install_puppetserver": true
           }
         ]
       }

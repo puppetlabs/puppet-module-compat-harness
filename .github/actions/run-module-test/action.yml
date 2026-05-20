@@ -53,6 +53,10 @@ inputs:
     description: 'Docker container mode: sshd (default) or systemd'
     required: false
     default: 'sshd'
+  install-puppetserver:
+    description: 'Install Puppet Core server (puppetserver) in acceptance test image'
+    required: false
+    default: 'false'
 
 runs:
   using: composite
@@ -139,6 +143,9 @@ runs:
         fi
         if [ "${{ inputs.docker-mode }}" = "systemd" ]; then
           runner_args+=(--docker-mode systemd)
+        fi
+        if [ "${{ inputs.install-puppetserver }}" = "true" ]; then
+          runner_args+=(--install-puppetserver)
         fi
         ruby bin/puppet-module-tester "${runner_args[@]}"
 

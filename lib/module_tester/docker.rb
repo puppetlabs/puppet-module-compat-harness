@@ -13,7 +13,7 @@ module ModuleTester
     # Builds a Docker image with puppet-agent from authenticated Puppet Core
     # repos.  The API key is used ONLY during the docker build and is removed
     # from the resulting image layers.  Returns [image_tag, StageResult].
-    def build_puppet_core_image(base_setfile_path, puppet_major, api_key, docker_mode: 'sshd')
+    def build_puppet_core_image(base_setfile_path, puppet_major, api_key, docker_mode: 'sshd', install_puppetserver: false)
       base = YAML.safe_load(File.read(base_setfile_path), permitted_classes: [Symbol])
       hosts_key = base['HOSTS']&.keys&.first
       raise "No HOSTS entry found in setfile #{base_setfile_path}" unless hosts_key
@@ -25,7 +25,7 @@ module ModuleTester
       existing_cmds = host_cfg['docker_image_commands'] || []
 
       image_tag = "puppet-core-sut:#{File.basename(base_setfile_path, '.*')}"
-      dockerfile = puppet_core_dockerfile(base_image, existing_cmds, variant, version, puppet_major, docker_mode: docker_mode)
+      dockerfile = puppet_core_dockerfile(base_image, existing_cmds, variant, version, puppet_major, docker_mode: docker_mode, install_puppetserver: install_puppetserver)
       return [image_tag, Result.failed_stage('build_sut_image', 'Docker CLI not found in PATH')] unless @stage.command_available?('docker')
 
       build_dir = File.expand_path(File.join(@workspace_dir, '.docker-build'))
@@ -99,7 +99,7 @@ module ModuleTester
     # Generates a Dockerfile that installs puppet-agent from Puppet Core repos.
     # Credentials are consumed from a BuildKit secret mount and are never stored
     # in image layers or build metadata.
-    def puppet_core_dockerfile(base_image, setup_commands, variant, version, puppet_major, docker_mode: 'sshd')
+    def puppet_core_dockerfile(base_image, setup_commands, variant, version, puppet_major, docker_mode: 'sshd', install_puppetserver: false)
       collection = "puppet#{puppet_major}"
       lines = []
       lines << '# syntax=docker/dockerfile:1.4'
@@ -114,13 +114,27 @@ module ModuleTester
       when 'el', 'centos', 'redhat', 'rocky', 'alma', 'fedora', 'amazon'
         release_rpm = "https://yum-puppetcore.puppet.com/public/#{collection}-release-#{variant}-#{version}.noarch.rpm"
         repo_file = "/etc/yum.repos.d/#{collection}-release.repo"
+        puppet_install_pkgs = install_puppetserver ? 'puppet-agent puppetserver' : 'puppet-agent'
         lines << "RUN --mount=type=secret,id=puppet_core_api_key \\" \
                  "\n PUPPET_CORE_API_KEY=\"$(cat /run/secrets/puppet_core_api_key)\" \\" \
                  "\n && rpm -Uvh #{release_rpm} \\" \
                  "\n && sed -i '/^\\[#{collection}\\]/a username=forge-key\\npassword='\"$PUPPET_CORE_API_KEY\" #{repo_file} \\" \
-                 "\n && dnf install -y puppet-agent || yum install -y puppet-agent \\" \
+                 "\n && dnf install -y #{puppet_install_pkgs} || yum install -y #{puppet_install_pkgs} \\" \
                  "\n && rm -f #{repo_file}"
         lines << "RUN dnf install -y openssh-server openssh-clients passwd || yum install -y openssh-server openssh-clients passwd"
+        
+        if install_puppetserver
+          lines << "RUN dnf install -y rpm-build rpmdevtools || yum install -y rpm-build rpmdevtools"
+          lines << "COPY config/compat-rpms/openvox-server.spec /tmp/openvox-server.spec"
+          lines << <<~'RUN_BUILD_RPM'.strip
+            RUN mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS} \
+             && cp /tmp/openvox-server.spec /root/rpmbuild/SPECS/ \
+             && rpmbuild -bb /root/rpmbuild/SPECS/openvox-server.spec \
+             && rpm -i /root/rpmbuild/RPMS/noarch/openvox-server-8.0.0-1.noarch.rpm \
+             && rm -rf /root/rpmbuild /tmp/openvox-server.spec
+          RUN_BUILD_RPM
+          lines << "RUN dnf remove -y rpm-build rpmdevtools || yum remove -y rpm-build rpmdevtools"
+        end
       when 'debian', 'ubuntu'
         release_deb_url = "https://apt-puppetcore.puppet.com/public/#{collection}-release-$(. /etc/os-release && echo $VERSION_CODENAME).deb"
         auth_file = "/etc/apt/auth.conf.d/#{collection}-puppetcore.conf"

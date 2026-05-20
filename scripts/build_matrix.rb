@@ -61,7 +61,8 @@ modules.each do |m|
       'target' => target_name,
       'target_id' => target_id,
       'setfile' => target.fetch('setfile'),
-      'docker_mode' => target.fetch('docker_mode', 'sshd')
+      'docker_mode' => target.fetch('docker_mode', 'sshd'),
+      'install_puppetserver' => target.fetch('install_puppetserver', false)
     }
   end
 end
