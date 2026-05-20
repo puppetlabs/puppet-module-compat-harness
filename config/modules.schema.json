@@ -131,6 +131,11 @@
           ],
           "default": "sshd"
         }
+        },
+        "install_puppetserver": {
+          "type": "boolean",
+          "default": false
+        }
       }
     },
     "packageList": {
