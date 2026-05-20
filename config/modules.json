@@ -350,6 +350,10 @@
           "ldap-utils",
           "augeas-lenses",
           "libaugeas0"
+        ],
+        "dnf": [
+          "openldap-servers",
+          "openldap-clients"
         ]
       },
       "acceptance": {
