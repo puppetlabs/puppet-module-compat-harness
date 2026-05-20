@@ -351,6 +351,16 @@
           "augeas-lenses",
           "libaugeas0"
         ]
+      },
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
       }
     },
     {
