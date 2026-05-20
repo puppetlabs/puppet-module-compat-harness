@@ -330,7 +330,16 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-nodejs",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-openldap",
