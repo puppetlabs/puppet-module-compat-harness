@@ -25,7 +25,7 @@ module ModuleTester
       existing_cmds = host_cfg['docker_image_commands'] || []
 
       image_tag = "puppet-core-sut:#{File.basename(base_setfile_path, '.*')}"
-      dockerfile = puppet_core_dockerfile(base_image, existing_cmds, variant, version, puppet_major, docker_mode: docker_mode, install_puppetserver: install_puppetserver)
+      dockerfile = puppet_core_dockerfile(base_image, existing_cmds, variant, version, puppet_major, docker_mode: docker_mode, install_puppetserver: install_puppetserver, certname: hosts_key)
       return [image_tag, Result.failed_stage('build_sut_image', 'Docker CLI not found in PATH')] unless @stage.command_available?('docker')
 
       build_dir = File.expand_path(File.join(@workspace_dir, '.docker-build'))
@@ -109,7 +109,7 @@ module ModuleTester
     # Generates a Dockerfile that installs puppet-agent from Puppet Core repos.
     # Credentials are consumed from a BuildKit secret mount and are never stored
     # in image layers or build metadata.
-    def puppet_core_dockerfile(base_image, setup_commands, variant, version, puppet_major, docker_mode: 'sshd', install_puppetserver: false)
+    def puppet_core_dockerfile(base_image, setup_commands, variant, version, puppet_major, docker_mode: 'sshd', install_puppetserver: false, certname: nil)
       collection = "puppet#{puppet_major}"
       lines = []
       lines << '# syntax=docker/dockerfile:1.4'
@@ -136,6 +136,7 @@ module ModuleTester
         if install_puppetserver
           lines << "RUN dnf install -y rpm-build rpmdevtools || yum install -y rpm-build rpmdevtools"
           lines << "COPY openvox-server.spec /tmp/openvox-server.spec"
+          lines << "RUN /opt/puppetlabs/bin/puppet config set certname #{certname} --section main" if certname
           lines << <<~'RUN_BUILD_RPM'.strip
             RUN mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS} \
              && cp /tmp/openvox-server.spec /root/rpmbuild/SPECS/ \
