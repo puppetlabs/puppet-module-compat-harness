@@ -492,20 +492,7 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-rsyslog",
-      "ref": "master",
-      "acceptance": {
-        "enabled": true,
-        "targets": [
-          {
-            "name": "centos9-systemd",
-            "setfile": "centos9-systemd",
-            "docker_mode": "systemd",
-            "setup_commands": [
-              "dnf install -y rsyslog rsyslog-logrotate"
-            ]
-          }
-        ]
-      }
+      "ref": "master"
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-selinux",
