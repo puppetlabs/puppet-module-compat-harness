@@ -370,7 +370,7 @@
               "systemctl disable apparmor.service 2>/dev/null || true",
               "systemctl mask apparmor.service 2>/dev/null || true",
               "mkdir -p /etc/systemd/system/slapd.service.d",
-              "printf '[Service]\\nProtectSystem=off\\nProtectHome=off\\nPrivateTmp=no\\nReadWritePaths=/tmp /var/tmp /var/lib/ldap /srv\\n' > /etc/systemd/system/slapd.service.d/99-pmt-openldap-permissions.conf"
+              "printf '[Service]\\nUser=root\\nGroup=root\\nProtectSystem=off\\nProtectHome=off\\nPrivateTmp=no\\n' > /etc/systemd/system/slapd.service.d/99-pmt-openldap-permissions.conf"
             ]
           }
         ]
