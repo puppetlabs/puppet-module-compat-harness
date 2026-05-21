@@ -512,7 +512,10 @@
           {
             "name": "centos9-systemd",
             "setfile": "centos9-systemd",
-            "docker_mode": "systemd"
+            "docker_mode": "systemd",
+            "setup_commands": [
+              "dnf install -y rsyslog rsyslog-logrotate"
+            ]
           }
         ]
       }
