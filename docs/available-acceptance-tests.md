@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-05-19
+Last updated: 2026-05-21
 
 ## Modules With Acceptance Tests (46)
 
@@ -29,7 +29,7 @@ Last updated: 2026-05-19
 | ⏳ | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | Ubuntu 22.04-24.04, Debian 11-13, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Gentoo, SLES 15, openSUSE 15 |
 | ✅ | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | AlmaLinux 8-10, CentOS 9-10, OracleLinux 8-10, RedHat 8-10, Rocky 8-10, Archlinux, Debian 11-13, Ubuntu 22.04-24.04 |
 | ✅ | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | Debian 11-13, OpenBSD, RedHat 8-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10, CentOS 9-10, SLES, Solaris, AIX, FreeBSD, DragonFly, NetBSD, Archlinux, Ubuntu 20.04-24.04 |
-| ⏳ | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | Debian 10-13, Ubuntu 18.04-24.04, SLES 12 and 15, OpenSUSE 15, RedHat 7-9, AlmaLinux 8-9, Rocky 8-9, CentOS 7-9, FreeBSD 12-14 |
+| ⛔ | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | Debian 10-13, Ubuntu 18.04-24.04, SLES 12 and 15, OpenSUSE 15, RedHat 7-9, AlmaLinux 8-9, Rocky 8-9, CentOS 7-9, FreeBSD 12-14 |
 | ⏳ | [puppet-php](https://github.com/voxpupuli/puppet-php) | AlmaLinux 8-10, Ubuntu 22.04-24.04, Debian 11-13, RedHat 8-10, CentOS 9-10, OracleLinux 8-10, Rocky 8-10, FreeBSD 13, SLES 15, OpenSUSE |
 | ✅ | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | Debian 11-13, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, OracleLinux 8-10, Rocky 8-10, Alpine, FreeBSD 13-14 |
 | ✅ | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | OracleLinux 8-9, RedHat 8-9, CentOS 9, AlmaLinux 8-9, Rocky 8-9, VirtuozzoLinux 7, Debian 11-12, Ubuntu 22.04-24.04, Archlinux |
@@ -82,4 +82,5 @@ These modules have acceptance tests defined but cannot currently be run in CI du
 | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing. |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | Module manages kernel-level swap file operations via `swapon` and `swapoff` commands. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires full VM or bare-metal environment for acceptance testing. |
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | Module attempts to manage `/etc/resolv.conf` via symlink replacement to `/run/systemd/resolve/resolv.conf`. Docker container runtime owns `/etc/resolv.conf`, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |
+| [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | Acceptance tests use `Dir.mktmpdir` on the Beaker controller to create temporary directories for LDAP database paths (`olcDbDirectory`), then reference those host-local paths inside the Docker SUT where they do not exist. `slapd` rejects the non-existent paths with "invalid path: Permission denied". This is a fundamental filesystem boundary issue between Beaker controller and Docker SUT — the tests assume a shared filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT. |
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | Acceptance tests target only Debian 8-9, Ubuntu 16.04-18.04, and RHEL 6-7 — none of which match any available setfile. The spec also hardcodes `su - vagrant` to run puppet apply as a Vagrant user, which is not present in Docker-based SUT containers. Requires either new legacy setfiles or upstream test modernization. |
