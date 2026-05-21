@@ -227,11 +227,9 @@ code**:
    that references only the pre-built local image tag — no credentials
    anywhere. Before invoking Beaker, it strips `PUPPET_CORE_API_KEY`,
    `BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM`, `PASSWORD`, and `USERNAME`
-    from the subprocess environment. The clean setfile sets
-    `use_image_as_is: true` so beaker-docker does not rebuild the image, and
-    carries host-level `dockeropts` (for example privileged mode and cgroup/tmpfs
-    mounts required by systemd targets). Module test code runs with no access to
-    any secret.
+    from the subprocess environment and carries host-level `dockeropts` (for
+    example privileged mode and cgroup/tmpfs mounts required by systemd
+    targets). Module test code runs with no access to any secret.
 
 #### FOSS Fallback
 

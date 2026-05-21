@@ -74,8 +74,6 @@ module ModuleTester
       host_cfg = base['HOSTS'][hosts_key]
       host_cfg['image'] = image_tag
       host_cfg['docker_image_commands'] = []  # everything is in the pre-built image
-      # Skip beaker-docker image rebuilding; use the pre-built Puppet Core image as-is.
-      host_cfg['use_image_as_is'] = true
 
       if docker_mode == 'systemd'
         # Systemd mode: preserve the setfile's PID 1 command when provided
