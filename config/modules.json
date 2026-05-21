@@ -502,8 +502,8 @@
         "enabled": true,
         "targets": [
           {
-            "name": "el9-systemd",
-            "setfile": "el9-systemd",
+            "name": "ubuntu24-systemd",
+            "setfile": "ubuntu24-systemd",
             "docker_mode": "systemd"
           }
         ]
