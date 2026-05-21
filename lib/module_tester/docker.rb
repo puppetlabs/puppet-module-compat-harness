@@ -76,10 +76,11 @@ module ModuleTester
       host_cfg['docker_image_commands'] = []  # everything is in the pre-built image
 
       if docker_mode == 'systemd'
-        # Systemd mode: container runs /usr/sbin/init as PID 1.
-        # SSH is started by systemd (sshd.service), not as the entrypoint.
-        # Requires privileged container with appropriate mounts.
-        host_cfg['docker_cmd'] = '/usr/sbin/init'
+        # Systemd mode: preserve the setfile's PID 1 command when provided
+        # because init path differs across distributions/images.
+        # SSH is started by systemd (ssh/sshd.service), not as the entrypoint.
+        # Requires privileged container with appropriate cgroup mounts.
+        host_cfg['docker_cmd'] = host_cfg['docker_cmd'].to_s.empty? ? '/sbin/init' : host_cfg['docker_cmd']
       else
         # Override beaker-docker's default command (`service sshd start; tail -f /dev/null`),
         # which fails in non-systemd containers and causes ECONNRESET loops.
@@ -180,13 +181,13 @@ module ModuleTester
       lines << 'EXPOSE 22'
 
       if docker_mode == 'systemd'
-        # Systemd mode: use /usr/sbin/init as PID 1 so systemd manages all
+        # Systemd mode: use /sbin/init as a portable default so systemd manages all
         # services (including sshd). This requires the container to run
         # privileged with appropriate cgroup mounts.
         # Debian/Ubuntu use ssh.service; EL-family uses sshd.service.
         ssh_service = %w[debian ubuntu].include?(variant) ? 'ssh.service' : 'sshd.service'
         lines << "RUN systemctl enable #{ssh_service}"
-        lines << 'CMD ["/usr/sbin/init"]'
+        lines << 'CMD ["/sbin/init"]'
       else
         # sshd mode: run sshd directly as PID 1 without systemd.
         # This is the default — faster and more portable, but services

@@ -204,7 +204,7 @@ controls how the SUT container runs:
 | Mode | PID 1 process | Use case | Tradeoffs |
 |------|---------------|----------|-----------|
 | `sshd` (default) | `/usr/sbin/sshd -D -e` | General modules that don't require systemd service management. Fast, portable, stable SSH. | Services managed by systemd (e.g. chronyd, firewalld) cannot start. |
-| `systemd` | `/usr/sbin/init` | Modules whose acceptance tests assert service running/enabled state. Container runs privileged with cgroup mounts. | Heavier, requires privileged container, may be less stable across CI kernels. |
+| `systemd` | setfile `docker_cmd` (fallback `/sbin/init`) | Modules whose acceptance tests assert service running/enabled state. Container runs privileged with cgroup mounts. | Heavier, requires privileged container, may be less stable across CI kernels. |
 
 The `sshd` mode was chosen as the default because Beaker's built-in default
 command (`service sshd start; tail -f /dev/null`) caused ECONNRESET loops in

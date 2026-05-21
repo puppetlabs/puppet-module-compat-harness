@@ -4,7 +4,7 @@ HOSTS:
     ip: 127.0.0.1
     image: debian:12
     hypervisor: docker
-    docker_cmd: /usr/sbin/init
+    docker_cmd: /sbin/init
     docker_image_commands:
       - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y systemd systemd-sysv cron openssh-server wget
     docker_container_create_options:
