@@ -365,7 +365,13 @@
           {
             "name": "debian12-systemd",
             "setfile": "debian12-systemd",
-            "docker_mode": "systemd"
+            "docker_mode": "systemd",
+            "setup_commands": [
+              "apt-get install -y apparmor-utils 2>/dev/null || true",
+              "aa-teardown 2>/dev/null || true",
+              "systemctl disable apparmor.service 2>/dev/null || true",
+              "systemctl mask apparmor.service 2>/dev/null || true"
+            ]
           }
         ]
       }

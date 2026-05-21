@@ -13,7 +13,7 @@ module ModuleTester
     # Builds a Docker image with puppet-agent from authenticated Puppet Core
     # repos.  The API key is used ONLY during the docker build and is removed
     # from the resulting image layers.  Returns [image_tag, StageResult].
-    def build_puppet_core_image(base_setfile_path, puppet_major, api_key, docker_mode: 'sshd', install_puppetserver: false)
+    def build_puppet_core_image(base_setfile_path, puppet_major, api_key, docker_mode: 'sshd', install_puppetserver: false, setup_commands: [])
       base = YAML.safe_load(File.read(base_setfile_path), permitted_classes: [Symbol])
       hosts_key = base['HOSTS']&.keys&.first
       raise "No HOSTS entry found in setfile #{base_setfile_path}" unless hosts_key
@@ -22,7 +22,7 @@ module ModuleTester
       base_image = host_cfg['image'].to_s
       platform = host_cfg['platform'].to_s
       variant, version, _arch = platform.split('-', 3)
-      existing_cmds = host_cfg['docker_image_commands'] || []
+      existing_cmds = (host_cfg['docker_image_commands'] || []) + Array(setup_commands)
 
       image_tag = "puppet-core-sut:#{File.basename(base_setfile_path, '.*')}"
       dockerfile = puppet_core_dockerfile(base_image, existing_cmds, variant, version, puppet_major, docker_mode: docker_mode, install_puppetserver: install_puppetserver, certname: hosts_key)
