@@ -4,7 +4,7 @@ HOSTS:
     ip: 127.0.0.1
     image: rockylinux:9
     hypervisor: docker
-    docker_cmd: '["/usr/sbin/init", "--log-target=console", "--log-level=debug"]'
+    docker_cmd: '["/usr/sbin/init"]'
     docker_image_commands:
       - dnf install -y cronie initscripts wget systemd iproute
 CONFIG:

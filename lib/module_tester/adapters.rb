@@ -162,7 +162,6 @@ module ModuleTester
       )
 
       result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
-      result[:stages] << probe_acceptance_systemd_health(module_dir, acceptance_env)
       acceptance_stage = @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
       result[:stages] << acceptance_stage
 
@@ -208,7 +207,7 @@ module ModuleTester
         echo "=== inside container: pid1, ssh status, journal, sockets ==="
         docker exec "$CID" /bin/sh -lc 'set +e; ps -fp 1; systemctl is-system-running || true; systemctl status ssh --no-pager || systemctl status sshd --no-pager || true; journalctl -u ssh -b --no-pager -n 200 || journalctl -u sshd -b --no-pager -n 200 || true; ls -ld /run /run/sshd /var/run/sshd || true; ss -lntp || true' || true
 
-        echo "=== one-shot systemd boot diagnostic (runs systemd as PID 1 for 15 seconds) ==="
+        echo "=== one-shot systemd boot diagnostic (runs systemd as PID 1 for 10 seconds) ==="
         IMAGE=$(docker inspect "$CID" --format '{{.Config.Image}}' 2>/dev/null || true)
         if [ -n "$IMAGE" ]; then
           echo "Image: $IMAGE"
@@ -242,61 +241,6 @@ module ModuleTester
         module_dir,
         env
       )
-    end
-
-    def probe_acceptance_systemd_health(module_dir, env)
-      # For systemd-mode acceptance tests, probe the SUT before Beaker connects
-      # to catch systemd/SSH startup issues early rather than waiting for Beaker timeout.
-      setfile = env.fetch('BEAKER_SETFILE', nil)
-      return StageResult.new(
-        name: 'acceptance_systemd_health',
-        status: 'passed',
-        command: nil,
-        exit_code: 0,
-        duration_seconds: 0,
-        output: 'systemd health probe skipped (no BEAKER_SETFILE)'
-      ) unless setfile && File.exist?(setfile)
-
-      return StageResult.new(
-        name: 'acceptance_systemd_health',
-        status: 'passed',
-        command: nil,
-        exit_code: 0,
-        duration_seconds: 0,
-        output: 'systemd health probe skipped (not systemd mode)'
-      ) unless File.read(setfile).include?('/sbin/init') || File.read(setfile).include?('/usr/sbin/init')
-
-      probe_script = <<~'SH'
-        set +e
-        CID=$(docker ps -aq --filter name=beaker- --latest 2>/dev/null)
-        if [ -z "$CID" ]; then
-          echo "No beaker container running for health probe."
-          exit 0
-        fi
-        echo "Container: $CID"
-        
-        # Check if systemd is PID 1
-        PID1=$(docker top "$CID" -o pid,comm 2>/dev/null | grep -E '^\s*1\s' | awk '{print $2}')
-        echo "PID 1 process: $PID1"
-        
-        # Quick systemd status check
-        echo "=== systemd status ==="
-        docker exec "$CID" systemctl is-system-running 2>&1 || true
-        
-        # Check SSH/SSHD socket availability
-        echo "=== SSH socket check ==="
-        docker exec "$CID" ls -ld /run/sshd /var/run/sshd 2>&1 || true
-        
-        # Check SSH service (try both names: ssh and sshd)
-        echo "=== SSH service status ==="
-        docker exec "$CID" systemctl is-active ssh 2>&1 || docker exec "$CID" systemctl is-active sshd 2>&1 || true
-        
-        # Final connectivity test: try SSH port 22
-        echo "=== Port 22 check ==="
-        docker exec "$CID" ss -lntp 2>&1 | grep 22 || true
-      SH
-
-      @stage.run_stage('acceptance_systemd_health', ['/bin/sh', '-lc', probe_script], module_dir, env)
     end
 
     def downgrade_puppet_server_default_unit_failure(result, unit_stage)
