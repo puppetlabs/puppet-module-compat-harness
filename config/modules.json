@@ -367,8 +367,8 @@
             "setfile": "debian12-systemd",
             "docker_mode": "systemd",
             "setup_commands": [
-              "echo '/tmp/** rw,' >> /etc/apparmor.d/usr.sbin.slapd || true",
-              "apparmor_parser -r /etc/apparmor.d/usr.sbin.slapd 2>/dev/null || true"
+              "systemctl disable apparmor.service 2>/dev/null || true",
+              "systemctl mask apparmor.service 2>/dev/null || true"
             ]
           }
         ]
@@ -508,8 +508,8 @@
         "enabled": true,
         "targets": [
           {
-            "name": "ubuntu24-systemd",
-            "setfile": "ubuntu24-systemd",
+            "name": "centos9-systemd",
+            "setfile": "centos9-systemd",
             "docker_mode": "systemd"
           }
         ]
