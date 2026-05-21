@@ -74,6 +74,8 @@ module ModuleTester
       host_cfg = base['HOSTS'][hosts_key]
       host_cfg['image'] = image_tag
       host_cfg['docker_image_commands'] = []  # everything is in the pre-built image
+      # Skip beaker-docker image rebuilding; use the pre-built Puppet Core image as-is.
+      host_cfg['use_image_as_is'] = true
 
       if docker_mode == 'systemd'
         # Systemd mode: preserve the setfile's PID 1 command when provided
@@ -177,9 +179,20 @@ module ModuleTester
       lines << <<~'RUN_SSH'.strip
         RUN mkdir -p /var/run/sshd \
          && ssh-keygen -A \
-         && if grep -Eq '^#?PermitRootLogin' /etc/ssh/sshd_config; then sed -ri 's/^#?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config; else echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config; fi \
-         && if grep -Eq '^#?PasswordAuthentication' /etc/ssh/sshd_config; then sed -ri 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config; else echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config; fi \
-         && if grep -Eq '^#?UsePAM' /etc/ssh/sshd_config; then sed -ri 's/^#?UsePAM.*/UsePAM no/' /etc/ssh/sshd_config; else echo 'UsePAM no' >> /etc/ssh/sshd_config; fi \
+        && echo 'd /run/sshd 0755 root root -' > /etc/tmpfiles.d/sshd.conf \
+        && for cfg in /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*.conf; do \
+            [ -f "$cfg" ] || continue; \
+            if grep -Eq '^#?PermitRootLogin' "$cfg"; then sed -ri 's/^#?PermitRootLogin.*/PermitRootLogin yes/' "$cfg"; fi; \
+            if grep -Eq '^#?PasswordAuthentication' "$cfg"; then sed -ri 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/' "$cfg"; fi; \
+            if grep -Eq '^#?UsePAM' "$cfg"; then sed -ri 's/^#?UsePAM.*/UsePAM no/' "$cfg"; fi; \
+            if grep -Eq '^#?UseDNS' "$cfg"; then sed -ri 's/^#?UseDNS.*/UseDNS no/' "$cfg"; fi; \
+            if grep -Eq '^#?MaxAuthTries' "$cfg"; then sed -ri 's/^#?MaxAuthTries.*/MaxAuthTries 1000/' "$cfg"; fi; \
+          done \
+        && if grep -Eq '^#?PermitRootLogin' /etc/ssh/sshd_config; then sed -ri 's/^#?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config; else echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config; fi \
+        && if grep -Eq '^#?PasswordAuthentication' /etc/ssh/sshd_config; then sed -ri 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config; else echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config; fi \
+        && if grep -Eq '^#?UsePAM' /etc/ssh/sshd_config; then sed -ri 's/^#?UsePAM.*/UsePAM no/' /etc/ssh/sshd_config; else echo 'UsePAM no' >> /etc/ssh/sshd_config; fi \
+        && if grep -Eq '^#?UseDNS' /etc/ssh/sshd_config; then sed -ri 's/^#?UseDNS.*/UseDNS no/' /etc/ssh/sshd_config; else echo 'UseDNS no' >> /etc/ssh/sshd_config; fi \
+        && if grep -Eq '^#?MaxAuthTries' /etc/ssh/sshd_config; then sed -ri 's/^#?MaxAuthTries.*/MaxAuthTries 1000/' /etc/ssh/sshd_config; else echo 'MaxAuthTries 1000' >> /etc/ssh/sshd_config; fi \
          && echo 'root:root' | chpasswd
       RUN_SSH
       lines << 'EXPOSE 22'

@@ -7,7 +7,7 @@ HOSTS:
     docker_cmd: /sbin/init
     docker_image_commands:
       - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y systemd systemd-sysv cron openssh-server wget
-    docker_container_create_options:
+    dockeropts:
       Privileged: true
       HostConfig:
         Tmpfs:
