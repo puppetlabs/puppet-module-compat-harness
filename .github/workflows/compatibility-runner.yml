@@ -13,6 +13,14 @@ on:
         description: "Metadata handling mode (warn|fail)"
         required: false
         default: "warn"
+      enable_debug:
+        description: "Enable verbose debug output (captures Docker logs, acceptance output)"
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
       modules_json:
         description: "Optional JSON array override: [{\"repo\":\"...\",\"ref\":\"main\",\"os\":\"windows-latest\"}]"
         required: false
@@ -82,6 +90,7 @@ jobs:
       PUPPET_ENFORCE_EXACT_PUPPET_VERSION: "true"
       PUPPET_SPLIT_SOURCES: "true"
       PUPPET_STAGE_TIMEOUT_SECONDS: ${{ vars.PUPPET_STAGE_TIMEOUT_SECONDS || '1800' }}
+      PUPPET_ACCEPTANCE_DEBUG: ${{ github.event.inputs.enable_debug || 'false' }}
 
     steps:
       - name: Checkout
@@ -94,6 +103,7 @@ jobs:
           module-id: ${{ matrix.module.id }}
           profile: ${{ github.event.inputs.profile || '8-latest-maintained' }}
           metadata-mode: ${{ github.event.inputs.metadata_mode || 'warn' }}
+          enable-debug: ${{ github.event.inputs.enable_debug || 'false' }}
           test-mode: unit
           output-dir: o/${{ matrix.module.id }}
           artifact-name: compatibility-${{ matrix.module.id }}-unit
@@ -130,6 +140,7 @@ jobs:
       PUPPET_ENFORCE_EXACT_PUPPET_VERSION: "true"
       PUPPET_SPLIT_SOURCES: "true"
       PUPPET_STAGE_TIMEOUT_SECONDS: ${{ vars.PUPPET_STAGE_TIMEOUT_SECONDS || '1800' }}
+      PUPPET_ACCEPTANCE_DEBUG: ${{ github.event.inputs.enable_debug || 'false' }}
 
     steps:
       - name: Checkout (for Beaker host seeding)
@@ -185,6 +196,7 @@ jobs:
           module-id: ${{ matrix.module.id }}
           profile: ${{ github.event.inputs.profile || '8-latest-maintained' }}
           metadata-mode: ${{ github.event.inputs.metadata_mode || 'warn' }}
+          enable-debug: ${{ github.event.inputs.enable_debug || 'false' }}
           test-mode: acceptance
           allow-acceptance: 'true'
           beaker-setfile: config/beaker/setfiles/${{ matrix.module.setfile }}.yml
