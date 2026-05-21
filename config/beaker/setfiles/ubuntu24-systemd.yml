@@ -6,7 +6,7 @@ HOSTS:
     hypervisor: docker
     docker_cmd: '["/sbin/init"]'
     docker_image_commands:
-      - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y systemd systemd-sysv cron openssh-server wget
+      - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y systemd systemd-sysv dbus dbus-daemon cron openssh-server iproute2 wget
     dockeropts:
       Privileged: true
       HostConfig:
