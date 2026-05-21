@@ -162,7 +162,53 @@ module ModuleTester
       )
 
       result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
-      result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
+      acceptance_stage = @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
+      result[:stages] << acceptance_stage
+
+      debug_enabled = ENV.fetch('PUPPET_ACCEPTANCE_DEBUG', '1').strip != '0'
+      if acceptance_stage.status != 'passed' && debug_enabled
+        result[:stages] << collect_acceptance_debug(module_dir, acceptance_env)
+      end
+    end
+
+    def collect_acceptance_debug(module_dir, env)
+      return StageResult.new(
+        name: 'acceptance_debug',
+        status: 'passed',
+        command: nil,
+        exit_code: 0,
+        duration_seconds: 0,
+        output: 'Skipping acceptance debug capture because docker is not available in PATH'
+      ) unless @stage.command_available?('docker')
+
+      debug_script = <<~'SH'
+        set +e
+        echo "=== docker ps -a (beaker containers) ==="
+        docker ps -a --format '{{.ID}} {{.Names}} {{.Status}} {{.Image}}' | grep 'beaker-' || true
+
+        CID=$(docker ps -aq --filter name=beaker- --latest)
+        if [ -z "$CID" ]; then
+          echo "No beaker container found for debug capture."
+          exit 0
+        fi
+
+        echo "=== selected container id ==="
+        echo "$CID"
+
+        echo "=== docker inspect (summary) ==="
+        docker inspect "$CID" --format 'Name={{.Name}} State={{.State.Status}} Exit={{.State.ExitCode}} Started={{.State.StartedAt}} Finished={{.State.FinishedAt}}' || true
+
+        echo "=== docker top ==="
+        docker top "$CID" || true
+
+        echo "=== docker logs (tail 200) ==="
+        docker logs --tail 200 "$CID" || true
+
+        echo "=== inside container: pid1, ssh status, journal, sockets ==="
+        docker exec "$CID" /bin/sh -lc 'set +e; ps -fp 1; systemctl is-system-running || true; systemctl status ssh --no-pager || systemctl status sshd --no-pager || true; journalctl -u ssh -b --no-pager -n 200 || journalctl -u sshd -b --no-pager -n 200 || true; ls -ld /run /run/sshd /var/run/sshd || true; ss -lntp || true' || true
+      SH
+
+      @stage.run_stage('acceptance_debug', ['/bin/sh', '-lc', debug_script], module_dir, env)
     end
 
     def probe_runtime_versions(module_dir, env, stage_name)

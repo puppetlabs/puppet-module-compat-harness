@@ -75,6 +75,14 @@ module ModuleTester
       host_cfg['image'] = image_tag
       host_cfg['docker_image_commands'] = []  # everything is in the pre-built image
 
+      # Temporary debugging mode: preserve the Beaker test container so we can
+      # inspect systemd/ssh state after acceptance failures.
+      debug_enabled = ENV.fetch('PUPPET_ACCEPTANCE_DEBUG', '1').strip != '0'
+      if debug_enabled
+        host_cfg['docker_preserve_container'] = true
+        host_cfg['docker_preserve_image'] = true
+      end
+
       if docker_mode == 'systemd'
         # Systemd mode: preserve the setfile's PID 1 command when provided
         # because init path differs across distributions/images.
