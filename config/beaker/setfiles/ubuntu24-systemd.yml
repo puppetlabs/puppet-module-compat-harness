@@ -7,14 +7,6 @@ HOSTS:
     docker_cmd: '["/sbin/init"]'
     docker_image_commands:
       - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y systemd systemd-sysv dbus dbus-daemon cron openssh-server iproute2 wget
-    dockeropts:
-      Privileged: true
-      HostConfig:
-        Tmpfs:
-          /run: ''
-          /run/lock: ''
-        Binds:
-          - /sys/fs/cgroup:/sys/fs/cgroup:rw
 CONFIG:
   log_level: verbose
   type: foss
