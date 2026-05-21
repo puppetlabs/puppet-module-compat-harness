@@ -206,21 +206,6 @@ module ModuleTester
 
         echo "=== inside container: pid1, ssh status, journal, sockets ==="
         docker exec "$CID" /bin/sh -lc 'set +e; ps -fp 1; systemctl is-system-running || true; systemctl status ssh --no-pager || systemctl status sshd --no-pager || true; journalctl -u ssh -b --no-pager -n 200 || journalctl -u sshd -b --no-pager -n 200 || true; ls -ld /run /run/sshd /var/run/sshd || true; ss -lntp || true' || true
-
-        echo "=== one-shot systemd boot diagnostic (bypasses restart loop) ==="
-        IMAGE=$(docker inspect "$CID" --format '{{.Config.Image}}' 2>/dev/null || true)
-        if [ -n "$IMAGE" ]; then
-          echo "Image: $IMAGE"
-          docker run --rm --privileged \
-            --tmpfs /run --tmpfs /run/lock \
-            -v /sys/fs/cgroup:/sys/fs/cgroup:rw \
-            -e container=docker \
-            --entrypoint /bin/bash \
-            "$IMAGE" \
-            -c 'timeout 10 /sbin/init --log-target=console --log-level=debug 2>&1 || true; echo "init exit: $?"' 2>&1 || true
-        else
-          echo "Could not determine image from container $CID"
-        fi
       SH
 
       @stage.run_stage('acceptance_debug', ['/bin/sh', '-lc', debug_script], module_dir, env)
