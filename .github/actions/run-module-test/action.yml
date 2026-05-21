@@ -61,6 +61,10 @@ inputs:
     description: 'Enable verbose debug output (captures Docker logs, acceptance output)'
     required: false
     default: 'false'
+  setup-commands:
+    description: 'JSON array of additional shell commands to run during SUT image build (e.g. AppArmor disable)'
+    required: false
+    default: '[]'
 
 runs:
   using: composite
@@ -152,6 +156,10 @@ runs:
         fi
         if [ "${{ inputs.install-puppetserver }}" = "true" ]; then
           runner_args+=(--install-puppetserver)
+        fi
+        setup_cmds='${{ inputs.setup-commands }}'
+        if [ "$setup_cmds" != "[]" ] && [ "$setup_cmds" != "" ]; then
+          runner_args+=(--setup-commands "$setup_cmds")
         fi
         ruby bin/puppet-module-tester "${runner_args[@]}"
 

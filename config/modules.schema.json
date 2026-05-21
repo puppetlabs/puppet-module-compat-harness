@@ -134,6 +134,15 @@
         "install_puppetserver": {
           "type": "boolean",
           "default": false
+        },
+        "setup_commands": {
+          "type": "array",
+          "description": "Additional shell commands appended to docker_image_commands during SUT image build. Use for module-specific SUT preparation (e.g. disabling AppArmor for modules that require it).",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },

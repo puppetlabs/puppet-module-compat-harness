@@ -365,7 +365,11 @@
           {
             "name": "debian12-systemd",
             "setfile": "debian12-systemd",
-            "docker_mode": "systemd"
+            "docker_mode": "systemd",
+            "setup_commands": [
+              "echo '/tmp/** rw,' >> /etc/apparmor.d/usr.sbin.slapd || true",
+              "apparmor_parser -r /etc/apparmor.d/usr.sbin.slapd 2>/dev/null || true"
+            ]
           }
         ]
       }

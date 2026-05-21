@@ -112,7 +112,7 @@ flowchart TD
 | Trigger | Fires on a nightly schedule or manual `workflow_dispatch` (with optional profile and module override). |
 | JavaScript action runtime | Workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` so JavaScript-based actions run on Node 24 ahead of runner defaults. |
 | Validate schema | `validate_modules_config.py` checks `config/modules.json` against the JSON schema before anything fans out. |
-| Build matrix | `build_matrix.rb` expands the module list into two separate matrices: one for unit jobs and one for acceptance jobs (one row per module × target OS). |
+| Build matrix | `build_matrix.rb` expands the module list into two separate matrices: one for unit jobs and one for acceptance jobs (one row per module × target OS). Each acceptance entry carries `docker_mode`, `install_puppetserver`, and `setup_commands` from `modules.json`. |
 
 ### Per-Job Finalisation (end of every parallel job)
 
@@ -205,7 +205,7 @@ controls how the SUT container runs:
 |------|---------------|----------|-----------|
 | `sshd` (default) | `/usr/sbin/sshd -D -e` | General modules that don't require systemd service management. Fast, portable, stable SSH. | Services managed by systemd (e.g. chronyd, firewalld) cannot start. |
 | `systemd` | setfile `docker_cmd` (fallback `/sbin/init`) | Modules whose acceptance tests assert service running/enabled state. Container runs privileged with cgroup mounts. | Heavier, requires privileged container, may be less stable across CI kernels. |
-
+Each acceptance target may also declare **`setup_commands`** — a list of shell commands appended to `docker_image_commands` in the generated Dockerfile during Stage 1 (SUT image build). This allows module-specific SUT preparation without affecting other modules or the global runner. A typical use case is disabling AppArmor for modules like `puppet-openldap` whose acceptance tests write LDAP databases to `mktmpdir` paths that the `slapd` AppArmor profile would otherwise block.
 The `sshd` mode was chosen as the default because Beaker's built-in default
 command (`service sshd start; tail -f /dev/null`) caused ECONNRESET loops in
 non-systemd containers, and running sshd directly as PID 1 resolved that

@@ -119,7 +119,8 @@ module ModuleTester
           profile.fetch('puppet_major'),
           puppet_core_api_key,
           docker_mode: docker_mode,
-          install_puppetserver: @options[:install_puppetserver]
+          install_puppetserver: @options[:install_puppetserver],
+          setup_commands: @options.fetch(:setup_commands, [])
         )
         result[:stages] << build_stage
         return if build_stage.status != 'passed'
