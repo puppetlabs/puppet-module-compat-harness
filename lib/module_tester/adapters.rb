@@ -144,14 +144,10 @@ module ModuleTester
       # Strip all secrets from the env before running untrusted test code.
       Docker.strip_secrets_from_env!(acceptance_env)
 
-      # Preserve debug flag if set
-      acceptance_env['PUPPET_ACCEPTANCE_DEBUG'] = env['PUPPET_ACCEPTANCE_DEBUG'] if env['PUPPET_ACCEPTANCE_DEBUG']
-
       diag_lines = []
       diag_lines << "BEAKER_SETFILE=#{effective_setfile}" if effective_setfile
       diag_lines << "BEAKER_PUPPET_COLLECTION=#{effective_collection}" if effective_collection
       diag_lines << "BEAKER_HYPERVISOR=#{acceptance_env['BEAKER_HYPERVISOR']}"
-      diag_lines << "PUPPET_ACCEPTANCE_DEBUG=#{acceptance_env['PUPPET_ACCEPTANCE_DEBUG']}" if acceptance_env['PUPPET_ACCEPTANCE_DEBUG']
       if effective_setfile && File.exist?(effective_setfile)
         diag_lines << "--- Effective setfile content ---"
         diag_lines << File.read(effective_setfile)
@@ -166,35 +162,7 @@ module ModuleTester
       )
 
       result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
-      result[:stages] << diagnose_setup_acceptance_node(module_dir)
       result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
-    end
-
-    def diagnose_setup_acceptance_node(module_dir)
-      setup_file = File.join(module_dir, 'spec', 'setup_acceptance_node.pp')
-
-      diag_lines = []
-      if File.exist?(setup_file)
-        diag_lines << "setup_acceptance_node.pp found at: spec/setup_acceptance_node.pp"
-        diag_lines << "--- File content ---"
-        diag_lines << File.read(setup_file)
-        diag_lines << "--- End file ---"
-        diag_lines << "Note: voxpupuli-acceptance framework should execute this file via 'before :suite' hook"
-        status = 'passed'
-      else
-        diag_lines << "setup_acceptance_node.pp NOT FOUND at spec/setup_acceptance_node.pp"
-        diag_lines << "voxpupuli-acceptance will use default setup (may be empty)"
-        status = 'passed'
-      end
-
-      StageResult.new(
-        name: 'setup_acceptance_diagnostics',
-        status: status,
-        command: nil,
-        exit_code: 0,
-        duration_seconds: 0,
-        output: diag_lines.join("\n")
-      )
     end
 
     def probe_runtime_versions(module_dir, env, stage_name)
