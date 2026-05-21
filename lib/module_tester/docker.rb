@@ -117,6 +117,10 @@ module ModuleTester
       lines << "FROM #{base_image}"
       # Ensure Puppet agent binaries are discoverable during Beaker SSH sessions.
       lines << 'ENV PATH="/opt/puppetlabs/bin:${PATH}"'
+      # Signal to systemd (and other init tooling) that we are inside a container.
+      # Without this, systemd may hang trying to mount cgroups or access hardware,
+      # preventing multi-user.target from being reached (and sshd from starting).
+      lines << 'ENV container=docker'
 
       # Run the base setfile setup commands (cronie, initscripts, etc.)
       setup_commands.each { |cmd| lines << "RUN #{cmd}" } unless setup_commands.empty?
