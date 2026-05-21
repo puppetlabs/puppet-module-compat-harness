@@ -182,7 +182,9 @@ module ModuleTester
         # Systemd mode: use /usr/sbin/init as PID 1 so systemd manages all
         # services (including sshd). This requires the container to run
         # privileged with appropriate cgroup mounts.
-        lines << 'RUN systemctl enable sshd.service'
+        # Debian/Ubuntu use ssh.service; EL-family uses sshd.service.
+        ssh_service = %w[debian ubuntu].include?(variant) ? 'ssh.service' : 'sshd.service'
+        lines << "RUN systemctl enable #{ssh_service}"
         lines << 'CMD ["/usr/sbin/init"]'
       else
         # sshd mode: run sshd directly as PID 1 without systemd.
