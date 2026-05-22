@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-05-21
+Last updated: 2026-05-22
 
 ## Modules With Acceptance Tests (46)
 
@@ -83,4 +83,5 @@ These modules have acceptance tests defined but cannot currently be run in CI du
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | Module manages kernel-level swap file operations via `swapon` and `swapoff` commands. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires full VM or bare-metal environment for acceptance testing. |
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | Module attempts to manage `/etc/resolv.conf` via symlink replacement to `/run/systemd/resolve/resolv.conf`. Docker container runtime owns `/etc/resolv.conf`, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |
 | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | Acceptance tests use `Dir.mktmpdir` on the Beaker controller to create temporary directories for LDAP database paths (`olcDbDirectory`), then reference those host-local paths inside the Docker SUT where they do not exist. `slapd` rejects the non-existent paths with "invalid path: Permission denied". This is a fundamental filesystem boundary issue between Beaker controller and Docker SUT — the tests assume a shared filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT. |
+| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | Module's `cleanup_helper` removes the rsyslog package between tests. In the harness's persistent Docker container model (where PuppetCore is pre-installed in the image), RPM database entries from the image build become corrupt. When Puppet tries to remove rsyslog via `rpm -e rsyslog`, it fails with "package not installed" even though Puppet detects it as installed. This is a Docker copy-on-write filesystem artifact unique to the persistent container model. Unit tests pass cleanly; acceptance tests are blocked by this architectural limitation. |
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | Acceptance tests target only Debian 8-9, Ubuntu 16.04-18.04, and RHEL 6-7 — none of which match any available setfile. The spec also hardcodes `su - vagrant` to run puppet apply as a Vagrant user, which is not present in Docker-based SUT containers. Requires either new legacy setfiles or upstream test modernization. |
