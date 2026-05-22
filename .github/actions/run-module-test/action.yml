@@ -66,11 +66,6 @@ inputs:
     required: false
     default: '[]'
 
-  post-cleanup-setup-commands:
-    description: 'JSON array of shell commands to run after cleanup_helper, to reset module state between tests'
-    required: false
-    default: '[]'
-
 runs:
   using: composite
   steps:
@@ -165,10 +160,6 @@ runs:
         setup_cmds='${{ inputs.setup-commands }}'
         if [ "$setup_cmds" != "[]" ] && [ "$setup_cmds" != "" ]; then
           runner_args+=(--setup-commands "$setup_cmds")
-        fi
-        post_cleanup_cmds='${{ inputs.post-cleanup-setup-commands }}'
-        if [ "$post_cleanup_cmds" != "[]" ] && [ "$post_cleanup_cmds" != "" ]; then
-          runner_args+=(--post-cleanup-setup-commands "$post_cleanup_cmds")
         fi
         ruby bin/puppet-module-tester "${runner_args[@]}"
 

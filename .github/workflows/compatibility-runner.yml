@@ -208,7 +208,6 @@ jobs:
           docker-mode: ${{ matrix.module.docker_mode || 'sshd' }}
           install-puppetserver: ${{ matrix.module.install_puppetserver || 'false' }}
           setup-commands: ${{ toJson(matrix.module.setup_commands) }}
-          post-cleanup-setup-commands: ${{ toJson(matrix.module.post_cleanup_setup_commands) }}
 
       - name: Upload module artifacts (acceptance)
         if: always()
