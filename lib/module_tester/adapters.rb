@@ -162,6 +162,13 @@ module ModuleTester
         output: diag_lines.join("\n")
       )
 
+     # If this module needs to re-run setup commands after cleanup_helper,
+     # inject a Beaker hook into spec_helper_acceptance_local.rb BEFORE running tests
+     post_cleanup_cmds = @options.fetch(:post_cleanup_setup_commands, [])
+     unless post_cleanup_cmds.empty?
+       inject_post_cleanup_hook(module_dir, post_cleanup_cmds)
+     end
+
       result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
       result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
     end
@@ -351,5 +358,39 @@ module ModuleTester
       pattern = File.join(bundle_path, '**', 'json-*', 'lib')
       Dir.glob(pattern).sort.reverse.find { |path| File.directory?(path) }
     end
+
+    # Writes a spec_helper_acceptance_local.rb into the module that registers
+    # a before(:context) hook to restore packages/state on the SUT.
+    #
+    # RSpec.configure before(:context) hooks execute BEFORE describe-level
+    # before(:context) hooks, so our reinstall runs before cleanup_helper
+    # tries to remove the package — ensuring the removal always succeeds.
+    def inject_post_cleanup_hook(module_dir, post_cleanup_cmds)
+      local_helper = File.join(module_dir, 'spec', 'spec_helper_acceptance_local.rb')
+
+      cmds_ruby = post_cleanup_cmds.inspect
+
+      hook_code = <<~RUBY
+        # Auto-injected by puppet-module-tester harness.
+        # Restores packages/state before each test context so that
+        # cleanup_helper (which runs in before(:context)) finds them present.
+        POST_CLEANUP_SETUP_COMMANDS = #{cmds_ruby}.freeze
+
+        RSpec.configure do |c|
+          c.before(:context) do
+            POST_CLEANUP_SETUP_COMMANDS.each do |cmd|
+              on(default, cmd, acceptable_exit_codes: [0])
+            end
+          end
+        end
+      RUBY
+
+      if File.exist?(local_helper)
+        File.open(local_helper, 'a') { |f| f.write("\n#{hook_code}") }
+      else
+        File.write(local_helper, hook_code)
+      end
+    end
   end
 end
+

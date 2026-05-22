@@ -492,7 +492,20 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-rsyslog",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd",
+            "post_cleanup_setup_commands": [
+              "dnf install -y rsyslog"
+            ]
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-selinux",

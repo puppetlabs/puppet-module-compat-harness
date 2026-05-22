@@ -143,6 +143,15 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "post_cleanup_setup_commands": {
+          "type": "array",
+          "description": "Shell commands run on the SUT before each acceptance test context, ensuring packages removed by cleanup_helper are restored. Only needed for modules whose cleanup_helper removes packages in persistent Docker containers.",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },

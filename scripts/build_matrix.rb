@@ -63,7 +63,8 @@ modules.each do |m|
       'setfile' => target.fetch('setfile'),
       'docker_mode' => target.fetch('docker_mode', 'sshd'),
       'install_puppetserver' => target.fetch('install_puppetserver', false),
-      'setup_commands' => target.fetch('setup_commands', [])
+      'setup_commands' => target.fetch('setup_commands', []),
+      'post_cleanup_setup_commands' => target.fetch('post_cleanup_setup_commands', [])
     }
   end
 end

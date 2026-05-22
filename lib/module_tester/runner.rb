@@ -22,7 +22,8 @@ module ModuleTester
       beaker_setfile: nil,
       docker_mode: 'sshd',
       install_puppetserver: false,
-      setup_commands: []
+      setup_commands: [],
+      post_cleanup_setup_commands: []
     }.freeze
 
     def initialize(argv)
@@ -150,6 +151,7 @@ module ModuleTester
         opts.on('--docker-mode MODE')   { |v| @options[:docker_mode] = v.to_s.strip.downcase }
         opts.on('--install-puppetserver') { @options[:install_puppetserver] = true }
         opts.on('--setup-commands JSON') { |v| @options[:setup_commands] = JSON.parse(v) }
+        opts.on('--post-cleanup-setup-commands JSON') { |v| @options[:post_cleanup_setup_commands] = JSON.parse(v) }
       end.parse!(@argv)
 
       unless %w[unit acceptance].include?(@options[:test_mode])
