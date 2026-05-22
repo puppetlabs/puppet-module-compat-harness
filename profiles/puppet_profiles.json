@@ -2,8 +2,8 @@
   "profiles": [
     {
       "name": "8-latest-maintained",
-      "puppet_core_version": "8.17.0",
-      "facter_version": "4.17.0",
+      "puppet_core_version": "8.19.0",
+      "facter_version": "4.19.0",
       "puppet_major": 8,
       "ruby_version": "3.2",
       "bundler_version": "2.5.22",
@@ -11,8 +11,8 @@
     },
     {
       "name": "8-previous-maintained",
-      "puppet_core_version": "8.16.0",
-      "facter_version": "4.16.0",
+      "puppet_core_version": "8.18.0",
+      "facter_version": "4.18.0",
       "puppet_major": 8,
       "ruby_version": "3.2",
       "bundler_version": "2.5.22",
