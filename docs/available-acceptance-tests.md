@@ -75,7 +75,6 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 | [puppet-limits](https://github.com/saz/puppet-limits) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
 | [puppet-sudo](https://github.com/saz/puppet-sudo) |
-| [puppet-sysctl](https://github.com/thias/puppet-sysctl) |
 
 ## Modules With Acceptance Tests but Disabled in CI
 
