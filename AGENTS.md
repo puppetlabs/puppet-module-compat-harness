@@ -21,25 +21,23 @@ This file is for coding agents working in this repository.
 
 1. Inspect the target module repository first (do not skip this step). If the module is not present locally, agents MUST fetch and analyze the remote repository (e.g., via GitHub API or by cloning/downloading the repo) to discover acceptance tests and other required files. Acceptance test discovery must NOT be limited to the local workspace.
 2. Add a module object under `modules` in `config/modules.json`.
-3. **Insert the new module in alphabetical position** by repo name (the segment after the final `/`, lowercase, case-insensitive). The `modules` array must remain sorted alphabetically at all times because GitHub Actions renders matrix jobs in the order they appear in `modules.json`; alphabetical order makes individual jobs easy to locate in the CI panel.
+3. **Insert Vox Pupuli modules first and alternative maintainers second.** Keep all `voxpupuli/*` entries grouped at the top and sorted alphabetically by repo name (the segment after the final `/`, lowercase, case-insensitive). Keep all non-`voxpupuli` entries grouped at the bottom and sorted alphabetically by explicit `id`. This preserves a clean primary Vox Pupuli block while keeping alternative maintainer jobs easy to identify in the GitHub Actions UI.
 4. Set `repo` (required), optionally `ref`, `id`, `os`, and `prereqs`.
 5. Default behavior when omitted:
    - `ref`: treated as `main` by runner logic.
    - `os`: defaults to `ubuntu-latest` in workflow behavior.
-   - `id`: derived from repo name.
+  - `id`: derived from repo name for `voxpupuli/*` entries when omitted.
 6. Validate against schema before proposing completion.
 7. Update [Available Acceptance Tests](./docs/available-acceptance-tests.md) documentation with information about the module being added. Make sure to update the 'last updated' date as well.
 
-### Alphabetical Ordering Rule
+### Ordering Rule
 
-- Sort key: the last path segment of `repo` (e.g. `puppet-archive` from `https://github.com/voxpupuli/puppet-archive`), compared case-insensitively.
-- This applies to every entry — new additions, reorderings, and any cleanup edits.
+- Primary block: all `voxpupuli/*` entries, sorted by the last path segment of `repo` (for example `puppet-archive` from `https://github.com/voxpupuli/puppet-archive`), compared case-insensitively.
+- Secondary block: all non-`voxpupuli` entries, sorted by explicit `id`, compared case-insensitively.
+- Every non-`voxpupuli` entry must set `id` explicitly.
+- This applies to every entry — new additions, reorderings, duplicate-maintainer support, and cleanup edits.
 - If you discover existing entries out of order during an edit, fix the order in the same change.
-- Quick re-sort one-liner (run from repo root):
-
-  ```bash
-  python -c "import json; p='config/modules.json'; d=json.load(open(p)); d['modules'].sort(key=lambda m: m['repo'].rsplit('/',1)[-1].lower()); json.dump(d, open(p,'w',newline='\n'), indent=2); open(p,'a').write('\n')"
-  ```
+- When adding an alternative-maintainer version of a module already present from Vox Pupuli or another maintainer, append it to the non-`voxpupuli` block with a disambiguating `id` that clearly identifies the maintainer.
 
 ## Decision Rules
 
@@ -49,7 +47,8 @@ This file is for coding agents working in this repository.
 - Omit `os` for general modules to keep Ubuntu as default.
 - Do not guess system package prerequisites.
 - Determine `prereqs` from repository evidence before finalizing a module addition.
-- Add explicit `id` only when stable custom naming is needed in artifacts/reporting.
+- Omit `id` for `voxpupuli/*` entries unless stable custom naming is needed in artifacts/reporting.
+- Set explicit `id` for every non-`voxpupuli` entry. Use a maintainer-qualified value so matrix job names remain unambiguous when duplicate module names exist across maintainers.
 - Set `docker_mode` to `systemd` on acceptance targets only when the module's acceptance tests assert service running/enabled state via systemd (e.g. `is_expected.to be_running`, `is_expected.to be_enabled`). Evidence: check `spec/acceptance/` for `be_running` or `be_enabled` matchers on Service resources.
 - Default `docker_mode` is `sshd` — faster, more portable, and avoids privileged containers. Only escalate to `systemd` when tests require it.
 
