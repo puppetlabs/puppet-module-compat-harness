@@ -37,8 +37,9 @@ module ModuleTester
       end
 
       # Extract (operator, version) pairs using regex
-      # Matches patterns like: >=2.7.20, <9.0.0, =1.0.0, etc.
-      pairs = expression.scan(/([><=]+)([\d.]+)/)
+      # Matches patterns like: >=2.7.20, <9.0.0, =1.0.0, >= 3.4.0, etc.
+      # \s* allows optional whitespace between operator and version
+      pairs = expression.scan(/([><=]+)\s*([\d.]+)/)
       return false if pairs.empty?
 
       pairs.each do |op, expected_raw|
