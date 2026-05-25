@@ -9,9 +9,11 @@ Run compatibility tests for Vox Pupuli (and other community) modules against Pup
 
 - Windows native setup: [README_Windows.md](README_Windows.md)
 
-## Known incompatibilities
+## Known incompatibilities and deprecations
 
-Some modules have been tested and determined to be incompatible with Puppet Core 8. See [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md) for the list and details.
+Some modules are no longer maintained or are incompatible with Puppet Core 8:
+- Deprecated/archived modules: [KNOWN_DEPRECATED.md](KNOWN_DEPRECATED.md)
+- Tested incompatibilities: [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md)
 
 ## What is implemented
 
