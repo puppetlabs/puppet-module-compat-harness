@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-05-22
+Last updated: 2026-05-25
 
 ## Modules With Acceptance Tests (46)
 
@@ -55,7 +55,7 @@ Last updated: 2026-05-22
 | ⏳ | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | Windows 2008R2, 2012, 2012R2, 2016, 2019, 2022 |
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Amazon 2017, CentOS 9, Fedora 36-40 |
 
-## Modules Without Acceptance Tests (11)
+## Modules Without Acceptance Tests (15)
 
 Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypoint was found.
 
@@ -67,11 +67,15 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) |
+| [garethr-docker](https://github.com/garethr/garethr-docker) |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) |
+| [herculesteam-augeasproviders_core](https://github.com/hercules-team/augeasproviders_core) |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
+| [puppet-limits](https://github.com/saz/puppet-limits) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
-| [puppet-staging](https://github.com/voxpupuli/puppet-staging) |
+| [puppet-sudo](https://github.com/saz/puppet-sudo) |
+| [puppet-sysctl](https://github.com/thias/puppet-sysctl) |
 
 ## Modules With Acceptance Tests but Disabled in CI
 
