@@ -594,6 +594,6 @@
       "repo": "https://github.com/saz/puppet-sudo",
       "ref": "master",
       "id": "saz-puppet-sudo"
-    },
+    }
   ]
 }
