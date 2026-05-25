@@ -103,7 +103,8 @@ module ModuleTester
       text = output.to_s
       return nil unless text.include?('Could not find compatible versions') || text.include?('version solving has failed')
 
-      return nil unless text.match?(/depends on puppet-resource_api/i)
+      # Detect either puppet-resource_api conflicts OR generic json/dependency conflicts
+      return nil unless text.match?(/depends on (puppet-resource_api|json)/i)
 
       'Dependency incompatibility detected during bundle install; applying Puppet Core-compatible gem constraints and retrying.'
     end
@@ -176,8 +177,14 @@ module ModuleTester
       lines = []
       lines << "eval_gemfile 'Gemfile'"
       lines << ""
-      lines << "gem 'json', '>= 2.5.0', require: false"
+      
+      # Adapt json constraint based on Beaker version in use
+      # Older Beaker (1.x-3.x) requires json ~> 1.8, while newer Beaker (4.x+) supports modern json
+      beaker_constraint = extract_beaker_version_constraint(module_dir)
+      json_constraint = json_constraint_for_beaker(beaker_constraint)
+      lines << "gem 'json', '#{json_constraint}', require: false"
       lines << ""
+      
       lines << "source '#{source_url}' do"
       lines << "  gem 'puppet', '= #{puppet_version}', require: false"
       lines << "  gem 'facter', '= #{facter_version}', require: false" unless facter_version.empty?
@@ -186,6 +193,30 @@ module ModuleTester
 
       File.write(overlay_gemfile, lines.join("\n"))
       overlay_gemfile
+    end
+
+    def extract_beaker_version_constraint(module_dir)
+      gemfile_path = File.join(module_dir, 'Gemfile')
+      return nil unless File.exist?(gemfile_path)
+      
+      content = File.read(gemfile_path)
+      # Match patterns like: gem 'beaker', '~> 4.0' or gem "beaker", ">= 3.0"
+      match = content.match(/gem\s+['\"]beaker['\"]\s*,\s*['\"]([^'\"]+)['"]/)
+      match ? match[1].strip : nil
+    end
+
+    def json_constraint_for_beaker(beaker_constraint)
+      return '>= 2.5.0' if beaker_constraint.nil? || beaker_constraint.empty?
+      
+      constraint_str = beaker_constraint.to_s.strip
+      
+      # Beaker 4.x and 5.x support modern json; older versions require json ~> 1.8
+      if constraint_str.match?(/~>\s*[45]/) || constraint_str.match?(/>= [45]/)
+        '>= 2.0.0'
+      else
+        # Beaker 1.x, 2.x, 3.x require older json (>= 1.8.0)
+        '>= 1.8.0'
+      end
     end
 
     def normalize_runtime_gem_versions(module_dir, profile, result)
