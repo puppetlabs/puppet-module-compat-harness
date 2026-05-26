@@ -568,11 +568,6 @@
       }
     },
     {
-      "repo": "https://github.com/garethr/garethr-docker",
-      "ref": "master",
-      "id": "garethr-docker"
-    },
-    {
       "repo": "https://github.com/hercules-team/augeasproviders_core",
       "ref": "master",
       "id": "herculesteam-augeasproviders-core",
