@@ -47,7 +47,7 @@ Last updated: 2026-06-16
 | ⏳ | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | Debian 11-13, Ubuntu 22.04-24.04 |
 | ⏳ | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | RedHat 6-7, CentOS 6-7, OracleLinux 6-7, Scientific 6-7, SLES 11 SP1, Debian 8-9, Ubuntu 16.04-18.04, Solaris 10-11, AIX 5.3-7.1, Darwin 10-13, FreeBSD 10-11, Windows Server (various) |
 | ⏳ | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | RedHat 8-10, CentOS 9-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10, Fedora 40, Debian 11-13, Amazon 2 |
-| ⏳ | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | CentOS 9, FreeBSD 13-14, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Debian 11-12, RedHat 8-9, Ubuntu 22.04-24.04 |
+| ✅ | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | CentOS 9, FreeBSD 13-14, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Debian 11-12, RedHat 8-9, Ubuntu 22.04-24.04 |
 | ⏳ | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, CentOS 9-10, OracleLinux 8-10, Debian 11-12, Ubuntu 20.04-22.04 |
 | ⏳ | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | Debian 11-13, Ubuntu 20.04-24.04, SLES 12 and 15, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Archlinux, Gentoo, Fedora 40 |
 | ✅ | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | RedHat 8-9, Rocky 8-9, AlmaLinux 8-9, Raspbian 10, Debian 10-13, CentOS 8-9, OracleLinux 8-9, Ubuntu 18.04-24.04, Windows Server 2012 and 2012 R2, SLES 12, Darwin 18, FreeBSD 12-13 |
