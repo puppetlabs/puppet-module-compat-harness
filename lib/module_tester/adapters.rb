@@ -37,6 +37,7 @@ module ModuleTester
           output: 'fact_provider=unknown puppet_provider=unknown detection_method=skipped puppet_detection_method=skipped reason=pdk_adapter_path'
         )
         downgrade_puppet_server_default_unit_failure(result, unit_stage)
+        downgrade_choria_openvox_unit_failure(result, unit_stage)
         return
       end
 
@@ -68,10 +69,12 @@ module ModuleTester
         unit_stage = @stage.run_stage('unit', ['bundle', 'exec', 'rake', 'spec'], module_dir, env)
         result[:stages] << unit_stage
         downgrade_puppet_server_default_unit_failure(result, unit_stage)
+        downgrade_choria_openvox_unit_failure(result, unit_stage)
       elsif tasks.include?('test')
         unit_stage = @stage.run_stage('unit', ['bundle', 'exec', 'rake', 'test'], module_dir, env)
         result[:stages] << unit_stage
         downgrade_puppet_server_default_unit_failure(result, unit_stage)
+        downgrade_choria_openvox_unit_failure(result, unit_stage)
       else
         # No rake spec/test task was discovered. Record an explicit
         # failure stage that surfaces the discovered task list so the
@@ -222,6 +225,47 @@ module ModuleTester
       unit_stage.output = [
         output,
         'Detected Puppet Core 8.12 server setting default change; unit failure downgraded to compatibility warning.'
+      ].join("\n")
+    end
+
+    def downgrade_choria_openvox_unit_failure(result, unit_stage)
+      return if unit_stage.nil?
+      return if unit_stage.status == 'passed'
+
+      output = unit_stage.output.to_s
+      return unless output.include?('Choria only supports OpenVox')
+
+      # Only downgrade when ALL rspec failures are attributable to the Choria/OpenVox check.
+      # Split on ::error markers and verify every error section contains the Choria message.
+      error_sections = output.split(/(?=::error )/).reject { |s| s.strip.empty? }
+      choria_errors = error_sections.select { |s| s.start_with?('::error') }
+      non_choria_errors = choria_errors.reject { |s| s.include?('Choria only supports OpenVox') }
+      return if choria_errors.empty? || non_choria_errors.any?
+
+      warning = 'Unit specs for the r10k::mcollective integration class fail because the choria fixture ' \
+                'module only supports OpenVox and raises a hard error when run under Puppet Core. ' \
+                'The r10k::mcollective class cannot be used with Puppet Core when mcollective/choria ' \
+                'integration is enabled. All other puppet-r10k functionality is compatible with ' \
+                'Perforce Puppet products. See KNOWN_INCOMPATIBLE.md for details.'
+
+      result[:dependency_status] = 'warning'
+      result[:dependency_message] = warning
+      Annotations.github_annotation('warning', "#{result[:module]} choria/mcollective integration", warning)
+
+      result[:stages] << StageResult.new(
+        name: 'choria_openvox_warning',
+        status: 'passed',
+        command: nil,
+        exit_code: 0,
+        duration_seconds: 0,
+        output: warning
+      )
+
+      unit_stage.status = 'passed'
+      unit_stage.exit_code = 0
+      unit_stage.output = [
+        output,
+        'Detected Choria OpenVox-only restriction; mcollective integration test failures downgraded to compatibility warning.'
       ].join("\n")
     end
 
