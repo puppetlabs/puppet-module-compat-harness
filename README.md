@@ -1,17 +1,13 @@
-# puppet-module-tester-poc
-This is a proof-of-concept to see if there is a simpler way of testing modules against Puppet Core.
+# Puppet Module Compatibility Harness
+This repository runs a matrix of unit and acceptance tests for popular community modules to test their compatibility with Puppet Core.
 
-## Goal
+The project uses external harness and GitHub Actions, running the module's own test suite, without requiring source changes in the tested module. Puppet Core and Perforce Facter are injected into the tests to validate compatibility against the latest released Puppet Core versions.
 
-Run compatibility tests for Vox Pupuli (and other community) modules against Puppet Core, using an external harness and GitHub Actions, without requiring source changes in the tested module.
-
-## Platform setup
-
-- Windows native setup: [README_Windows.md](README_Windows.md)
+Results can be viewed in the [Actions](https://github.com/puppetlabs/puppet-module-compat-harness/actions) tab.
 
 ## Known incompatibilities and deprecations
 
-Some modules are no longer maintained or are incompatible with Puppet Core 8:
+Some modules are no longer maintained or are incompatible with Puppet Core:
 - Deprecated/archived modules: [KNOWN_DEPRECATED.md](KNOWN_DEPRECATED.md)
 - Tested incompatibilities: [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md)
 
