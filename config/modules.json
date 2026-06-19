@@ -271,8 +271,18 @@
       }
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-kibana",
-      "ref": "master"
+      "repo": "https://github.com/jst-cyr/puppet-kibana",
+      "ref": "fix-plugin-tls-certificate",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-kmod",

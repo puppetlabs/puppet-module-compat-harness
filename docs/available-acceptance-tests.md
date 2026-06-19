@@ -24,7 +24,7 @@ Last updated: 2026-06-17
 | ✅ | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | Debian 11-12, Ubuntu 20.04-22.04, RedHat 8-9, CentOS 9, Rocky 8-9, AlmaLinux 8-9, OracleLinux 8-9, FreeBSD 12-13, SLES 12 |
 | ⏳ | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | RedHat 8-9, CentOS 9, OracleLinux 8-9, AlmaLinux 8-9, Rocky 8-9, Debian 11, Ubuntu 22.04 |
 | ✅ | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | Debian 11-13, Ubuntu 20.04-24.04, RedHat 7-10, CentOS 7-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10 |
-| ⏳ | [puppet-kibana](https://github.com/voxpupuli/puppet-kibana) | Debian 11-12, CentOS 9, AlmaLinux 8-9, Rocky 8-9, RedHat 8-9, Ubuntu 22.04-24.04 |
+| ✅ | [puppet-kibana](https://github.com/voxpupuli/puppet-kibana) | Debian 11-12, CentOS 9, AlmaLinux 8-9, Rocky 8-9, RedHat 8-9, Ubuntu 22.04-24.04 |
 | ✅ | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | CentOS 9-10, Gentoo, OracleLinux 8-10, RedHat 8-10, AlmaLinux 8-10, Rocky 8-10, Ubuntu 22.04-24.04, Debian 11-13, FreeBSD 12-13 |
 | ⏳ | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | Ubuntu 22.04-24.04, Debian 11-13, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Gentoo, SLES 15, openSUSE 15 |
 | ✅ | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | AlmaLinux 8-10, CentOS 9-10, OracleLinux 8-10, RedHat 8-10, Rocky 8-10, Archlinux, Debian 11-13, Ubuntu 22.04-24.04 |
