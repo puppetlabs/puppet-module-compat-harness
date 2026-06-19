@@ -50,6 +50,7 @@ flowchart TD
             subgraph TwoStage["Two-Stage Docker Isolation Model"]
                 S1["Stage 1 · Build SUT Image<br/>docker build — API key present here<br/>Installs Puppet Core agent<br/>Scrubs key from all image layers"]
                 DM{"docker_mode?"}
+                PAC["Pre-acceptance setup (optional)<br/>host commands run from module dir<br/>e.g. start GitLab · Squid containers<br/>writes ~/GITLAB_IP, ~/SQUID_IP"]
                 S2S["Stage 2 · Run Tests (sshd)<br/>sshd as PID 1 — no systemd<br/>Secrets stripped from environment"]
                 S2D["Stage 2 · Run Tests (systemd)<br/>systemd as PID 1 — privileged<br/>Secrets stripped from environment"]
             end
@@ -87,8 +88,9 @@ flowchart TD
     TM -- acceptance --> AK
     AK -- "yes — Puppet Core" --> S1
     S1 --> DM
-    DM -- "sshd (default)" --> S2S --> CL
-    DM -- "systemd" --> S2D --> CL
+    DM --> PAC
+    PAC -- "sshd (default)" --> S2S --> CL
+    PAC -- "systemd" --> S2D --> CL
     AK -- "no — FOSS fallback" --> FOSS --> CL
 
     CL --> RP --> RS --> WS --> UA
@@ -112,7 +114,7 @@ flowchart TD
 | Trigger | Fires on a nightly schedule or manual `workflow_dispatch` (with optional profile and module override). |
 | JavaScript action runtime | Workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` so JavaScript-based actions run on Node 24 ahead of runner defaults. |
 | Validate schema | `validate_modules_config.py` checks `config/modules.json` against the JSON schema before anything fans out. |
-| Build matrix | `build_matrix.rb` expands the module list into two separate matrices: one for unit jobs and one for acceptance jobs (one row per module × target OS). Each acceptance entry carries `docker_mode`, `install_puppetserver`, and `setup_commands` from `modules.json`. |
+| Build matrix | `build_matrix.rb` expands the module list into two separate matrices: one for unit jobs and one for acceptance jobs (one row per module × target OS). Each acceptance entry carries `docker_mode`, `install_puppetserver`, `setup_commands`, and `pre_acceptance_commands` from `modules.json`. |
 
 ### Per-Job Finalisation (end of every parallel job)
 
@@ -206,6 +208,8 @@ controls how the SUT container runs:
 | `sshd` (default) | `/usr/sbin/sshd -D -e` | General modules that don't require systemd service management. Fast, portable, stable SSH. | Services managed by systemd (e.g. chronyd, firewalld) cannot start. |
 | `systemd` | setfile `docker_cmd` (fallback `/sbin/init`) | Modules whose acceptance tests assert service running/enabled state. Container runs privileged with cgroup mounts. | Heavier, requires privileged container, may be less stable across CI kernels. |
 Each acceptance target may also declare **`setup_commands`** — a list of shell commands appended to `docker_image_commands` in the generated Dockerfile during Stage 1 (SUT image build). This allows module-specific SUT preparation without affecting other modules or the global runner. A typical use case is disabling AppArmor for modules like `puppet-openldap` whose acceptance tests write LDAP databases to `mktmpdir` paths that the `slapd` AppArmor profile would otherwise block.
+
+Each acceptance target may also declare **`pre_acceptance_commands`** — a list of shell commands that run on the **host runner** (not inside Docker) after the SUT image is built but before Beaker starts. Commands execute from the cloned module directory, so relative paths like `bash scripts/start-gitlab.sh` resolve correctly. Use this for modules whose acceptance tests require external services to be running — for example, `puppet-gitlab_ci_runner` starts a GitLab CE container and a Squid proxy, writing their IPs to `~/GITLAB_IP` and `~/SQUID_IP` so that `spec_helper_acceptance.rb` can read them at load time. Each command is tracked as a named stage (`pre_acceptance_setup_0`, `pre_acceptance_setup_1`, …) so failures are visible in the compatibility report; if any command fails the pipeline short-circuits before Beaker runs.
 The `sshd` mode was chosen as the default because Beaker's built-in default
 command (`service sshd start; tail -f /dev/null`) caused ECONNRESET loops in
 non-systemd containers, and running sshd directly as PID 1 resolved that

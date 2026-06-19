@@ -65,6 +65,10 @@ inputs:
     description: 'JSON array of additional shell commands to run during SUT image build (e.g. AppArmor disable)'
     required: false
     default: '[]'
+  pre-acceptance-commands:
+    description: 'JSON array of shell commands to run on the host before Beaker starts (e.g. start supporting services like GitLab or Squid)'
+    required: false
+    default: '[]'
 
 runs:
   using: composite
@@ -160,6 +164,10 @@ runs:
         setup_cmds='${{ inputs.setup-commands }}'
         if [ "$setup_cmds" != "[]" ] && [ "$setup_cmds" != "" ]; then
           runner_args+=(--setup-commands "$setup_cmds")
+        fi
+        pre_accept_cmds='${{ inputs.pre-acceptance-commands }}'
+        if [ "$pre_accept_cmds" != "[]" ] && [ "$pre_accept_cmds" != "" ]; then
+          runner_args+=(--pre-acceptance-commands "$pre_accept_cmds")
         fi
         ruby bin/puppet-module-tester "${runner_args[@]}"
 

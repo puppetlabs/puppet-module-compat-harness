@@ -143,6 +143,15 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "pre_acceptance_commands": {
+          "type": "array",
+          "description": "Shell commands run on the host runner before Beaker starts. Use to start external services (e.g. GitLab, databases) that acceptance tests connect to. Commands execute from the cloned module directory.",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },

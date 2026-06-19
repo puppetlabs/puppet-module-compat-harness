@@ -165,6 +165,13 @@ module ModuleTester
         output: diag_lines.join("\n")
       )
 
+      pre_cmds = @options.fetch(:pre_acceptance_commands, [])
+      pre_cmds.each_with_index do |cmd, idx|
+        stage = @stage.run_stage("pre_acceptance_setup_#{idx}", ['bash', '-c', cmd], module_dir, acceptance_env)
+        result[:stages] << stage
+        return if stage.status != 'passed'
+      end
+
       result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
       result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
     end
