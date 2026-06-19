@@ -217,7 +217,21 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-gitlab_ci_runner",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd",
+            "pre_acceptance_commands": [
+              "bash scripts/start-gitlab.sh",
+              "bash scripts/start-squid.sh"
+            ]
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-grafana",
