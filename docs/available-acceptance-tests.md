@@ -20,7 +20,7 @@ Last updated: 2026-06-17
 | ✅ | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | RedHat 8-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10 |
 | ✅ | [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Debian 11-13, Ubuntu 22.04-24.04, SLES 15 |
 | ✅ | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | RedHat 8-10, CentOS 9-10, OracleLinux 8-10, AlmaLinux 8-10, Rocky 8-10, Debian 12-13, Ubuntu 22.04-24.04 |
-| ⏳ | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | RedHat 8-10, CentOS 9-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10, Debian 11-13, Ubuntu 22.04-24.04, SLES 15 |
+| ✅ | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | RedHat 8-10, CentOS 9-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10, Debian 11-13, Ubuntu 22.04-24.04, SLES 15 |
 | ✅ | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | Debian 11-12, Ubuntu 20.04-22.04, RedHat 8-9, CentOS 9, Rocky 8-9, AlmaLinux 8-9, OracleLinux 8-9, FreeBSD 12-13, SLES 12 |
 | ⏳ | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | RedHat 8-9, CentOS 9, OracleLinux 8-9, AlmaLinux 8-9, Rocky 8-9, Debian 11, Ubuntu 22.04 |
 | ✅ | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | Debian 11-13, Ubuntu 20.04-24.04, RedHat 7-10, CentOS 7-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10 |
