@@ -55,7 +55,31 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-augeasproviders_pam",
+      "ref": "master",
+      "prereqs": {
+        "apt": [
+          "libaugeas-dev",
+          "augeas-tools",
+          "pkg-config",
+          "build-essential"
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_shellvar",
+      "ref": "master",
+      "prereqs": {
+        "apt": [
+          "libaugeas-dev",
+          "augeas-tools",
+          "pkg-config",
+          "build-essential"
+        ]
+      }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-augeasproviders_ssh",
       "ref": "master",
       "prereqs": {
         "apt": [
@@ -185,6 +209,10 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-filemapper",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-format",
       "ref": "master"
     },
     {
@@ -379,6 +407,10 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-nsswitch",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-openldap",
       "ref": "master",
       "prereqs": {
@@ -396,6 +428,10 @@
       "acceptance": {
         "enabled": false
       }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-openvox_bootstrap",
+      "ref": "main"
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-php",
@@ -479,6 +515,18 @@
       "ref": "master"
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-puppetserver",
+      "ref": "master",
+      "prereqs": {
+        "apt": [
+          "libaugeas-dev",
+          "augeas-tools",
+          "pkg-config",
+          "build-essential"
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-python",
       "ref": "master",
       "acceptance": {
@@ -557,6 +605,10 @@
       "ref": "master"
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-staging",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-swap_file",
       "ref": "master",
       "prereqs": {
@@ -597,7 +649,15 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-vault_lookup",
+      "ref": "master"
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-wget",
+      "ref": "master"
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-windows_env",
       "ref": "master"
     },
     {
@@ -620,6 +680,10 @@
           }
         ]
       }
+    },
+    {
+      "repo": "https://github.com/voxpupuli/puppet-zypprepo",
+      "ref": "master"
     },
     {
       "repo": "https://github.com/hercules-team/augeasproviders_core",

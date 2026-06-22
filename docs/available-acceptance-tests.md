@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-06-17
+Last updated: 2026-06-22
 
 ## Modules With Acceptance Tests (46)
 
@@ -55,26 +55,36 @@ Last updated: 2026-06-17
 | ⏳ | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | Windows 2008R2, 2012, 2012R2, 2016, 2019, 2022 |
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Amazon 2017, CentOS 9, Fedora 36-40 |
 
-## Modules Without Acceptance Tests (15)
+## Modules Without Acceptance Tests (24)
 
 Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypoint was found.
 
 | Module |
 |--------|
 | [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) |
+| [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) |
 | [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) |
+| [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) |
 | [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) |
+| [puppet-format](https://github.com/voxpupuli/puppet-format) |
 | [garethr-docker](https://github.com/garethr/garethr-docker) |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) |
 | [herculesteam-augeasproviders_core](https://github.com/hercules-team/augeasproviders_core) |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) |
-| [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
 | [puppet-limits](https://github.com/saz/puppet-limits) |
+| [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) |
+| [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) |
+| [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
+| [puppet-puppetserver](https://github.com/voxpupuli/puppet-puppetserver) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
+| [puppet-staging](https://github.com/voxpupuli/puppet-staging) |
 | [puppet-sudo](https://github.com/saz/puppet-sudo) |
+| [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) |
+| [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) |
+| [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) |
 
 ## Modules With Acceptance Tests but Disabled in CI
 
