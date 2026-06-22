@@ -408,7 +408,24 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-nsswitch",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          },
+          {
+            "name": "ubuntu24",
+            "setfile": "ubuntu24"
+          },
+          {
+            "name": "debian12",
+            "setfile": "debian12"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-openldap",
