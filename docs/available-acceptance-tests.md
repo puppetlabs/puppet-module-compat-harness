@@ -80,7 +80,6 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
 | [puppet-puppetserver](https://github.com/voxpupuli/puppet-puppetserver) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
-| [puppet-staging](https://github.com/voxpupuli/puppet-staging) |
 | [puppet-sudo](https://github.com/saz/puppet-sudo) |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) |
 | [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) |

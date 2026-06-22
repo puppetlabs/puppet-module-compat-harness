@@ -605,10 +605,6 @@
       "ref": "master"
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-staging",
-      "ref": "master"
-    },
-    {
       "repo": "https://github.com/voxpupuli/puppet-swap_file",
       "ref": "master",
       "prereqs": {
