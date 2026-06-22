@@ -566,7 +566,19 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-selinux",
-      "ref": "master"
+      "ref": "master",
+      "prereqs": {
+        "dnf": ["policycoreutils-python-utils", "selinux-policy-targeted", "checkpolicy", "make"]
+      },
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-squid",
