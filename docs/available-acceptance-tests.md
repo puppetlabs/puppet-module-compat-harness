@@ -5,7 +5,7 @@ Identifies which repos have acceptance tests and the operating systems declared 
 
 Last updated: 2026-06-22
 
-## Modules With Acceptance Tests (46)
+## Modules With Acceptance Tests (51)
 
 | Status | Module | Supported Operating Systems |
 |--------|--------|------------------------------|
