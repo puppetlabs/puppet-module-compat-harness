@@ -52,7 +52,6 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | 8.19.0 | ✅ | N/A |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | 8.19.0 | ✅ | ✅ |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | 8.19.0 | ✅ | ✅ |
-| [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | 8.19.0 | ✅ | N/A |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | 8.19.0 | ✅ | ✅ |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | 8.19.0 | ✅ | N/A |
 | [herculesteam-augeasproviders_core](https://github.com/hercules-team/augeasproviders_core) | 8.19.0 | ✅ | N/A |

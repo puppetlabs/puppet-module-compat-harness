@@ -5,7 +5,7 @@ Identifies which repos have acceptance tests and the operating systems declared 
 
 Last updated: 2026-06-22
 
-## Modules With Acceptance Tests (51)
+## Modules With Acceptance Tests (54)
 
 | Status | Module | Supported Operating Systems |
 |--------|--------|------------------------------|
@@ -59,8 +59,11 @@ Last updated: 2026-06-22
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Amazon 2017, CentOS 9, Fedora 36-40 |
 | ⏳ | [saz-puppet-limits](https://github.com/saz/puppet-limits) | RedHat 8-9, Amazon, CentOS 9, Debian 11-13, Ubuntu 20.04-24.04, Gentoo, SLES |
 | ⏳ | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | RedHat 8-9, CentOS 9, OracleLinux 8-9, Debian 11-12, Ubuntu 20.04-24.04, FreeBSD, Gentoo, Archlinux, AIX, Solaris 10-11 |
+| ⏳ | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | RedHat 8-9, CentOS 9, OracleLinux 8-9, AlmaLinux 8-9, Rocky 8-9, Debian 11-12, Ubuntu 22.04-24.04, Windows 2016, Solaris 11, SLES 12, Fedora 36-38 |
+| ⏳ | [puppet-puppetserver](https://github.com/voxpupuli/puppet-puppetserver) | RedHat 6-7 |
+| ⏳ | [garethr-docker](https://github.com/garethr/garethr-docker) | Ubuntu 12.04-14.04, Debian 7-8, RedHat 7, CentOS 6-7, Fedora 21, Archlinux, Gentoo |
 
-## Modules Without Acceptance Tests (19)
+## Modules Without Acceptance Tests (15)
 
 Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypoint was found.
 
@@ -74,15 +77,12 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) |
 | [puppet-format](https://github.com/voxpupuli/puppet-format) |
-| [garethr-docker](https://github.com/garethr/garethr-docker) |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) |
 | [herculesteam-augeasproviders_core](https://github.com/hercules-team/augeasproviders_core) |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) |
 | [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
-| [puppet-puppetserver](https://github.com/voxpupuli/puppet-puppetserver) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
-| [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) |
 
 ## Modules With Acceptance Tests but Disabled in CI
