@@ -27,6 +27,7 @@ Last updated: 2026-06-22
 | ✅ | [puppet-kibana](https://github.com/voxpupuli/puppet-kibana) | Debian 11-12, CentOS 9, AlmaLinux 8-9, Rocky 8-9, RedHat 8-9, Ubuntu 22.04-24.04 |
 | ✅ | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | CentOS 9-10, Gentoo, OracleLinux 8-10, RedHat 8-10, AlmaLinux 8-10, Rocky 8-10, Ubuntu 22.04-24.04, Debian 11-13, FreeBSD 12-13 |
 | ⏳ | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | Ubuntu 22.04-24.04, Debian 11-13, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Gentoo, SLES 15, openSUSE 15 |
+| ⏳ | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | RedHat 8-9, CentOS 9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Ubuntu 22.04, Debian 11-13, SLES, Solaris 10-11, FreeBSD, Archlinux, Gentoo |
 | ✅ | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | AlmaLinux 8-10, CentOS 9-10, OracleLinux 8-10, RedHat 8-10, Rocky 8-10, Archlinux, Debian 11-13, Ubuntu 22.04-24.04 |
 | ✅ | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | Debian 11-13, OpenBSD, RedHat 8-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10, CentOS 9-10, SLES, Solaris, AIX, FreeBSD, DragonFly, NetBSD, Archlinux, Ubuntu 20.04-24.04 |
 | ⛔ | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | Debian 10-13, Ubuntu 18.04-24.04, SLES 12 and 15, OpenSUSE 15, RedHat 7-9, AlmaLinux 8-9, Rocky 8-9, CentOS 7-9, FreeBSD 12-14 |
@@ -37,6 +38,7 @@ Last updated: 2026-06-22
 | ✅ | [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | Debian 11-12, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Archlinux, Gentoo |
 | ✅ | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | Debian 11-12, Ubuntu 20.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10 |
 | ⏳ | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | Debian 10-12, Ubuntu 22.04-24.04, RedHat 9-10, AlmaLinux 9-10, Rocky 9-10 |
+| ⏳ | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | Debian 11-13, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10 |
 | ✅ | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | EL/RedHat 9, AlmaLinux 9, Rocky 9, Debian 12-13, Ubuntu 24.04, FreeBSD, OpenBSD |
 | ✅ | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | RedHat 8-9, CentOS 9, Debian 11-12, FreeBSD 13-14, OpenSuSE 15.2, OracleLinux 8-9, SLES 11-12, Solaris 10-11, Ubuntu 20.04-22.04, AlmaLinux 8-9, Rocky 8-9 |
 | ✅ | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | RedHat 8-9, CentOS 9, Rocky 8-9, AlmaLinux 8-9, SLES 12-15, OpenSuSE 15, Debian 11-12, Ubuntu 20.04-22.04 |
@@ -51,11 +53,14 @@ Last updated: 2026-06-22
 | ⏳ | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, CentOS 9-10, OracleLinux 8-10, Debian 11-12, Ubuntu 20.04-22.04 |
 | ⏳ | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | Debian 11-13, Ubuntu 20.04-24.04, SLES 12 and 15, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Archlinux, Gentoo, Fedora 40 |
 | ✅ | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | RedHat 8-9, Rocky 8-9, AlmaLinux 8-9, Raspbian 10, Debian 10-13, CentOS 8-9, OracleLinux 8-9, Ubuntu 18.04-24.04, Windows Server 2012 and 2012 R2, SLES 12, Darwin 18, FreeBSD 12-13 |
+| ⏳ | [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) | Windows 2016, 2019, 2022 |
 | ⏳ | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | Windows 2008, 2008 R2, 2012, 2012 R2, 2016, 2019, 2022 |
 | ⏳ | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | Windows 2008R2, 2012, 2012R2, 2016, 2019, 2022 |
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Amazon 2017, CentOS 9, Fedora 36-40 |
+| ⏳ | [saz-puppet-limits](https://github.com/saz/puppet-limits) | RedHat 8-9, Amazon, CentOS 9, Debian 11-13, Ubuntu 20.04-24.04, Gentoo, SLES |
+| ⏳ | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | RedHat 8-9, CentOS 9, OracleLinux 8-9, Debian 11-12, Ubuntu 20.04-24.04, FreeBSD, Gentoo, Archlinux, AIX, Solaris 10-11 |
 
-## Modules Without Acceptance Tests (24)
+## Modules Without Acceptance Tests (19)
 
 Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypoint was found.
 
@@ -64,7 +69,6 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 | [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) |
 | [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) |
 | [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) |
-| [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) |
 | [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) |
@@ -74,15 +78,11 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) |
 | [herculesteam-augeasproviders_core](https://github.com/hercules-team/augeasproviders_core) |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) |
-| [puppet-limits](https://github.com/saz/puppet-limits) |
-| [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) |
 | [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
 | [puppet-puppetserver](https://github.com/voxpupuli/puppet-puppetserver) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
-| [puppet-sudo](https://github.com/saz/puppet-sudo) |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) |
-| [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) |
 
 ## Modules With Acceptance Tests but Disabled in CI
