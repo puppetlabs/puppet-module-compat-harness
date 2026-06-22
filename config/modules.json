@@ -515,18 +515,6 @@
       "ref": "master"
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-puppetserver",
-      "ref": "master",
-      "prereqs": {
-        "apt": [
-          "libaugeas-dev",
-          "augeas-tools",
-          "pkg-config",
-          "build-essential"
-        ]
-      }
-    },
-    {
       "repo": "https://github.com/voxpupuli/puppet-python",
       "ref": "master",
       "acceptance": {
