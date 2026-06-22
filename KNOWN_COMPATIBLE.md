@@ -17,6 +17,7 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) | 8.19.0 | ✅ | N/A |
 | [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) | 8.19.0 | ✅ | N/A |
 | [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | 8.19.0 | ✅ | N/A |
+| [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | 8.19.0 | ✅ | ✅ |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | 8.19.0 | ✅ | ✅ |
 | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | 8.19.0 | ✅ | ✅ |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | 8.19.0 | ✅ | ✅ |
