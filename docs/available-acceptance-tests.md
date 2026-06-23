@@ -12,7 +12,7 @@ Last updated: 2026-06-23
 | ✅ | [puppet-alternatives](https://github.com/voxpupuli/puppet-alternatives) | Debian 11-12, Ubuntu 20.04-24.04, RedHat 8-9, CentOS 9, OracleLinux 8, SLES 12 SP4-15, AlmaLinux 8-9, Rocky 8-9 |
 | ✅ | [puppet-archive](https://github.com/voxpupuli/puppet-archive) | AlmaLinux 8-9, Rocky 8-9, RedHat 8-9, OracleLinux 8-9, Ubuntu 22.04-24.04, Debian 11-13, Solaris 10-11, Windows 2016, Archlinux, Darwin 19 |
 | ✅ | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | RedHat 8-9, CentOS 9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-10, Amazon 2.0 and 2023, Debian 11-13, Ubuntu 22.04-24.04, SLES 15, Archlinux, Gentoo |
-| ⏳ | [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, CentOS 9, Ubuntu 20.04-22.04, Debian 11-12 |
+| ✅ | [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, CentOS 9, Ubuntu 20.04-22.04, Debian 11-12 |
 | ✅ | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | RedHat 8-9, CentOS 8-9, AlmaLinux 8-9, Rocky 8-9, Debian 10-12, Gentoo, SLES 12 and 15, FreeBSD 12-14 |
 | ⏳ | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) | RedHat 7, CentOS 7, Debian 11-12, Ubuntu 20.04-24.04, SLES 12 and 15 |
 | ⛔ | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | Debian 11-13, OpenSuSE 15, RedHat 8-10, Rocky 8-10, AlmaLinux 8-10, CentOS 9-10, SLES 15, Ubuntu 22.04-24.04 |
