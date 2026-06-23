@@ -688,19 +688,6 @@
       "ref": "master"
     },
     {
-      "repo": "https://github.com/hercules-team/augeasproviders_core",
-      "ref": "master",
-      "id": "herculesteam-augeasproviders-core",
-      "prereqs": {
-        "apt": [
-          "libaugeas-dev",
-          "augeas-tools",
-          "pkg-config",
-          "build-essential"
-        ]
-      }
-    },
-    {
       "repo": "https://github.com/saz/puppet-limits",
       "ref": "master",
       "id": "saz-puppet-limits",

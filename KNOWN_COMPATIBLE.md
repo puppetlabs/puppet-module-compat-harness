@@ -56,6 +56,5 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | 8.19.0 | ✅ | ✅ |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | 8.19.0 | ✅ | ✅ |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | 8.19.0 | ✅ | N/A |
-| [herculesteam-augeasproviders_core](https://github.com/hercules-team/augeasproviders_core) | 8.19.0 | ✅ | N/A |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | 8.19.0 | ✅ | ✅ |
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.19.0 | ✅ | ✅ |
