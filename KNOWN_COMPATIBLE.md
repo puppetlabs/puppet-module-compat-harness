@@ -23,6 +23,7 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | 8.19.0 | ✅ | ✅ |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | 8.19.0 | ✅ | ✅ |
 | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | 8.19.0 | ✅ | ✅ |
+| [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | 8.19.0 | ✅ | ✅ |
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | 8.19.0 | ✅ | ✅ |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | 8.19.0 | ✅ | N/A |
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | 8.19.0 | ✅ | ✅ |
