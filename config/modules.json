@@ -703,12 +703,30 @@
     {
       "repo": "https://github.com/saz/puppet-limits",
       "ref": "master",
-      "id": "saz-puppet-limits"
+      "id": "saz-puppet-limits",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/saz/puppet-sudo",
       "ref": "master",
-      "id": "saz-puppet-sudo"
+      "id": "saz-puppet-sudo",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
+        ]
+      }
     }
   ]
 }

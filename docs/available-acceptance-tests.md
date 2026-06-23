@@ -57,8 +57,8 @@ Last updated: 2026-06-22
 | ⏳ | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | Windows 2008, 2008 R2, 2012, 2012 R2, 2016, 2019, 2022 |
 | ⏳ | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | Windows 2008R2, 2012, 2012R2, 2016, 2019, 2022 |
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Amazon 2017, CentOS 9, Fedora 36-40 |
-| ⏳ | [saz-puppet-limits](https://github.com/saz/puppet-limits) | RedHat 8-9, Amazon, CentOS 9, Debian 11-13, Ubuntu 20.04-24.04, Gentoo, SLES |
-| ⏳ | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | RedHat 8-9, CentOS 9, OracleLinux 8-9, Debian 11-12, Ubuntu 20.04-24.04, FreeBSD, Gentoo, Archlinux, AIX, Solaris 10-11 |
+| ✅ | [saz-puppet-limits](https://github.com/saz/puppet-limits) | RedHat 8-9, Amazon, CentOS 9, Debian 11-13, Ubuntu 20.04-24.04, Gentoo, SLES |
+| ✅ | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | RedHat 8-9, CentOS 9, OracleLinux 8-9, Debian 11-12, Ubuntu 20.04-24.04, FreeBSD, Gentoo, Archlinux, AIX, Solaris 10-11 |
 | ⏳ | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | RedHat 8-9, CentOS 9, OracleLinux 8-9, AlmaLinux 8-9, Rocky 8-9, Debian 11-12, Ubuntu 22.04-24.04, Windows 2016, Solaris 11, SLES 12, Fedora 36-38 |
 | ⏳ | [puppet-puppetserver](https://github.com/voxpupuli/puppet-puppetserver) | RedHat 6-7 |
 | ⏳ | [garethr-docker](https://github.com/garethr/garethr-docker) | Ubuntu 12.04-14.04, Debian 7-8, RedHat 7, CentOS 6-7, Fedora 21, Archlinux, Gentoo |
