@@ -40,6 +40,23 @@
           "pkg-config",
           "build-essential"
         ]
+      },
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          },
+          {
+            "name": "debian12",
+            "setfile": "debian12"
+          },
+          {
+            "name": "ubuntu24",
+            "setfile": "ubuntu24"
+          }
+        ]
       }
     },
     {
@@ -461,7 +478,24 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-openssl",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          },
+          {
+            "name": "debian12",
+            "setfile": "debian12"
+          },
+          {
+            "name": "ubuntu24",
+            "setfile": "ubuntu24"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-openvox_bootstrap",
