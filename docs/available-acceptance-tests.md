@@ -30,7 +30,7 @@ Last updated: 2026-06-23
 | ✅ | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | RedHat 8-9, CentOS 9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Ubuntu 22.04, Debian 11-13, SLES, Solaris 10-11, FreeBSD, Archlinux, Gentoo |
 | ✅ | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | AlmaLinux 8-10, CentOS 9-10, OracleLinux 8-10, RedHat 8-10, Rocky 8-10, Archlinux, Debian 11-13, Ubuntu 22.04-24.04 |
 | ✅ | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | Debian 11-13, OpenBSD, RedHat 8-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10, CentOS 9-10, SLES, Solaris, AIX, FreeBSD, DragonFly, NetBSD, Archlinux, Ubuntu 20.04-24.04 |
-| ⏳ | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | RedHat 8-9, OracleLinux 8-9, AlmaLinux 8-9, Rocky 8-9, CentOS 9, Debian 11-12, Ubuntu 20.04-24.04, Archlinux, Solaris 11.4, OpenBSD |
+| ✅ | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | RedHat 8-9, OracleLinux 8-9, AlmaLinux 8-9, Rocky 8-9, CentOS 9, Debian 11-12, Ubuntu 20.04-24.04, Archlinux, Solaris 11.4, OpenBSD |
 | ⛔ | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | Debian 10-13, Ubuntu 18.04-24.04, SLES 12 and 15, OpenSUSE 15, RedHat 7-9, AlmaLinux 8-9, Rocky 8-9, CentOS 7-9, FreeBSD 12-14 |
 | ✅ | [puppet-php](https://github.com/voxpupuli/puppet-php) | AlmaLinux 8-10, Ubuntu 22.04-24.04, Debian 11-13, RedHat 8-10, CentOS 9-10, OracleLinux 8-10, Rocky 8-10, FreeBSD 13, SLES 15, OpenSUSE |
 | ✅ | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | Debian 11-13, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, OracleLinux 8-10, Rocky 8-10, Alpine, FreeBSD 13-14 |
@@ -38,7 +38,7 @@ Last updated: 2026-06-23
 | ✅ | [puppet-python](https://github.com/voxpupuli/puppet-python) | AIX 6100 and 7100, AlmaLinux 8-9, CentOS 9, Debian 11-13, FreeBSD 13-14, Gentoo, Ubuntu 22.04-24.04, OracleLinux 8-9, RedHat 8-9, Rocky 8-9, SLES 11.3, Archlinux |
 | ✅ | [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | Debian 11-12, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Archlinux, Gentoo |
 | ✅ | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | Debian 11-12, Ubuntu 20.04-24.04, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10 |
-| ⏳ | [puppet-augeas](https://github.com/voxpupuli/puppet-augeas) | Debian 11-13, Ubuntu 20.04-24.04, RedHat 9, FreeBSD 13-14, Archlinux |
+| ✅ | [puppet-augeas](https://github.com/voxpupuli/puppet-augeas) | Debian 11-13, Ubuntu 20.04-24.04, RedHat 9, FreeBSD 13-14, Archlinux |
 | ⏳ | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | Debian 10-12, Ubuntu 22.04-24.04, RedHat 9-10, AlmaLinux 9-10, Rocky 9-10 |
 | ✅ | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | Debian 11-13, Ubuntu 22.04-24.04, RedHat 8-10, CentOS 9-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10 |
 | ✅ | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | EL/RedHat 9, AlmaLinux 9, Rocky 9, Debian 12-13, Ubuntu 24.04, FreeBSD, OpenBSD |
