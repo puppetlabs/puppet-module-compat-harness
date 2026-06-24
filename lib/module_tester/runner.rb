@@ -103,6 +103,13 @@ module ModuleTester
         @bootstrap.run(module_dir, env, result, profile)
         return finish(result) if Result.stages_failed_since?(result, pre)
 
+        # Credentials are only needed for `bundle install` (bootstrap). Strip them
+        # now so that untrusted module test code (Rakefile, spec_helper, PDK hooks)
+        # cannot read gem-source credentials from the subprocess environment.
+        # Acceptance tests re-read PUPPET_CORE_API_KEY from ENV directly for the
+        # Docker build stage, so stripping here does not affect that path.
+        Docker.strip_secrets_from_env!(env)
+
         # 5. Enforce runtime guardrails (gem source, puppet version, etc.)
         pre = result[:stages].length
         @guardrails.enforce(module_dir, env, result, profile)
