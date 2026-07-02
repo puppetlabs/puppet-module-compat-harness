@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-06-26
+Last updated: 2026-07-02
 
 ## Modules With Acceptance Tests (56)
 
@@ -26,7 +26,7 @@ Last updated: 2026-06-26
 | ✅ | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | Debian 11-13, Ubuntu 20.04-24.04, RedHat 7-10, CentOS 7-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10 |
 | ✅ | [puppet-kibana](https://github.com/voxpupuli/puppet-kibana) | Debian 11-12, CentOS 9, AlmaLinux 8-9, Rocky 8-9, RedHat 8-9, Ubuntu 22.04-24.04 |
 | ✅ | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | CentOS 9-10, Gentoo, OracleLinux 8-10, RedHat 8-10, AlmaLinux 8-10, Rocky 8-10, Ubuntu 22.04-24.04, Debian 11-13, FreeBSD 12-13 |
-| ⏳ | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | Ubuntu 22.04-24.04, Debian 11-13, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Gentoo, SLES 15, openSUSE 15 |
+| ✅ | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | Ubuntu 22.04-24.04, Debian 11-13, RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Gentoo, SLES 15, openSUSE 15 |
 | ✅ | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | RedHat 8-9, CentOS 9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-9, Ubuntu 22.04, Debian 11-13, SLES, Solaris 10-11, FreeBSD, Archlinux, Gentoo |
 | ✅ | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | AlmaLinux 8-10, CentOS 9-10, OracleLinux 8-10, RedHat 8-10, Rocky 8-10, Archlinux, Debian 11-13, Ubuntu 22.04-24.04 |
 | ✅ | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | Debian 11-13, OpenBSD, RedHat 8-10, Rocky 8-10, AlmaLinux 8-10, OracleLinux 8-10, CentOS 9-10, SLES, Solaris, AIX, FreeBSD, DragonFly, NetBSD, Archlinux, Ubuntu 20.04-24.04 |
