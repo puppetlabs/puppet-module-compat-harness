@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-07-02
+Last updated: 2026-07-03
 
 ## Modules With Acceptance Tests (56)
 
@@ -14,7 +14,7 @@ Last updated: 2026-07-02
 | ✅ | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | RedHat 8-9, CentOS 9, AlmaLinux 8-9, Rocky 8-9, OracleLinux 8-10, Amazon 2.0 and 2023, Debian 11-13, Ubuntu 22.04-24.04, SLES 15, Archlinux, Gentoo |
 | ✅ | [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | RedHat 8-9, AlmaLinux 8-9, Rocky 8-9, CentOS 9, Ubuntu 20.04-22.04, Debian 11-12 |
 | ✅ | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | RedHat 8-9, CentOS 8-9, AlmaLinux 8-9, Rocky 8-9, Debian 10-12, Gentoo, SLES 12 and 15, FreeBSD 12-14 |
-| ⏳ | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) | RedHat 7, CentOS 7, Debian 11-12, Ubuntu 20.04-24.04, SLES 12 and 15 |
+| ✅ | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) | RedHat 7, CentOS 7, Debian 11-12, Ubuntu 20.04-24.04, SLES 12 and 15 |
 | ⛔ | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | Debian 11-13, OpenSuSE 15, RedHat 8-10, Rocky 8-10, AlmaLinux 8-10, CentOS 9-10, SLES 15, Ubuntu 22.04-24.04 |
 | ⛔ | [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | RedHat 8-10, CentOS 9-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10, Debian 11-12, Ubuntu 22.04-24.04, SLES 15 |
 | ✅ | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | RedHat 8-10, AlmaLinux 8-10, Rocky 8-10, OracleLinux 8-10 |
