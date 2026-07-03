@@ -198,7 +198,17 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-corosync",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "targets": [
+          {
+            "name": "debian12-systemd",
+            "setfile": "debian12-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-cron",
