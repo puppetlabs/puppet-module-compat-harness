@@ -41,9 +41,9 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | 8.20.0 | ✅ | N/A |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | 8.20.0 | ✅ | ✅ |
 | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | 8.20.0 | ✅ | ✅ |
-| [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | 8.19.0 | ✅ | ✅ |
+| [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | 8.20.0 | ✅ | ✅ |
 | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | 8.20.0 | ✅ | ✅ |
-| [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | 8.19.0 | ✅ | ✅ |
+| [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | 8.20.0 | ✅ | ✅ |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | 8.20.0 | ✅ | ✅ |
 | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | 8.20.0 | ✅ | ✅ |
 | [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) | 8.20.0 | ✅ | N/A |
