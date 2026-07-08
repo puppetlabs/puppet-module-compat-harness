@@ -176,6 +176,9 @@ module ModuleTester
       lines = []
       lines << "eval_gemfile 'Gemfile'"
       lines << ""
+      # The single modern native json for every module. normalize_runtime_gem_versions
+      # has already stripped any module-level json pin (see there for why), so
+      # this is the sole json declaration.
       lines << "gem 'json', '>= 2.5.0', require: false"
       lines << ""
       lines << "source '#{source_url}' do"
@@ -226,6 +229,23 @@ module ModuleTester
         end
       end
 
+      # Also strip the module's own json pin (old or new, literal or dynamic).
+      # The overlay declares a single modern `json >= 2.5.0` (see
+      # write_split_gemfile); stripping here prevents a "json specified twice"
+      # bootstrap failure and lets that pin override modules shipping an ancient,
+      # Puppet-Core-incompatible json.
+      json_content, json_changed = strip_gem_version_constraint(updated, 'json')
+      if json_changed
+        updated = json_content
+        changes << 'json=removed module pin (overlay forces >= 2.5.0 native json)'
+      else
+        json_content, json_changed = strip_dynamic_gem_assignment(updated, 'json')
+        if json_changed
+          updated = json_content
+          changes << 'json=removed dynamic gems[] assignment (overlay forces >= 2.5.0 native json)'
+        end
+      end
+
       return if updated == original
 
       backup_path = File.join(module_dir, 'Gemfile.before-runtime-normalize')
@@ -249,17 +269,6 @@ module ModuleTester
         duration_seconds: 0,
         output: "Failed to normalize runtime gem requirements: #{e.message}"
       )
-    end
-
-    def gem_declared_in_gemfile?(module_dir, gem_name)
-      gemfile_path = File.join(module_dir, 'Gemfile')
-      return false unless File.exist?(gemfile_path)
-
-      gem_declared_in_content?(File.read(gemfile_path), gem_name)
-    end
-
-    def gem_declared_in_content?(content, gem_name)
-      content.match?(/^\s*gem\s+['\"]#{Regexp.escape(gem_name)}['\"]/)
     end
 
     # Strip any version constraint(s) from a `gem 'name', '...'` declaration by
