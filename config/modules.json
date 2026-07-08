@@ -774,6 +774,11 @@
           }
         ]
       }
+    },
+    {
+      "repo": "https://github.com/TraGicCode/tragiccode-azure_key_vault",
+      "ref": "master",
+      "id": "tragiccode-azure_key_vault"
     }
   ]
 }
