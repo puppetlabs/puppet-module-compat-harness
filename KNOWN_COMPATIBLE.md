@@ -63,3 +63,4 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | 8.20.0 | ✅ | N/A |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | 8.20.0 | ✅ | ✅ |
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.20.0 | ✅ | ✅ |
+| [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A |
