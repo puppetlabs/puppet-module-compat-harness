@@ -202,13 +202,27 @@ module ModuleTester
       # added by the split-source overlay (Gemfile.puppetcore). We do NOT add
       # puppet/facter to the main Gemfile here — those gems come from the
       # private puppetcore source via the overlay, not from rubygems.org.
+      #
+      # Two declaration shapes are handled:
+      #   1. Literal:  gem 'puppet', '>= 6.0'          (voxpupuli / classic)
+      #   2. Dynamic:  gems['puppet'] = location_for(...)  then a
+      #                `gems.each { |n, p| gem n, *p }` loop (current
+      #                pdk-templates default). Leaving this in place makes
+      #                bundler see `puppet` from BOTH rubygems.org (main
+      #                Gemfile) and the puppetcore source (overlay), which is a
+      #                hard "same gem from two sources" conflict.
       %w[puppet facter].each do |gem_name|
-        next unless gem_declared_in_content?(updated, gem_name)
-
         new_content, changed = strip_gem_version_constraint(updated, gem_name)
         if changed
           updated = new_content
           changes << "#{gem_name}=unconstrained (overlay pins exact version)"
+          next
+        end
+
+        new_content, changed = strip_dynamic_gem_assignment(updated, gem_name)
+        if changed
+          updated = new_content
+          changes << "#{gem_name}=removed dynamic gems[] assignment (overlay pins exact version)"
         end
       end
 
@@ -263,6 +277,35 @@ module ModuleTester
     def strip_gem_version_constraint(content, gem_name)
       changed = false
       pattern = /^(\s*)gem\s+['\"]#{Regexp.escape(gem_name)}['\"].*$/
+
+      updated = content.gsub(pattern) do
+        indent = Regexp.last_match(1)
+        original_line = Regexp.last_match(0)
+        if original_line !~ /^\s*#/  # only comment if not already commented
+          changed = true
+          "#{indent}# Pinned by compatibility harness in Gemfile.puppetcore\n#{indent}# #{original_line.lstrip}"
+        else
+          original_line
+        end
+      end
+
+      [updated, changed]
+    end
+
+    # Neutralize the pdk-templates "dynamic" gem declaration form by commenting
+    # out the hash assignment. The template collects puppet/facter/hiera into a
+    # `gems` hash and later emits them via `gems.each { |n, p| gem n, *p }`.
+    # Commenting the assignment removes the key from the hash, so the loop never
+    # declares that gem — leaving the split-source overlay (Gemfile.puppetcore)
+    # as the sole authority for it via the puppetcore source.
+    #
+    # Handles forms:
+    #   gems['puppet'] = location_for(puppet_version)
+    #   gems['facter'] = location_for(facter_version) if facter_version
+    #   gems["facter"] = location_for(ENV['FACTER_GEM_VERSION']) if ENV['FACTER_GEM_VERSION']
+    def strip_dynamic_gem_assignment(content, gem_name)
+      changed = false
+      pattern = /^(\s*)gems\[\s*['\"]#{Regexp.escape(gem_name)}['\"]\s*\]\s*=.*$/
 
       updated = content.gsub(pattern) do
         indent = Regexp.last_match(1)
