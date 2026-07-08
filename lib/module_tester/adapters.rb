@@ -20,7 +20,16 @@ module ModuleTester
     private
 
     def run_unit(module_dir, env, profile, result)
-      prefer_rake = result[:capability].is_a?(Hash) && result[:capability]['uses_vox_vars']
+      # Prefer the rake/bundle path (over PDK) whenever the swap must govern the
+      # actual test runtime:
+      #   * uses_vox_vars — OpenVox modules whose Gemfile keys off OPENVOX_GEM_VERSION.
+      #   * private source — the Gemfile.puppetcore overlay pins puppet/facter to
+      #     the private Puppet Core source. PDK ignores that overlay and re-resolves
+      #     against its own vendored FOSS puppet for `--puppet-version`, which would
+      #     silently bypass the swap while the version probe still reported success.
+      capability = result[:capability]
+      prefer_rake = (capability.is_a?(Hash) && capability['uses_vox_vars']) ||
+                    profile.fetch('gem_source_mode', '') == 'private'
 
       if @stage.command_available?('pdk') && !prefer_rake
         validate_stage = @stage.run_stage('validate', ['pdk', 'validate', '--puppet-version', profile.fetch('puppet_major').to_s], module_dir, env)
