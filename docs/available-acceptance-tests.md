@@ -3,7 +3,7 @@
 Audit of all module repositories defined in `config/modules.json`.
 Identifies which repos have acceptance tests and the operating systems declared in their `metadata.json`.
 
-Last updated: 2026-07-03
+Last updated: 2026-07-08
 
 ## Modules With Acceptance Tests (56)
 
@@ -85,6 +85,7 @@ Repos where no `spec/spec_helper_acceptance.rb` or equivalent acceptance entrypo
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) |
+| [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
 ## Modules With Acceptance Tests but Disabled in CI
 
