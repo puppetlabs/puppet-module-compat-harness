@@ -79,8 +79,13 @@ module ModuleTester
         unless ok
           result[:stages] << StageResult.new(name: 'clone', status: 'failed',
             command: "git clone --depth 1 --branch #{ref} #{repo}", exit_code: 1, output: clone_output)
-          result[:compatibility_state] = 'inconclusive'
-          return result
+          # A failed clone is a harness/config problem (unreachable repo, wrong
+          # ref, auth), not an "inconclusive" module outcome. Route through the
+          # classifier so it resolves to harness_error (clone is listed as a
+          # harness-error stage), which makes the runner exit non-zero, turns
+          # the CI job red, and triggers the failure-diagnostics step instead of
+          # passing green.
+          return finish(result)
         end
 
         # 2. Discover capabilities and evaluate metadata compatibility
