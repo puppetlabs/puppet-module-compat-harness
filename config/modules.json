@@ -668,7 +668,7 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-sssd",
-      "ref": "master"
+      "ref": "main"
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-swap_file",
@@ -720,7 +720,7 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-windows_env",
-      "ref": "master"
+      "ref": "main"
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-windows_firewall",
