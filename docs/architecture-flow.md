@@ -19,9 +19,11 @@ flowchart TD
 
     subgraph CI["GitHub Actions CI"]
         MJ[("modules.json<br/>defines all modules to test")]
+        LG[("status/ledger.json<br/>last-known status per module")]
         T(["Trigger<br/>Schedule · Workflow Dispatch"])
         V["Validate modules.json<br/>against schema"]
-        BM["Build job matrix<br/>unit entries + acceptance entries"]
+        DC["Detect changes (lean matrix)<br/>detect_changes.py<br/>run_all? · include/skip per module"]
+        BM["Build job matrix<br/>filtered by RUN_ALL + INCLUDE_IDS"]
     end
 
     subgraph Runner["Per-Module Runner  ·  one parallel job per matrix entry"]
@@ -76,7 +78,9 @@ flowchart TD
 
     T --> V
     MJ --> V
-    V --> BM
+    V --> DC
+    LG --> DC
+    DC --> BM
     BM -- "fan-out (parallel jobs)" --> C
     C --> D --> A --> B --> GC
     GC -- "no conflict" --> G
@@ -100,7 +104,7 @@ flowchart TD
     UA -- "fan-in (all jobs complete)" --> DA
     DA --> SM --> GS --> UL --> RD --> CM
 
-    class MJ datasource
+    class MJ,LG datasource
     class BR gemswap
     class S1,S2S,S2D isolation
     style TwoStage fill:#fdf2f8,stroke:#be185d,stroke-width:2px
@@ -114,10 +118,11 @@ flowchart TD
 
 | Step | What happens |
 |------|--------------|
-| Trigger | Fires on a nightly schedule or manual `workflow_dispatch` (with optional profile and module override). |
+| Trigger | Fires on a nightly schedule or manual `workflow_dispatch` (with optional profile, `lean` toggle, and module override). |
 | JavaScript action runtime | Workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` so JavaScript-based actions run on Node 24 ahead of runner defaults. |
 | Validate schema | `validate_modules_config.py` checks `config/modules.json` against the JSON schema before anything fans out. |
-| Build matrix | `build_matrix.rb` expands the module list into two separate matrices: one for unit jobs and one for acceptance jobs (one row per module × target OS). Each acceptance entry carries `docker_mode`, `install_puppetserver`, `setup_commands`, and `pre_acceptance_commands` from `modules.json`. |
+| Detect changes (lean matrix) | `detect_changes.py` decides which modules need testing this run. It sets `run_all` if a **material harness path** (`lib/`, `bin/`, `profiles/`, `scripts/`, `.github/`, `Gemfile*`) changed within the window, or on a manual dispatch with `lean=false`. Otherwise it includes a module only if its ledger status is **not green** (never-tested / unit-failing / acceptance-failing), it is **stale** (`> STALE_DAYS`, default 30), or it had an **upstream commit** on its ref within the window (GitHub commits API). Any indeterminate signal (git failure, API error, non-GitHub host) **fails safe by including** the module. Writes `.tmp/change-decisions.json` (uploaded as the `change-decisions` artifact) and exposes `run_all` + `include_ids` as step outputs. Skipped when a `modules_json` override is supplied — the override runs verbatim. |
+| Build matrix | `build_matrix.rb` expands the module list into two matrices (unit + acceptance, one row per module × target OS), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance entry carries `docker_mode`, `install_puppetserver`, `setup_commands`, and `pre_acceptance_commands` from `modules.json`. If the filter yields an empty matrix, the corresponding test job produces zero combinations and is skipped — a valid, successful "nothing to test" run. |
 
 ### Per-Job Finalisation (end of every parallel job)
 
@@ -135,6 +140,7 @@ The `publish` job runs after **all** unit and acceptance jobs finish (with `if: 
 
 1. Downloads every `compatibility-*` artifact into `all-artifacts/` via `actions/download-artifact@v8`.
 2. Runs `summarize_module_statuses.py`, which walks the artifact tree collecting every `module-status.json`, sorts results by lane and module id, and writes a consolidated `GITHUB_STEP_SUMMARY` with:
+   - A **Run mode** banner (full vs lean) and, when lean, a collapsible **Skipped** table listing each untested module and why (read from the `change-decisions` skip manifest). This makes a "nothing changed → nothing tested" run explicit in both the summary and the job log.
    - A **Unit Compatibility** table (gating results).
    - An **Acceptance Compatibility** table (if any acceptance jobs ran).
    - Counters for clean / warning / failure across both lanes.

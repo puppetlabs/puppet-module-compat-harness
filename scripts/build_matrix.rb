@@ -12,6 +12,7 @@
 #   has_acceptance    — "true" or "false"
 
 require 'json'
+require 'set'
 
 raw = (ARGV[0] || '').strip
 modules = if raw.empty?
@@ -20,6 +21,17 @@ modules = if raw.empty?
             JSON.parse(raw)
           end
 
+# Lean-matrix filtering (Phase 2). RUN_ALL defaults to true so an unset
+# environment (local dev, or the modules_json override path) includes every
+# module — matching pre-Phase-2 behaviour. When RUN_ALL=false, only modules
+# whose id is in INCLUDE_IDS (a JSON array) are emitted.
+run_all = ENV.fetch('RUN_ALL', 'true').strip != 'false'
+include_ids = nil
+unless run_all
+  raw_ids = ENV['INCLUDE_IDS'].to_s.strip
+  include_ids = (raw_ids.empty? ? [] : JSON.parse(raw_ids)).to_set
+end
+
 unit = []
 acceptance = []
 
@@ -27,6 +39,9 @@ modules.each do |m|
   repo = m.fetch('repo')
   ref = m.fetch('ref', 'main')
   id = m['id'] || repo.sub(%r{/$}, '').split('/').last.sub(/\.git$/, '').gsub(/[^a-zA-Z0-9_.-]+/, '-')
+
+  next unless run_all || include_ids.include?(id)
+
   os = m.fetch('os', 'ubuntu-latest')
   prereqs = m.fetch('prereqs', {})
 

@@ -21,6 +21,14 @@ on:
         options:
           - 'false'
           - 'true'
+      lean:
+        description: "Lean run: test only changed/not-green/stale modules (false = full run of all modules)"
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
       modules_json:
         description: "Optional JSON array override: [{\"repo\":\"...\",\"ref\":\"main\",\"os\":\"windows-latest\"}]"
         required: false
@@ -47,6 +55,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -60,13 +70,35 @@ jobs:
           python -m pip install --disable-pip-version-check jsonschema
           python scripts/validate_modules_config.py --config config/modules.json --schema config/modules.schema.json
 
+      - name: Detect changes (lean matrix)
+        id: detect
+        if: github.event.inputs.modules_json == ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp
+          python scripts/detect_changes.py
+        env:
+          MODULES_FILE: config/modules.json
+          LEDGER_FILE: status/ledger.json
+          OUTPUT_FILE: .tmp/change-decisions.json
+          WINDOW_HOURS: ${{ vars.PUPPET_CHANGE_WINDOW_HOURS || '48' }}
+          STALE_DAYS: ${{ vars.PUPPET_STALE_DAYS || '30' }}
+          EVENT_NAME: ${{ github.event_name }}
+          LEAN: ${{ github.event.inputs.lean || 'true' }}
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Build module matrix
         id: matrix
         shell: bash
         run: |
           set -euo pipefail
           OVERRIDE='${{ github.event.inputs.modules_json }}'
-          ruby scripts/build_matrix.rb "$OVERRIDE" > .tmp-matrix.json
+          RUN_ALL='${{ steps.detect.outputs.run_all }}'
+          INCLUDE_IDS='${{ steps.detect.outputs.include_ids }}'
+          # No detection ran (modules_json override) -> include everything.
+          if [ -z "$RUN_ALL" ]; then RUN_ALL='true'; fi
+          RUN_ALL="$RUN_ALL" INCLUDE_IDS="$INCLUDE_IDS" ruby scripts/build_matrix.rb "$OVERRIDE" > .tmp-matrix.json
 
           UNIT_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['unit_matrix']))")
           ACCEPTANCE_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['acceptance_matrix']))")
@@ -74,6 +106,14 @@ jobs:
           echo "unit_matrix=$UNIT_MATRIX" >> "$GITHUB_OUTPUT"
           echo "acceptance_matrix=$ACCEPTANCE_MATRIX" >> "$GITHUB_OUTPUT"
           echo "has_acceptance=$HAS_ACCEPTANCE" >> "$GITHUB_OUTPUT"
+
+      - name: Upload change decisions
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: change-decisions
+          path: .tmp/change-decisions.json
+          if-no-files-found: ignore
 
   test_unit:
     name: test / ${{ matrix.module.id }} / unit
@@ -260,6 +300,13 @@ jobs:
           pattern: compatibility-*
           merge-multiple: false
 
+      - name: Download change decisions
+        continue-on-error: true
+        uses: actions/download-artifact@v8
+        with:
+          name: change-decisions
+          path: .tmp-decisions
+
       - name: Summarize results
         shell: bash
         run: |
@@ -267,6 +314,7 @@ jobs:
           python scripts/summarize_module_statuses.py
         env:
           STATUS_ROOT: all-artifacts
+          SKIP_MANIFEST: .tmp-decisions/change-decisions.json
 
       - name: Update status ledger
         shell: bash

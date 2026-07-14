@@ -11,9 +11,21 @@ def emit(level: str, title: str, message: str) -> None:
     print(f"::{level} title={escape_annotation(title)}::{escape_annotation(message)}")
 
 
+def load_skip_manifest():
+    path = os.environ.get('SKIP_MANIFEST', '')
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        with open(path, 'r', encoding='utf-8') as handle:
+            return json.load(handle)
+    except (OSError, ValueError):
+        return None
+
+
 def main() -> int:
     root = os.environ.get('STATUS_ROOT', 'all-artifacts')
     summary_path = os.environ['GITHUB_STEP_SUMMARY']
+    manifest = load_skip_manifest()
 
     rows = []
     unit_counts = {'clean': 0, 'warning': 0, 'failure': 0}
@@ -48,6 +60,27 @@ def main() -> int:
 
     with open(summary_path, 'a', encoding='utf-8') as summary:
         summary.write('# Compatibility Run Summary\n\n')
+
+        if manifest is not None:
+            skipped = manifest.get('skipped', [])
+            included = manifest.get('included', [])
+            if manifest.get('run_all'):
+                summary.write(f"**Run mode:** full — {manifest.get('run_all_reason', 'run_all')}\n\n")
+            else:
+                summary.write(
+                    f"**Run mode:** lean — {len(included)} module(s) tested, "
+                    f"{len(skipped)} skipped (no changes). {manifest.get('run_all_reason', '')}\n\n"
+                )
+            if skipped:
+                summary.write('<details><summary>')
+                summary.write(f'Skipped {len(skipped)} module(s) — no changes detected')
+                summary.write('</summary>\n\n')
+                summary.write('| Module | Reason skipped |\n')
+                summary.write('|---|---|\n')
+                for row in sorted(skipped, key=lambda item: item['id']):
+                    summary.write(f"| {row['id']} | {row.get('reason', '')} |\n")
+                summary.write('\n</details>\n\n')
+
         summary.write('## Unit Compatibility (gating)\n\n')
         summary.write('| Module | Class | State | Metadata | Dependency | Documentation |\n')
         summary.write('|---|---|---|---|---|---|\n')
@@ -97,6 +130,22 @@ def main() -> int:
             summary.write('\n## Acceptance Failures\n\n')
             for row in acceptance_failure_rows:
                 summary.write(f"- {row['id']} ({row.get('acceptance_target', 'n/a')}): {row['message']}\n")
+
+    if manifest is not None:
+        included = manifest.get('included', [])
+        skipped = manifest.get('skipped', [])
+        if manifest.get('run_all'):
+            print(f"Run mode: FULL - {manifest.get('run_all_reason', 'run_all')}")
+        else:
+            print(f"Run mode: LEAN - tested {len(included)}, skipped {len(skipped)} (no changes)")
+            for row in sorted(skipped, key=lambda item: item['id']):
+                print(f"  skipped {row['id']}: {row.get('reason', '')}")
+        emit(
+            'notice',
+            'Run mode',
+            f"{'full' if manifest.get('run_all') else 'lean'}: "
+            f"tested={len(included)} skipped={len(skipped)}",
+        )
 
     if unit_warning_rows:
         print('Unit warnings detected:')

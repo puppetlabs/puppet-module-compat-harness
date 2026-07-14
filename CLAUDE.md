@@ -49,7 +49,8 @@ config/
   beaker/setfiles/                # One YAML per acceptance target OS (el9, ubuntu24, debian12, …)
 profiles/puppet_profiles.json     # Puppet Core version pins per profile
 scripts/
-  build_matrix.rb                 # Generates CI fan-out matrix
+  build_matrix.rb                 # Generates CI fan-out matrix (filtered by RUN_ALL/INCLUDE_IDS)
+  detect_changes.py               # Lean matrix: decides run_all + include/skip per module
   validate_modules_config.py      # Schema validation
   classify_module_result.py       # Per-job status recording
   summarize_module_statuses.py    # Final aggregated report
