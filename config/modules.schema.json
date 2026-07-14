@@ -15,7 +15,8 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "repo"
+          "repo",
+          "acceptance"
         ],
         "properties": {
           "id": {
@@ -71,11 +72,28 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "enabled"
+              "enabled",
+              "status"
             ],
             "properties": {
               "enabled": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "Whether acceptance tests run in CI for this module. Only enabled modules enter the acceptance matrix (see scripts/build_matrix.rb). Must be true iff status is 'running'."
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "running",
+                  "blocked",
+                  "pending",
+                  "none"
+                ],
+                "description": "Acceptance-test disposition. 'running': tests exist upstream and execute in CI. 'blocked': tests exist upstream but cannot run in this harness due to a hard technical limitation (see reason). 'pending': tests exist upstream but are not yet wired into the harness, e.g. Windows-only targets (see reason). 'none': no acceptance tests exist in the upstream repository — unit coverage alone is full coverage (rendered as N/A)."
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Required when status is 'blocked' or 'pending': why the acceptance tests do not run in this harness. Serves as the source of truth for the generated acceptance-test audit."
               },
               "targets": {
                 "type": "array",
@@ -92,11 +110,62 @@
                     "enabled": {
                       "const": true
                     }
-                  }
+                  },
+                  "required": [
+                    "enabled"
+                  ]
                 },
                 "then": {
                   "required": [
                     "targets"
+                  ],
+                  "properties": {
+                    "status": {
+                      "const": "running"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "enabled": {
+                      "const": false
+                    }
+                  },
+                  "required": [
+                    "enabled"
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "blocked",
+                        "pending",
+                        "none"
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "status": {
+                      "enum": [
+                        "blocked",
+                        "pending"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "reason"
                   ]
                 }
               }

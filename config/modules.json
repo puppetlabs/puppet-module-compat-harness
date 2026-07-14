@@ -5,6 +5,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -18,6 +19,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -39,6 +41,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -57,6 +60,10 @@
           "pkg-config",
           "build-essential"
         ]
+      },
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
       }
     },
     {
@@ -69,6 +76,11 @@
           "pkg-config",
           "build-essential"
         ]
+      },
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing."
       }
     },
     {
@@ -81,6 +93,10 @@
           "pkg-config",
           "build-essential"
         ]
+      },
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
       }
     },
     {
@@ -93,6 +109,10 @@
           "pkg-config",
           "build-essential"
         ]
+      },
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
       }
     },
     {
@@ -108,6 +128,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -129,6 +150,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -142,6 +164,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -153,13 +176,18 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-boolean",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-ca_cert",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -173,6 +201,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -187,6 +216,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -201,6 +231,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "debian12-systemd",
@@ -215,6 +246,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -226,21 +258,36 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-dnsquery",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-elastic_stack",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Same fundamental blockers as puppet-elasticsearch — orchestrates the Elasticsearch stack and its acceptance tests share the same vm.max_map_count kernel requirement, systemd dependency, and artifacts.elastic.co download pattern. Requires a real VM or privileged container."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-elasticsearch",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Production-mode bootstrap enforces vm.max_map_count >= 262144 (a host kernel parameter) which cannot be set from inside an unprivileged Docker container; all acceptance specs hit a live Elasticsearch HTTP API and fail. Tests also require systemd (unavailable in standard containers), download from artifacts.elastic.co, and need the simp-beaker-helpers gem. Requires a real VM or privileged container with host kernel tuning."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-epel",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -251,21 +298,34 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-extlib",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-filemapper",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-format",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-firewalld",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -280,6 +340,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -294,6 +355,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -312,6 +374,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -323,13 +386,18 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-hdm",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-hiera",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -342,13 +410,19 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-jira",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "pending",
+        "reason": "Acceptance tests exist upstream but are not yet wired into a harness setfile/target."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-keepalived",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -363,6 +437,7 @@
       "ref": "fix-plugin-tls-certificate",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -380,6 +455,10 @@
           "augeas-lenses",
           "libaugeas0"
         ]
+      },
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
       }
     },
     {
@@ -387,6 +466,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -407,6 +487,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -426,6 +507,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -440,6 +522,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -454,6 +537,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -467,6 +551,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -491,7 +576,9 @@
         ]
       },
       "acceptance": {
-        "enabled": false
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Acceptance tests use Dir.mktmpdir on the Beaker controller to create temporary directories for LDAP database paths (olcDbDirectory), then reference those host-local paths inside the Docker SUT where they do not exist; slapd rejects them with \"invalid path: Permission denied\". The tests assume a shared controller/SUT filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT."
       }
     },
     {
@@ -499,6 +586,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -509,7 +597,11 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-openvox_bootstrap",
-      "ref": "main"
+      "ref": "main",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-php",
@@ -525,6 +617,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -544,6 +637,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -565,6 +659,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -579,6 +674,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -590,13 +686,18 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-prometheus_reporter",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-python",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -610,6 +711,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -629,6 +731,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -640,11 +743,21 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-rsyslog",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "The module's cleanup_helper removes the rsyslog package between tests. In the harness's persistent Docker container model (PuppetCore pre-installed in the image), RPM database entries from the image build become corrupt, so rpm -e rsyslog fails with \"package not installed\" even though Puppet detects it as installed. This is a Docker copy-on-write filesystem artifact unique to the persistent container model."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-selinux",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "SELinux acceptance tests require kernel-level SELinux LSM support. Docker containers share the host kernel, and GitHub Actions ubuntu-latest runners use AppArmor, so the SELinux LSM is never loaded. Tests fail at setup because /etc/selinux/config does not exist and getenforce/semodule/setenforce require active kernel SELinux enforcement. Requires a self-hosted runner on a SELinux-enforcing host or a VM-based approach."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-squid",
@@ -657,6 +770,7 @@
       },
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -668,7 +782,11 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-sssd",
-      "ref": "main"
+      "ref": "main",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-swap_file",
@@ -677,17 +795,28 @@
         "apt": [
           "coreutils"
         ]
+      },
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Manages kernel-level swap file operations via swapon/swapoff. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires a full VM or bare-metal environment for acceptance testing."
       }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-systemd",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Attempts to manage /etc/resolv.conf via symlink replacement to /run/systemd/resolve/resolv.conf. The Docker container runtime owns /etc/resolv.conf, preventing overlay filesystem manipulation and causing \"Device or resource busy\" errors. Requires non-Docker execution or upstream test changes."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-telegraf",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9-systemd",
@@ -702,6 +831,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "ubuntu24",
@@ -712,29 +842,55 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-vault_lookup",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Tests are purpose-built for Docker and self-contained, but use a three-container topology (certs.local, vault.local, puppetserver.local) that the single-SUT harness cannot orchestrate. The VaultDockerfile and PuppetserverDockerfile use multi-stage COPY --from=certs:latest builds the harness image-build pipeline does not support, and require a live Puppet Server (not puppet apply) with mTLS cert auth via a shared PKI. Requires harness-level support for multi-container nodesets and cross-image build dependencies."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-wget",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Acceptance tests target only legacy OSes (Debian 8-9, Ubuntu 16.04-18.04, RHEL 6-7) — none of which match any available setfile — and hardcode `su - vagrant` to run puppet apply as a Vagrant user not present in Docker-based SUT containers. Requires new legacy setfiles or upstream test modernization."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-windows_env",
-      "ref": "main"
+      "ref": "main",
+      "acceptance": {
+        "enabled": false,
+        "status": "pending",
+        "reason": "Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-windows_firewall",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "pending",
+        "reason": "Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-windowsfeature",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "pending",
+        "reason": "Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support."
+      }
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-yum",
       "ref": "master",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -745,7 +901,11 @@
     },
     {
       "repo": "https://github.com/voxpupuli/puppet-zypprepo",
-      "ref": "master"
+      "ref": "master",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     },
     {
       "repo": "https://github.com/saz/puppet-limits",
@@ -753,6 +913,7 @@
       "id": "saz-puppet-limits",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -767,6 +928,7 @@
       "id": "saz-puppet-sudo",
       "acceptance": {
         "enabled": true,
+        "status": "running",
         "targets": [
           {
             "name": "el9",
@@ -778,7 +940,11 @@
     {
       "repo": "https://github.com/TraGicCode/tragiccode-azure_key_vault",
       "ref": "main",
-      "id": "tragiccode-azure_key_vault"
+      "id": "tragiccode-azure_key_vault",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
     }
   ]
 }
