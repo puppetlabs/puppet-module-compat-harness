@@ -62,12 +62,26 @@ def unit_icon(entry):
     return class_icon(unit.get('class'))
 
 
+def acceptance_status(entry):
+    # Config-derived disposition; falls back to the legacy boolean for old ledgers.
+    status = entry.get('acceptance_status')
+    if status:
+        return status
+    return 'running' if entry.get('acceptance_configured') else 'none'
+
+
 def acceptance_cell(entry):
-    if not entry.get('acceptance_configured'):
+    status = acceptance_status(entry)
+    if status == 'none':
         return 'N/A'
+    if status == 'blocked':
+        return '⛔ blocked'
+    if status == 'pending':
+        return '🚧 pending'
+    # status == 'running'
     acceptance = entry.get('acceptance')
     if not acceptance or not acceptance.get('targets'):
-        return '⏳ pending'
+        return '⏳ awaiting run'
     targets = acceptance['targets']
     return ' '.join(f"{name}:{class_icon(cls)}" for name, cls in sorted(targets.items()))
 
@@ -85,9 +99,14 @@ def acceptance_passed(entry):
 def is_fully_compatible(entry):
     if not unit_passed(entry):
         return False
-    if not entry.get('acceptance_configured'):
-        return True  # unit-only; N/A acceptance is full coverage
-    return acceptance_passed(entry)
+    status = acceptance_status(entry)
+    if status == 'none':
+        return True  # no acceptance tests exist — unit coverage is full coverage
+    if status == 'running':
+        return acceptance_passed(entry)
+    # blocked / pending: acceptance tests exist but were never exercised here, so
+    # coverage is incomplete. These are NOT fully compatible.
+    return False
 
 
 def last_tested(entry):
@@ -125,10 +144,13 @@ def main():
     unit_pass = [e for e in unit_tested if unit_passed(e)]
     unit_fail = [e for e in unit_tested if not unit_passed(e)]
 
-    acceptance_configured = [e for e in active.values() if e.get('acceptance_configured')]
-    acceptance_run = [e for e in acceptance_configured if e.get('acceptance', {}).get('targets')]
+    acceptance_running = [e for e in active.values() if acceptance_status(e) == 'running']
+    acceptance_run = [e for e in acceptance_running if e.get('acceptance', {}).get('targets')]
     acceptance_pass = [e for e in acceptance_run if acceptance_passed(e)]
     acceptance_fail = [e for e in acceptance_run if not acceptance_passed(e)]
+    acceptance_blocked = [e for e in active.values() if acceptance_status(e) == 'blocked']
+    acceptance_pending = [e for e in active.values() if acceptance_status(e) == 'pending']
+    acceptance_none = [e for e in active.values() if acceptance_status(e) == 'none']
 
     fully_compatible = [e for e in active.values() if is_fully_compatible(e)]
     never_tested = [e for e in active.values() if not e.get('unit')]
@@ -159,11 +181,14 @@ def main():
     lines.append(f"| Unit-tested | {len(unit_tested)} |")
     lines.append(f"| &nbsp;&nbsp;• unit pass | {len(unit_pass)} |")
     lines.append(f"| &nbsp;&nbsp;• unit fail | {len(unit_fail)} |")
-    lines.append(f"| Acceptance-configured | {len(acceptance_configured)} |")
+    lines.append(f"| Acceptance-enabled (running) | {len(acceptance_running)} |")
     lines.append(f"| &nbsp;&nbsp;• acceptance run | {len(acceptance_run)} |")
     lines.append(f"| &nbsp;&nbsp;• acceptance pass | {len(acceptance_pass)} |")
     lines.append(f"| &nbsp;&nbsp;• acceptance fail | {len(acceptance_fail)} |")
-    lines.append(f"| **Fully compatible** (unit + acceptance/N/A all pass) | **{len(fully_compatible)}** |")
+    lines.append(f"| ⛔ Acceptance blocked (tests exist, can't run here) | {len(acceptance_blocked)} |")
+    lines.append(f"| 🚧 Acceptance pending (tests exist, not yet wired) | {len(acceptance_pending)} |")
+    lines.append(f"| No acceptance tests (N/A) | {len(acceptance_none)} |")
+    lines.append(f"| **Fully compatible** (unit pass + acceptance pass or N/A) | **{len(fully_compatible)}** |")
     lines.append(f"| Never tested | {len(never_tested)} |")
     lines.append(f"| Stale (> {stale_days}d) | {len(stale)} |")
     lines.append(f"| Retired (incompatible / deprecated) | {len(retired)} |")
@@ -172,6 +197,11 @@ def main():
     lines.append('')
 
     lines.append('## Active Modules')
+    lines.append('')
+    lines.append('> Acceptance column: `target:✅/❌` = ran, `N/A` = no acceptance tests exist upstream, '
+                 '`⛔ blocked` = tests exist but cannot run in this harness, `🚧 pending` = tests exist but '
+                 'not yet wired up, `⏳ awaiting run` = enabled but no result yet. Only ✅/N/A count toward '
+                 '**Fully compatible**.')
     lines.append('')
     lines.append('| Module | Puppet Core | Unit | Acceptance | Coverage | Last Tested |')
     lines.append('|---|---|---|---|---|---|')
@@ -188,6 +218,14 @@ def main():
             f"| {acceptance_cell(entry)} | {entry.get('coverage_state', '—')} | {when} |"
         )
     lines.append('')
+
+    not_exercised = [mid for mid in active if acceptance_status(active[mid]) in ('blocked', 'pending')]
+    if not_exercised:
+        lines.append('> ⛔ **blocked** / 🚧 **pending** modules have acceptance tests upstream that the harness '
+                     'did not run, so their compatibility is confirmed by unit tests only — not fully. The '
+                     'per-module reasons are documented in '
+                     '[docs/available-acceptance-tests.md](docs/available-acceptance-tests.md).')
+        lines.append('')
 
     if retired or anomalies:
         lines.append('## Retired / Removed')

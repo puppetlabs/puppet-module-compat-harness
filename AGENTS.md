@@ -22,13 +22,30 @@ This file is for coding agents working in this repository.
 1. Inspect the target module repository first (do not skip this step). If the module is not present locally, agents MUST fetch and analyze the remote repository (e.g., via GitHub API or by cloning/downloading the repo) to discover acceptance tests and other required files. Acceptance test discovery must NOT be limited to the local workspace.
 2. Add a module object under `modules` in `config/modules.json`.
 3. **Insert Vox Pupuli modules first and alternative maintainers second.** Keep all `voxpupuli/*` entries grouped at the top and sorted alphabetically by repo name (the segment after the final `/`, lowercase, case-insensitive). Keep all non-`voxpupuli` entries grouped at the bottom and sorted alphabetically by explicit `id`. This preserves a clean primary Vox Pupuli block while keeping alternative maintainer jobs easy to identify in the GitHub Actions UI.
-4. Set `repo` (required), optionally `ref`, `id`, `os`, and `prereqs`.
+4. Set `repo` (required) and `acceptance` (required — see below), optionally `ref`, `id`, `os`, and `prereqs`.
 5. Default behavior when omitted:
    - `ref`: treated as `main` by runner logic.
    - `os`: defaults to `ubuntu-latest` in workflow behavior.
   - `id`: derived from repo name for `voxpupuli/*` entries when omitted.
 6. Validate against schema before proposing completion.
-7. Update [Available Acceptance Tests](./docs/available-acceptance-tests.md) documentation with information about the module being added. Make sure to update the 'last updated' date as well.
+7. Do **not** hand-edit [Available Acceptance Tests](./docs/available-acceptance-tests.md) — it is auto-generated from `config/modules.json` by `scripts/render_acceptance_audit.py` (CI regenerates and commits it). The module's `acceptance` block (status + reason) is the source of truth for that audit, so getting the disposition right in step 4 above is what populates the doc. You may run `python scripts/render_acceptance_audit.py` locally to preview the result.
+
+### Acceptance disposition (required)
+
+Every module must declare an `acceptance` block with an explicit `status` — this is what lets the status ledger and dashboard distinguish "no acceptance tests exist" from "tests exist but the harness can't run them." Choose the status from what you found inspecting the upstream repo:
+
+- **`running`** — the repo has acceptance tests and we run them in CI. Set `"enabled": true` and provide `targets`. (`enabled` must be `true` iff `status` is `running`.)
+  ```json
+  "acceptance": { "enabled": true, "status": "running", "targets": [ { "name": "el9", "setfile": "el9" } ] }
+  ```
+- **`blocked`** — acceptance tests exist upstream but cannot run in this harness due to a hard technical limitation (kernel params, multi-container topology, non-Docker OS, etc.). Set `"enabled": false` and a `reason`. Do **not** list it in `KNOWN_COMPATIBLE.md` — it has not had all available tests exercised.
+- **`pending`** — acceptance tests exist upstream but are not yet wired into the harness (e.g. Windows-only targets we don't have runners for). Set `"enabled": false` and a `reason`.
+- **`none`** — the upstream repo has no acceptance tests. Unit coverage alone is full coverage. Set `"enabled": false`; no `reason` needed.
+  ```json
+  "acceptance": { "enabled": false, "status": "none" }
+  ```
+
+`blocked` and `pending` require a `reason`, which is the source of truth for the acceptance-test audit. When a module is `blocked`/`pending`, add its reason here rather than only in prose docs.
 
 ### Ordering Rule
 

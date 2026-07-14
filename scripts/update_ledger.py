@@ -71,9 +71,17 @@ def coverage_state(entry, cfg):
         return 'never-tested'
     if not is_pass(unit.get('class')):
         return 'unit-failing'
-    acceptance_configured = bool(cfg and cfg.get('acceptance_enabled'))
-    if not acceptance_configured:
+    # Acceptance disposition comes from config (not from whether a run happened),
+    # so we can distinguish "no tests exist" (N/A) from "tests exist but can't run
+    # here" (blocked/pending). See docs/lean-testing-and-status-ledger-design.md §4.2.
+    status = (cfg or {}).get('acceptance_status', 'none')
+    if status == 'none':
         return 'unit-only'
+    if status == 'blocked':
+        return 'acceptance-blocked'
+    if status == 'pending':
+        return 'unit-pass/acceptance-pending'
+    # status == 'running': coverage depends on whether acceptance actually ran/passed.
     acceptance = entry.get('acceptance')
     if not acceptance or not acceptance.get('targets'):
         return 'unit-pass/acceptance-pending'
@@ -139,6 +147,12 @@ def reconcile(modules, config, now):
         if cfg is not None:
             entry['disposition'] = 'active'
             entry['acceptance_configured'] = cfg.get('acceptance_enabled', False)
+            entry['acceptance_status'] = cfg.get('acceptance_status', 'none')
+            reason = cfg.get('acceptance_reason', '')
+            if reason:
+                entry['acceptance_reason'] = reason
+            else:
+                entry.pop('acceptance_reason', None)
             entry['last_seen_in_config'] = now
         elif module_id in incompatible_ids:
             entry['disposition'] = 'incompatible'

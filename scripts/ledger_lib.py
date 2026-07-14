@@ -27,7 +27,18 @@ def derive_id(repo, explicit_id=None):
 
 
 def load_modules_config(path='config/modules.json'):
-    """Return {id: {repo, ref, id, acceptance_enabled, acceptance_targets[]}}."""
+    """Return {id: {repo, ref, id, acceptance_enabled, acceptance_status,
+    acceptance_reason, acceptance_targets[]}}.
+
+    acceptance_status is one of:
+      running — tests exist and run in CI (enabled).
+      blocked — tests exist upstream but cannot run in this harness (reason set).
+      pending — tests exist upstream but are not yet wired up here (reason set).
+      none    — no acceptance tests exist upstream (rendered as N/A).
+
+    For backward tolerance, a module whose acceptance status is absent is
+    treated as 'running' when enabled, else 'none'.
+    """
     with open(path, 'r', encoding='utf-8') as handle:
         data = json.load(handle)
 
@@ -35,8 +46,10 @@ def load_modules_config(path='config/modules.json'):
     for module in data.get('modules', []):
         repo = module['repo']
         module_id = derive_id(repo, module.get('id'))
-        acceptance = module.get('acceptance')
-        enabled = isinstance(acceptance, dict) and bool(acceptance.get('enabled'))
+        acceptance = module.get('acceptance') if isinstance(module.get('acceptance'), dict) else {}
+        enabled = bool(acceptance.get('enabled'))
+        status = acceptance.get('status') or ('running' if enabled else 'none')
+        reason = acceptance.get('reason', '')
         targets = []
         if enabled and isinstance(acceptance.get('targets'), list):
             targets = [
@@ -49,6 +62,8 @@ def load_modules_config(path='config/modules.json'):
             'ref': module.get('ref', 'main'),
             'id': module_id,
             'acceptance_enabled': enabled,
+            'acceptance_status': status,
+            'acceptance_reason': reason,
             'acceptance_targets': targets,
         }
     return result
