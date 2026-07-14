@@ -65,10 +65,13 @@ flowchart TD
         UA["Upload artifact<br/>compatibility-&lt;id&gt;-&lt;lane&gt;"]
     end
 
-    subgraph Summarize["Summarize Job  ·  runs after all parallel jobs"]
+    subgraph Publish["Publish Job  ·  runs after all parallel jobs"]
         DA["Download all artifacts<br/>pattern: compatibility-*"]
         SM["Aggregate results<br/>summarize_module_statuses.py"]
         GS["Write GitHub Step Summary<br/>tables: unit · acceptance · metadata"]
+        UL["Update status ledger<br/>update_ledger.py (merge + reconcile)"]
+        RD["Render dashboard<br/>render_status_dashboard.py → STATUS.md"]
+        CM["Commit ledger + STATUS.md<br/>push to current ref (GITHUB_TOKEN)"]
     end
 
     T --> V
@@ -95,7 +98,7 @@ flowchart TD
 
     CL --> RP --> RS --> WS --> UA
     UA -- "fan-in (all jobs complete)" --> DA
-    DA --> SM --> GS
+    DA --> SM --> GS --> UL --> RD --> CM
 
     class MJ datasource
     class BR gemswap
@@ -122,20 +125,25 @@ After the runner writes its outputs, each matrix job runs three additional steps
 
 | Step | Script | What it produces |
 |------|--------|------------------|
-| Record module status | `classify_module_result.py` | `module-status.json` — a compact status record (id, lane, class, compatibility state, metadata/dependency/documentation fields) written into the job's output directory. |
+| Record module status | `classify_module_result.py` | `module-status.json` — a compact status record (id, lane, class, compatibility state, metadata/dependency/documentation fields, plus `profile`, `puppet_core_version`, and `tested_at`) written into the job's output directory. |
 | Write per-job summary | `render_module_job_summary.py` | A per-module section appended to `GITHUB_STEP_SUMMARY`, visible on the individual job page in GitHub Actions. |
 | Upload artifact | `actions/upload-artifact@v5` | Uploads the entire output directory as `compatibility-<id>-<lane>` so the summarize job can collect it. |
 
-### CI: Summarize (fan-in)
+### CI: Publish (fan-in)
 
-The `summarize` job runs after **all** unit and acceptance jobs finish (with `if: always()` so it runs even when individual jobs fail). It:
+The `publish` job runs after **all** unit and acceptance jobs finish (with `if: always()` so it runs even when individual jobs fail). It holds `permissions: contents: write` so it can commit status back to the repo, and the whole workflow uses a `concurrency` group so ledger commits on the same ref never race. It:
 
-1. Downloads every `compatibility-*` artifact into `all-artifacts/` via `actions/download-artifact@v5`.
+1. Downloads every `compatibility-*` artifact into `all-artifacts/` via `actions/download-artifact@v8`.
 2. Runs `summarize_module_statuses.py`, which walks the artifact tree collecting every `module-status.json`, sorts results by lane and module id, and writes a consolidated `GITHUB_STEP_SUMMARY` with:
    - A **Unit Compatibility** table (gating results).
    - An **Acceptance Compatibility** table (if any acceptance jobs ran).
    - Counters for clean / warning / failure across both lanes.
    - A metadata mismatch table for modules whose `metadata.json` does not declare support for the tested Puppet version.
+3. Runs `update_ledger.py`, which **merges** this run's `module-status.json` records into the persistent `status/ledger.json` — upserting only the modules that ran (absence never downgrades an entry), seeding `never-tested` entries for any `modules.json` module not yet tracked, and reconciling every entry's `disposition` against `config/modules.json` + `KNOWN_INCOMPATIBLE.md` / `KNOWN_DEPRECATED.md`.
+4. Runs `render_status_dashboard.py`, which renders the complete fleet dashboard `STATUS.md` from the ledger (headline coverage counts, per-module table, retired/anomaly accounting, staleness flags at `STALE_DAYS`, default 30). Because it reads the accumulated ledger rather than one run's artifacts, the dashboard stays complete even when only a subset of modules is tested (see the lean-testing design).
+5. Commits `status/ledger.json` and `STATUS.md` and pushes to the current ref using the default `GITHUB_TOKEN` (no PAT). Pushes made with `GITHUB_TOKEN` do not re-trigger the workflow.
+
+> **Shared helper:** `ledger_lib.py` provides the module-id derivation (identical to `build_matrix.rb`) and the `modules.json` / KNOWN_* parsing used by both `update_ledger.py` and `render_status_dashboard.py`.
 
 ### Shared Pipeline Stages (both test modes)
 

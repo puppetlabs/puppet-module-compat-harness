@@ -53,6 +53,11 @@ scripts/
   validate_modules_config.py      # Schema validation
   classify_module_result.py       # Per-job status recording
   summarize_module_statuses.py    # Final aggregated report
+  update_ledger.py                # Merge run results into status/ledger.json (upsert + reconcile)
+  render_status_dashboard.py      # Render STATUS.md fleet dashboard from the ledger
+  ledger_lib.py                   # Shared id-derivation + config/KNOWN_* parsing
+status/ledger.json                # Persistent per-module status ledger (committed by CI)
+STATUS.md                         # Generated fleet dashboard (do not hand-edit)
 .github/
   workflows/compatibility-runner.yml   # Main CI pipeline
   actions/run-module-test/action.yml   # Composite action used per matrix job
