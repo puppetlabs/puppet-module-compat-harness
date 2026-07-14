@@ -72,8 +72,8 @@ flowchart TD
         SM["Aggregate results<br/>summarize_module_statuses.py"]
         GS["Write GitHub Step Summary<br/>tables: unit · acceptance · metadata"]
         UL["Update status ledger<br/>update_ledger.py (merge + reconcile)"]
-        RD["Render dashboard<br/>render_status_dashboard.py → STATUS.md"]
-        CM["Commit ledger + STATUS.md<br/>push to current ref (GITHUB_TOKEN)"]
+        RD["Render dashboard<br/>render_status_dashboard.py<br/>→ STATUS.md + KNOWN_COMPATIBLE.md"]
+        CM["Commit ledger + generated docs<br/>push to current ref (GITHUB_TOKEN)"]
     end
 
     T --> V
@@ -146,8 +146,10 @@ The `publish` job runs after **all** unit and acceptance jobs finish (with `if: 
    - Counters for clean / warning / failure across both lanes.
    - A metadata mismatch table for modules whose `metadata.json` does not declare support for the tested Puppet version.
 3. Runs `update_ledger.py`, which **merges** this run's `module-status.json` records into the persistent `status/ledger.json` — upserting only the modules that ran (absence never downgrades an entry), seeding `never-tested` entries for any `modules.json` module not yet tracked, and reconciling every entry's `disposition` against `config/modules.json` + `KNOWN_INCOMPATIBLE.md` / `KNOWN_DEPRECATED.md`.
-4. Runs `render_status_dashboard.py`, which renders the complete fleet dashboard `STATUS.md` from the ledger (headline coverage counts, per-module table, retired/anomaly accounting, staleness flags at `STALE_DAYS`, default 30). Because it reads the accumulated ledger rather than one run's artifacts, the dashboard stays complete even when only a subset of modules is tested (see the lean-testing design).
-5. Commits `status/ledger.json` and `STATUS.md` and pushes to the current ref using the default `GITHUB_TOKEN` (no PAT). Pushes made with `GITHUB_TOKEN` do not re-trigger the workflow.
+4. Runs `render_status_dashboard.py`, which renders from the ledger:
+   - `STATUS.md` — the complete fleet dashboard (headline coverage counts, per-module table, retired/anomaly accounting, staleness flags at `STALE_DAYS`, default 30). Because it reads the accumulated ledger rather than one run's artifacts, the dashboard stays complete even when only a subset of modules is tested (see the lean-testing design).
+   - `KNOWN_COMPATIBLE.md` — the curated fully-validated list, derived from the same `is_fully_compatible` predicate so it can't drift from the ledger. Modules whose acceptance is `blocked`/`pending` are excluded (their acceptance was never exercised); `none` (no upstream acceptance) counts as full coverage on unit alone.
+5. Commits `status/ledger.json`, `STATUS.md`, `KNOWN_COMPATIBLE.md`, and the generated `docs/available-acceptance-tests.md`, then pushes to the current ref using the default `GITHUB_TOKEN` (no PAT). Pushes made with `GITHUB_TOKEN` do not re-trigger the workflow.
 
 > **Shared helper:** `ledger_lib.py` provides the module-id derivation (identical to `build_matrix.rb`) and the `modules.json` / KNOWN_* parsing used by both `update_ledger.py` and `render_status_dashboard.py`.
 

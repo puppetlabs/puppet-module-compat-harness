@@ -1,15 +1,19 @@
-"""Render STATUS.md — the complete fleet dashboard — from the status ledger.
+"""Render STATUS.md and KNOWN_COMPATIBLE.md from the status ledger.
 
 Unlike a single run's summary (which, once testing is lean, covers only the
 modules that ran), this reads the accumulated ledger so it always reflects every
-tracked module. It produces the weekly-report numbers: unit coverage, acceptance
-coverage, fully-compatible count, plus stale / never-tested / retired accounting.
+tracked module. It produces:
+  - STATUS.md — the complete fleet dashboard (weekly-report numbers: unit /
+    acceptance coverage, fully-compatible count, stale / never-tested / retired).
+  - KNOWN_COMPATIBLE.md — the curated "fully validated" list, derived from the
+    same `is_fully_compatible` predicate, so it can never drift from the ledger.
 
 Environment:
-  LEDGER_FILE   ledger path (default: status/ledger.json)
-  MODULES_FILE  modules config (default: config/modules.json)
-  STATUS_FILE   output path (default: STATUS.md)
-  STALE_DAYS    freshness threshold in days (default: 30)
+  LEDGER_FILE            ledger path (default: status/ledger.json)
+  MODULES_FILE           modules config (default: config/modules.json)
+  STATUS_FILE            dashboard output path (default: STATUS.md)
+  KNOWN_COMPATIBLE_FILE  compatible-list output path (default: KNOWN_COMPATIBLE.md)
+  STALE_DAYS             freshness threshold in days (default: 30)
 """
 
 import datetime
@@ -18,7 +22,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from ledger_lib import load_modules_config  # noqa: E402
+from ledger_lib import load_modules_config, parse_known_ids  # noqa: E402
 
 # Reporting is pass/fail only. Warnings are deliberate green-keepers (tolerated
 # metadata gaps, etc.) and count as pass; we do not surface the warning level.
@@ -119,10 +123,72 @@ def last_tested(entry):
     return max(stamps) if stamps else None
 
 
+def render_known_compatible(active, path, excluded_ids):
+    """Write KNOWN_COMPATIBLE.md — modules that pass every test available to the
+    harness. Blocked/pending modules are excluded by `is_fully_compatible` because
+    their acceptance tests were never exercised here. Modules in `excluded_ids`
+    (from KNOWN_INCOMPATIBLE.md) are also excluded — a compatibility verdict is
+    mutually exclusive with the compatible list, even for a module still in the test
+    matrix whose only failures are downgraded to warnings (e.g. a "Partial" entry).
+    Deprecation is NOT an exclusion: it is a lifecycle status orthogonal to
+    compatibility, so a deprecated-but-passing module is still listed here.
+    """
+    compatible = sorted(
+        mid for mid, entry in active.items()
+        if is_fully_compatible(entry) and mid not in excluded_ids
+    )
+
+    lines = [
+        '# Known Compatible Modules',
+        '',
+        '> Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.',
+        '> Do not edit by hand — changes will be overwritten on the next run.',
+        '',
+        'This document lists modules that have been fully validated against Puppet Core — '
+        'meaning all available tests have passed.',
+        '',
+        '**N/A in the Acceptance column** means the module has no acceptance tests in its upstream '
+        'repository. Unit tests alone constitute full coverage for that module, and N/A is an '
+        'intentional distinction from ✅: it does not mean acceptance was skipped or blocked — there '
+        'is simply nothing to run.',
+        '',
+        'Modules with upstream acceptance tests that cannot currently run in the harness (due to '
+        'Docker/container limitations) are **not listed here** — they have not had all available '
+        'tests exercised. See [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md) '
+        'for the full audit including blocked modules.',
+        '',
+        '**Distinction from [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md):** Modules listed here have '
+        'passed all tests available to this harness. KNOWN_INCOMPATIBLE.md lists modules tested and '
+        'found to have compatibility failures.',
+        '',
+        '**⚠️ next to a module name** marks it deprecated / no longer maintained upstream. It remains '
+        'compatible, but consider migrating away from it.',
+        '',
+        '## Compatibility Summary',
+        '',
+        '| Module | Puppet Core | Unit | Acceptance |',
+        '|--------|-------------|------|------------|',
+    ]
+    for module_id in compatible:
+        entry = active[module_id]
+        repo = entry.get('repo', '')
+        name = f"[{module_id}]({repo})" if repo else module_id
+        if entry.get('deprecated'):
+            name += ' ⚠️'
+        acceptance = '✅' if acceptance_status(entry) == 'running' else 'N/A'
+        lines.append(f"| {name} | {entry.get('puppet_core_version', '—')} | ✅ | {acceptance} |")
+
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as handle:
+        handle.write('\n'.join(lines) + '\n')
+    return len(compatible)
+
+
 def main():
     ledger_file = os.environ.get('LEDGER_FILE', 'status/ledger.json')
     modules_file = os.environ.get('MODULES_FILE', 'config/modules.json')
     status_file = os.environ.get('STATUS_FILE', 'STATUS.md')
+    known_compatible_file = os.environ.get('KNOWN_COMPATIBLE_FILE', 'KNOWN_COMPATIBLE.md')
     stale_days = int(os.environ.get('STALE_DAYS', '30'))
 
     if not os.path.exists(ledger_file):
@@ -153,6 +219,7 @@ def main():
     acceptance_none = [e for e in active.values() if acceptance_status(e) == 'none']
 
     fully_compatible = [e for e in active.values() if is_fully_compatible(e)]
+    deprecated_active = [e for e in active.values() if e.get('deprecated')]
     never_tested = [e for e in active.values() if not e.get('unit')]
     stale = []
     for entry in unit_tested:
@@ -191,6 +258,7 @@ def main():
     lines.append(f"| **Fully compatible** (unit pass + acceptance pass or N/A) | **{len(fully_compatible)}** |")
     lines.append(f"| Never tested | {len(never_tested)} |")
     lines.append(f"| Stale (> {stale_days}d) | {len(stale)} |")
+    lines.append(f"| ⚠️ Deprecated (unmaintained upstream) | {len(deprecated_active)} |")
     lines.append(f"| Retired (incompatible / deprecated) | {len(retired)} |")
     if anomalies:
         lines.append(f"| ⚠️ Removed without disposition | {len(anomalies)} |")
@@ -202,6 +270,9 @@ def main():
                  '`⛔ blocked` = tests exist but cannot run in this harness, `🚧 pending` = tests exist but '
                  'not yet wired up, `⏳ awaiting run` = enabled but no result yet. Only ✅/N/A count toward '
                  '**Fully compatible**.')
+    lines.append('>')
+    lines.append('> ⚠️ next to a module name marks it **deprecated / no longer maintained upstream** — '
+                 'independent of compatibility (a deprecated module can still be fully compatible).')
     lines.append('')
     lines.append('| Module | Puppet Core | Unit | Acceptance | Coverage | Last Tested |')
     lines.append('|---|---|---|---|---|---|')
@@ -209,6 +280,8 @@ def main():
         entry = active[module_id]
         repo = entry.get('repo', '')
         name = f"[{module_id}]({repo})" if repo else module_id
+        if entry.get('deprecated'):
+            name += ' ⚠️'
         stamp = last_tested(entry)
         when = stamp.strftime('%Y-%m-%d') if stamp else '—'
         if stamp is not None and stamp < stale_cutoff:
@@ -251,10 +324,18 @@ def main():
     with open(status_file, 'w', encoding='utf-8') as handle:
         handle.write('\n'.join(lines))
 
+    # Only KNOWN_INCOMPATIBLE excludes — it is a compatibility verdict, mutually
+    # exclusive with "compatible". Deprecation is a lifecycle status, orthogonal to
+    # compatibility (a module can be both deprecated and fully compatible, e.g. an
+    # archived module whose unit tests still pass), so it does NOT exclude.
+    excluded_ids = parse_known_ids(os.environ.get('KNOWN_INCOMPATIBLE_FILE', 'KNOWN_INCOMPATIBLE.md'))
+    compatible_count = render_known_compatible(active, known_compatible_file, excluded_ids)
+
     print(
         f"STATUS.md rendered: {len(active)} active, {len(fully_compatible)} fully compatible, "
         f"{len(stale)} stale, {len(retired)} retired, {len(anomalies)} anomalies."
     )
+    print(f"KNOWN_COMPATIBLE.md rendered: {compatible_count} fully-compatible module(s).")
     return 0
 
 

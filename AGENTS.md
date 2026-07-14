@@ -38,7 +38,7 @@ Every module must declare an `acceptance` block with an explicit `status` — th
   ```json
   "acceptance": { "enabled": true, "status": "running", "targets": [ { "name": "el9", "setfile": "el9" } ] }
   ```
-- **`blocked`** — acceptance tests exist upstream but cannot run in this harness due to a hard technical limitation (kernel params, multi-container topology, non-Docker OS, etc.). Set `"enabled": false` and a `reason`. Do **not** list it in `KNOWN_COMPATIBLE.md` — it has not had all available tests exercised.
+- **`blocked`** — acceptance tests exist upstream but cannot run in this harness due to a hard technical limitation (kernel params, multi-container topology, non-Docker OS, etc.). Set `"enabled": false` and a `reason`. Blocked modules are automatically excluded from the generated `KNOWN_COMPATIBLE.md` (they have not had all available tests exercised) — setting the `status` correctly is what drives that; do not hand-edit `KNOWN_COMPATIBLE.md`, it is generated.
 - **`pending`** — acceptance tests exist upstream but are not yet wired into the harness (e.g. Windows-only targets we don't have runners for). Set `"enabled": false` and a `reason`.
 - **`none`** — the upstream repo has no acceptance tests. Unit coverage alone is full coverage. Set `"enabled": false`; no `reason` needed.
   ```json
@@ -46,6 +46,10 @@ Every module must declare an `acceptance` block with an explicit `status` — th
   ```
 
 `blocked` and `pending` require a `reason`, which is the source of truth for the acceptance-test audit. When a module is `blocked`/`pending`, add its reason here rather than only in prose docs.
+
+### Deprecation flag
+
+If the upstream module is no longer maintained (deprecated/archived by its maintainer or on the Forge), set `"deprecated": true` on the module entry. This is **orthogonal to compatibility** — a deprecated module can still be fully compatible and remains in the test matrix; the flag only drives a ⚠️ badge and a "Deprecated" count in `STATUS.md`. Omit the field (or set `false`) for maintained modules. Do not hand-edit `STATUS.md`.
 
 ### Ordering Rule
 

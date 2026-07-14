@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-14 20:40 UTC  
+**Generated:** 2026-07-14 21:08 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -25,11 +25,14 @@
 | **Fully compatible** (unit pass + acceptance pass or N/A) | **54** |
 | Never tested | 0 |
 | Stale (> 30d) | 0 |
+| ⚠️ Deprecated (unmaintained upstream) | 1 |
 | Retired (incompatible / deprecated) | 0 |
 
 ## Active Modules
 
 > Acceptance column: `target:✅/❌` = ran, `N/A` = no acceptance tests exist upstream, `⛔ blocked` = tests exist but cannot run in this harness, `🚧 pending` = tests exist but not yet wired up, `⏳ awaiting run` = enabled but no result yet. Only ✅/N/A count toward **Fully compatible**.
+>
+> ⚠️ next to a module name marks it **deprecated / no longer maintained upstream** — independent of compatibility (a deprecated module can still be fully compatible).
 
 | Module | Puppet Core | Unit | Acceptance | Coverage | Last Tested |
 |---|---|---|---|---|---|
@@ -43,7 +46,7 @@
 | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-14 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-14 |
 | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-14 |
-| [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-14 |
+| [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | 8.20.0 | ✅ | N/A | unit-only | 2026-07-14 |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-14 |
 | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-14 |
 | [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-14 |

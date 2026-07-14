@@ -177,6 +177,7 @@
     {
       "repo": "https://github.com/voxpupuli/puppet-boolean",
       "ref": "master",
+      "deprecated": true,
       "acceptance": {
         "enabled": false,
         "status": "none"

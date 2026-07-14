@@ -33,6 +33,10 @@
             "type": "string",
             "minLength": 1
           },
+          "deprecated": {
+            "type": "boolean",
+            "description": "True if the upstream module is no longer maintained (deprecated/archived by its maintainer or on the Forge). Orthogonal to compatibility — a deprecated module can still be fully compatible. Surfaced as a ⚠️ badge and a count in STATUS.md. Defaults to false when absent."
+          },
           "os": {
             "type": "string",
             "enum": [
