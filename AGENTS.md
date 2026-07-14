@@ -47,6 +47,10 @@ Every module must declare an `acceptance` block with an explicit `status` — th
 
 `blocked` and `pending` require a `reason`, which is the source of truth for the acceptance-test audit. When a module is `blocked`/`pending`, add its reason here rather than only in prose docs.
 
+### Deprecation flag
+
+If the upstream module is no longer maintained (deprecated/archived by its maintainer or on the Forge), set `"deprecated": true` on the module entry. This is **orthogonal to compatibility** — a deprecated module can still be fully compatible and remains in the test matrix; the flag only drives a ⚠️ badge and a "Deprecated" count in `STATUS.md`. Omit the field (or set `false`) for maintained modules. Do not hand-edit `STATUS.md`.
+
 ### Ordering Rule
 
 - Primary block: all `voxpupuli/*` entries, sorted by the last path segment of `repo` (for example `puppet-archive` from `https://github.com/voxpupuli/puppet-archive`), compared case-insensitively.

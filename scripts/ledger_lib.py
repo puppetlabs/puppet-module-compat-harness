@@ -27,8 +27,8 @@ def derive_id(repo, explicit_id=None):
 
 
 def load_modules_config(path='config/modules.json'):
-    """Return {id: {repo, ref, id, acceptance_enabled, acceptance_status,
-    acceptance_reason, acceptance_targets[]}}.
+    """Return {id: {repo, ref, id, deprecated, acceptance_enabled,
+    acceptance_status, acceptance_reason, acceptance_targets[]}}.
 
     acceptance_status is one of:
       running — tests exist and run in CI (enabled).
@@ -61,6 +61,7 @@ def load_modules_config(path='config/modules.json'):
             'repo': repo,
             'ref': module.get('ref', 'main'),
             'id': module_id,
+            'deprecated': bool(module.get('deprecated', False)),
             'acceptance_enabled': enabled,
             'acceptance_status': status,
             'acceptance_reason': reason,

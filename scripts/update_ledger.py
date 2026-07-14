@@ -146,6 +146,7 @@ def reconcile(modules, config, now):
         cfg = config.get(module_id)
         if cfg is not None:
             entry['disposition'] = 'active'
+            entry['deprecated'] = cfg.get('deprecated', False)
             entry['acceptance_configured'] = cfg.get('acceptance_enabled', False)
             entry['acceptance_status'] = cfg.get('acceptance_status', 'none')
             reason = cfg.get('acceptance_reason', '')

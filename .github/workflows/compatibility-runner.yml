@@ -338,6 +338,7 @@ jobs:
           MODULES_FILE: config/modules.json
           STATUS_FILE: STATUS.md
           KNOWN_COMPATIBLE_FILE: KNOWN_COMPATIBLE.md
+          KNOWN_INCOMPATIBLE_FILE: KNOWN_INCOMPATIBLE.md
           STALE_DAYS: ${{ vars.PUPPET_STALE_DAYS || '30' }}
 
       - name: Render acceptance audit
