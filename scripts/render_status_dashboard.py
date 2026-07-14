@@ -1,15 +1,19 @@
-"""Render STATUS.md — the complete fleet dashboard — from the status ledger.
+"""Render STATUS.md and KNOWN_COMPATIBLE.md from the status ledger.
 
 Unlike a single run's summary (which, once testing is lean, covers only the
 modules that ran), this reads the accumulated ledger so it always reflects every
-tracked module. It produces the weekly-report numbers: unit coverage, acceptance
-coverage, fully-compatible count, plus stale / never-tested / retired accounting.
+tracked module. It produces:
+  - STATUS.md — the complete fleet dashboard (weekly-report numbers: unit /
+    acceptance coverage, fully-compatible count, stale / never-tested / retired).
+  - KNOWN_COMPATIBLE.md — the curated "fully validated" list, derived from the
+    same `is_fully_compatible` predicate, so it can never drift from the ledger.
 
 Environment:
-  LEDGER_FILE   ledger path (default: status/ledger.json)
-  MODULES_FILE  modules config (default: config/modules.json)
-  STATUS_FILE   output path (default: STATUS.md)
-  STALE_DAYS    freshness threshold in days (default: 30)
+  LEDGER_FILE            ledger path (default: status/ledger.json)
+  MODULES_FILE           modules config (default: config/modules.json)
+  STATUS_FILE            dashboard output path (default: STATUS.md)
+  KNOWN_COMPATIBLE_FILE  compatible-list output path (default: KNOWN_COMPATIBLE.md)
+  STALE_DAYS             freshness threshold in days (default: 30)
 """
 
 import datetime
@@ -119,10 +123,59 @@ def last_tested(entry):
     return max(stamps) if stamps else None
 
 
+def render_known_compatible(active, path):
+    """Write KNOWN_COMPATIBLE.md — modules that pass every test available to the
+    harness. Blocked/pending modules are excluded by `is_fully_compatible` because
+    their acceptance tests were never exercised here.
+    """
+    compatible = sorted(mid for mid, entry in active.items() if is_fully_compatible(active[mid]))
+
+    lines = [
+        '# Known Compatible Modules',
+        '',
+        '> Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.',
+        '> Do not edit by hand — changes will be overwritten on the next run.',
+        '',
+        'This document lists modules that have been fully validated against Puppet Core — '
+        'meaning all available tests have passed.',
+        '',
+        '**N/A in the Acceptance column** means the module has no acceptance tests in its upstream '
+        'repository. Unit tests alone constitute full coverage for that module, and N/A is an '
+        'intentional distinction from ✅: it does not mean acceptance was skipped or blocked — there '
+        'is simply nothing to run.',
+        '',
+        'Modules with upstream acceptance tests that cannot currently run in the harness (blocked) or '
+        'are not yet wired up (pending) are **not listed here** — they have not had all available '
+        'tests exercised. See [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md) '
+        'for the full audit including blocked modules.',
+        '',
+        '**Distinction from [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md):** Modules listed here have '
+        'passed all tests available to this harness. KNOWN_INCOMPATIBLE.md lists modules tested and '
+        'found to have compatibility failures.',
+        '',
+        '## Compatibility Summary',
+        '',
+        '| Module | Puppet Core | Unit | Acceptance |',
+        '|--------|-------------|------|------------|',
+    ]
+    for module_id in compatible:
+        entry = active[module_id]
+        repo = entry.get('repo', '')
+        name = f"[{module_id}]({repo})" if repo else module_id
+        acceptance = '✅' if acceptance_status(entry) == 'running' else 'N/A'
+        lines.append(f"| {name} | {entry.get('puppet_core_version', '—')} | ✅ | {acceptance} |")
+
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as handle:
+        handle.write('\n'.join(lines) + '\n')
+    return len(compatible)
+
+
 def main():
     ledger_file = os.environ.get('LEDGER_FILE', 'status/ledger.json')
     modules_file = os.environ.get('MODULES_FILE', 'config/modules.json')
     status_file = os.environ.get('STATUS_FILE', 'STATUS.md')
+    known_compatible_file = os.environ.get('KNOWN_COMPATIBLE_FILE', 'KNOWN_COMPATIBLE.md')
     stale_days = int(os.environ.get('STALE_DAYS', '30'))
 
     if not os.path.exists(ledger_file):
@@ -251,10 +304,13 @@ def main():
     with open(status_file, 'w', encoding='utf-8') as handle:
         handle.write('\n'.join(lines))
 
+    compatible_count = render_known_compatible(active, known_compatible_file)
+
     print(
         f"STATUS.md rendered: {len(active)} active, {len(fully_compatible)} fully compatible, "
         f"{len(stale)} stale, {len(retired)} retired, {len(anomalies)} anomalies."
     )
+    print(f"KNOWN_COMPATIBLE.md rendered: {compatible_count} fully-compatible module(s).")
     return 0
 
 

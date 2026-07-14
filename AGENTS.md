@@ -38,7 +38,7 @@ Every module must declare an `acceptance` block with an explicit `status` — th
   ```json
   "acceptance": { "enabled": true, "status": "running", "targets": [ { "name": "el9", "setfile": "el9" } ] }
   ```
-- **`blocked`** — acceptance tests exist upstream but cannot run in this harness due to a hard technical limitation (kernel params, multi-container topology, non-Docker OS, etc.). Set `"enabled": false` and a `reason`. Do **not** list it in `KNOWN_COMPATIBLE.md` — it has not had all available tests exercised.
+- **`blocked`** — acceptance tests exist upstream but cannot run in this harness due to a hard technical limitation (kernel params, multi-container topology, non-Docker OS, etc.). Set `"enabled": false` and a `reason`. Blocked modules are automatically excluded from the generated `KNOWN_COMPATIBLE.md` (they have not had all available tests exercised) — setting the `status` correctly is what drives that; do not hand-edit `KNOWN_COMPATIBLE.md`, it is generated.
 - **`pending`** — acceptance tests exist upstream but are not yet wired into the harness (e.g. Windows-only targets we don't have runners for). Set `"enabled": false` and a `reason`.
 - **`none`** — the upstream repo has no acceptance tests. Unit coverage alone is full coverage. Set `"enabled": false`; no `reason` needed.
   ```json
