@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-14T12:04:20Z",
+  "generated_at": "2026-07-14T12:17:11Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance": {
@@ -7,14 +7,14 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-07-14T12:01:50Z"
+        "tested_at": "2026-07-14T12:14:39Z"
       },
       "acceptance_configured": true,
-      "coverage_state": "unit-pass/acceptance-pending",
+      "coverage_state": "unit+acceptance",
       "dependency_status": "none",
       "disposition": "active",
       "documentation_status": "none",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "metadata_status": "unsupported_by_metadata",
       "puppet_core_version": "8.20.0",
       "ref": "master",
@@ -22,16 +22,16 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "ff162d6",
-        "last_run_id": "29330959155",
-        "tested_at": "2026-07-14T12:01:46Z"
+        "last_harness_sha": "9de2079",
+        "last_run_id": "29331743485",
+        "tested_at": "2026-07-14T12:14:41Z"
       }
     },
     "puppet-archive": {
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-archive"
     },
@@ -39,7 +39,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeas"
     },
@@ -47,7 +47,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_core"
     },
@@ -55,7 +55,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_grub"
     },
@@ -63,7 +63,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_pam"
     },
@@ -71,7 +71,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_shellvar"
     },
@@ -79,7 +79,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_ssh"
     },
@@ -87,7 +87,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_sysctl"
     },
@@ -95,7 +95,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-autofs"
     },
@@ -103,7 +103,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-boolean"
     },
@@ -111,7 +111,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-ca_cert"
     },
@@ -119,7 +119,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-chrony"
     },
@@ -127,7 +127,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-confluence"
     },
@@ -135,7 +135,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-corosync"
     },
@@ -143,7 +143,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-cron"
     },
@@ -151,7 +151,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-dnsquery"
     },
@@ -159,7 +159,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-elastic_stack"
     },
@@ -167,7 +167,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-elasticsearch"
     },
@@ -175,7 +175,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-epel"
     },
@@ -183,7 +183,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-extlib"
     },
@@ -191,7 +191,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-filemapper"
     },
@@ -199,7 +199,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-firewalld"
     },
@@ -207,7 +207,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-format"
     },
@@ -215,7 +215,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-gitlab"
     },
@@ -223,7 +223,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-gitlab_ci_runner"
     },
@@ -231,7 +231,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-grafana"
     },
@@ -239,7 +239,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-hdm"
     },
@@ -247,7 +247,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-hiera"
     },
@@ -255,7 +255,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-jira"
     },
@@ -263,7 +263,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-keepalived"
     },
@@ -271,7 +271,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "fix-plugin-tls-certificate",
       "repo": "https://github.com/jst-cyr/puppet-kibana"
     },
@@ -279,7 +279,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-kmod"
     },
@@ -287,7 +287,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-logrotate"
     },
@@ -295,7 +295,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nfs"
     },
@@ -303,7 +303,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nftables"
     },
@@ -311,7 +311,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nginx"
     },
@@ -319,7 +319,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nodejs"
     },
@@ -327,7 +327,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nsswitch"
     },
@@ -335,7 +335,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-openldap"
     },
@@ -343,7 +343,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-openssl"
     },
@@ -351,7 +351,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "main",
       "repo": "https://github.com/voxpupuli/puppet-openvox_bootstrap"
     },
@@ -359,7 +359,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-php"
     },
@@ -367,7 +367,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-posix_acl"
     },
@@ -375,7 +375,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-postfix"
     },
@@ -383,7 +383,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-prometheus"
     },
@@ -391,7 +391,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-prometheus_reporter"
     },
@@ -399,7 +399,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-python"
     },
@@ -407,7 +407,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-r10k"
     },
@@ -415,7 +415,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-redis"
     },
@@ -423,7 +423,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-rsyslog"
     },
@@ -431,7 +431,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-selinux"
     },
@@ -439,7 +439,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-squid"
     },
@@ -447,7 +447,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "main",
       "repo": "https://github.com/voxpupuli/puppet-sssd"
     },
@@ -455,7 +455,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-swap_file"
     },
@@ -463,7 +463,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-systemd"
     },
@@ -471,7 +471,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-telegraf"
     },
@@ -479,7 +479,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-unattended_upgrades"
     },
@@ -487,7 +487,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-vault_lookup"
     },
@@ -495,7 +495,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-wget"
     },
@@ -503,7 +503,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "main",
       "repo": "https://github.com/voxpupuli/puppet-windows_env"
     },
@@ -511,7 +511,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-windows_firewall"
     },
@@ -519,7 +519,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-windowsfeature"
     },
@@ -527,7 +527,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-yum"
     },
@@ -535,7 +535,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-zypprepo"
     },
@@ -543,7 +543,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/saz/puppet-limits"
     },
@@ -551,7 +551,7 @@
       "acceptance_configured": true,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "master",
       "repo": "https://github.com/saz/puppet-sudo"
     },
@@ -559,7 +559,7 @@
       "acceptance_configured": false,
       "coverage_state": "never-tested",
       "disposition": "active",
-      "last_seen_in_config": "2026-07-14T12:04:20Z",
+      "last_seen_in_config": "2026-07-14T12:17:11Z",
       "ref": "main",
       "repo": "https://github.com/TraGicCode/tragiccode-azure_key_vault"
     }

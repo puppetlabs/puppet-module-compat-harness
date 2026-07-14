@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-14 12:04 UTC  
+**Generated:** 2026-07-14 12:17 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -13,13 +13,13 @@
 |---|---|
 | Active modules | 68 |
 | Unit-tested | 1 |
-| &nbsp;&nbsp;• unit clean | 0 |
-| &nbsp;&nbsp;• unit warning | 1 |
-| &nbsp;&nbsp;• unit failure | 0 |
+| &nbsp;&nbsp;• unit pass | 1 |
+| &nbsp;&nbsp;• unit fail | 0 |
 | Acceptance-configured | 39 |
 | &nbsp;&nbsp;• acceptance run | 1 |
-| &nbsp;&nbsp;• acceptance clean | 0 |
-| **Fully compatible** (unit + acceptance/N/A all green) | **0** |
+| &nbsp;&nbsp;• acceptance pass | 1 |
+| &nbsp;&nbsp;• acceptance fail | 0 |
+| **Fully compatible** (unit + acceptance/N/A all pass) | **1** |
 | Never tested | 67 |
 | Stale (> 30d) | 0 |
 | Retired (incompatible / deprecated) | 0 |
@@ -28,7 +28,7 @@
 
 | Module | Puppet Core | Unit | Acceptance | Coverage | Last Tested |
 |---|---|---|---|---|---|
-| [puppet-alternatives](https://github.com/voxpupuli/puppet-alternatives) | 8.20.0 | ⚠️ | el9:⚠️ | unit-pass/acceptance-pending | 2026-07-14 |
+| [puppet-alternatives](https://github.com/voxpupuli/puppet-alternatives) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-14 |
 | [puppet-archive](https://github.com/voxpupuli/puppet-archive) | — | — | ⏳ pending | never-tested | — |
 | [puppet-augeas](https://github.com/voxpupuli/puppet-augeas) | — | — | ⏳ pending | never-tested | — |
 | [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) | — | — | N/A | never-tested | — |
