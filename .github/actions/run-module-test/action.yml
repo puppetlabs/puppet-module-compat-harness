@@ -184,6 +184,8 @@ runs:
         MODULE_ID: ${{ inputs.module-id }}
         TEST_LANE: ${{ inputs.test-lane }}
         ACCEPTANCE_TARGET: ${{ inputs.acceptance-target }}
+        PROFILE: ${{ inputs.profile }}
+        PROFILES_FILE: profiles/puppet_profiles.json
 
     - name: Write module summary
       if: always()

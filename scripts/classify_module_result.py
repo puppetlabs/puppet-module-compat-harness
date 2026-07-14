@@ -1,6 +1,26 @@
+import datetime
 import json
 import os
 import sys
+
+
+def utc_now() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
+def resolve_puppet_version(profile_name: str) -> str:
+    if not profile_name:
+        return 'unknown'
+    profiles_file = os.environ.get('PROFILES_FILE', 'profiles/puppet_profiles.json')
+    try:
+        with open(profiles_file, 'r', encoding='utf-8') as handle:
+            data = json.load(handle)
+        for profile in data.get('profiles', []):
+            if profile.get('name') == profile_name:
+                return profile.get('puppet_core_version', 'unknown')
+    except (OSError, ValueError):
+        pass
+    return 'unknown'
 
 
 def main() -> int:
@@ -9,6 +29,7 @@ def main() -> int:
     module_id = os.environ['MODULE_ID']
     test_lane = os.environ.get('TEST_LANE', 'unit').strip() or 'unit'
     acceptance_target = os.environ.get('ACCEPTANCE_TARGET', '').strip()
+    profile_env = os.environ.get('PROFILE', '').strip()
 
     payload = {
         'id': module_id,
@@ -22,6 +43,9 @@ def main() -> int:
         'dependency_message': '',
         'documentation_status': 'unknown',
         'documentation_message': '',
+        'profile': profile_env,
+        'puppet_core_version': resolve_puppet_version(profile_env),
+        'tested_at': utc_now(),
         'message': 'compatibility-report.json not found',
     }
 
@@ -31,6 +55,8 @@ def main() -> int:
 
         result = (parsed.get('results') or [{}])[0]
         state = result.get('compatibility_state', 'unknown')
+        profile_name = result.get('profile') or profile_env
+        tested_at = result.get('started_at') or utc_now()
         metadata = result.get('metadata_status', 'unknown')
         metadata_message = result.get('metadata_message', '')
         dependency = result.get('dependency_status', 'none')
@@ -63,6 +89,9 @@ def main() -> int:
             'dependency_message': dependency_message,
             'documentation_status': documentation,
             'documentation_message': documentation_message,
+            'profile': profile_name,
+            'puppet_core_version': resolve_puppet_version(profile_name),
+            'tested_at': tested_at,
             'message': message,
         }
 

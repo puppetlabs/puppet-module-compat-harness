@@ -29,6 +29,11 @@ on:
 permissions:
   contents: read
 
+# Serialize runs on the same ref so concurrent ledger commits cannot race.
+concurrency:
+  group: compatibility-runner-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
@@ -228,15 +233,20 @@ jobs:
             .tmp/beaker-host-mappings.txt
           if-no-files-found: warn
 
-  summarize:
+  publish:
     runs-on: ubuntu-latest
     needs:
       - test_unit
       - test_acceptance
     if: always()
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -257,3 +267,40 @@ jobs:
           python scripts/summarize_module_statuses.py
         env:
           STATUS_ROOT: all-artifacts
+
+      - name: Update status ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/update_ledger.py
+        env:
+          STATUS_ROOT: all-artifacts
+          LEDGER_FILE: status/ledger.json
+          MODULES_FILE: config/modules.json
+          KNOWN_INCOMPATIBLE_FILE: KNOWN_INCOMPATIBLE.md
+          KNOWN_DEPRECATED_FILE: KNOWN_DEPRECATED.md
+
+      - name: Render status dashboard
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/render_status_dashboard.py
+        env:
+          LEDGER_FILE: status/ledger.json
+          MODULES_FILE: config/modules.json
+          STATUS_FILE: STATUS.md
+          STALE_DAYS: ${{ vars.PUPPET_STALE_DAYS || '30' }}
+
+      - name: Commit status ledger and dashboard
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add status/ledger.json STATUS.md
+          if git diff --cached --quiet; then
+            echo "No status changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(status): update compatibility ledger and dashboard [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
