@@ -256,8 +256,8 @@ One entry per module id. Fields draw from the existing `module-status.json`
       "documentation_status": "ok",
 
       "disposition": "active",           // active | incompatible | deprecated | removed-without-disposition
-      "coverage_state": "unit+acceptance", // unit-only | unit+acceptance | unit-pass/acceptance-pending | acceptance-blocked
-      "last_seen_in_config": "2026-07-13"
+      "deprecated": false,               // upstream no longer maintained (orthogonal to compatibility)
+      "coverage_state": "unit+acceptance" // unit-only | unit+acceptance | unit-pass/acceptance-pending | acceptance-blocked
     }
   }
 }

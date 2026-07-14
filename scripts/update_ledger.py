@@ -133,7 +133,7 @@ def upsert_results(modules, config, rows, now):
             entry['acceptance']['class'] = worst_class(entry['acceptance'].get('targets', {}).values())
 
 
-def reconcile(modules, config, now):
+def reconcile(modules, config):
     incompatible_ids = parse_known_ids(os.environ.get('KNOWN_INCOMPATIBLE_FILE', 'KNOWN_INCOMPATIBLE.md'))
     deprecated_ids = parse_known_ids(os.environ.get('KNOWN_DEPRECATED_FILE', 'KNOWN_DEPRECATED.md'))
 
@@ -154,7 +154,6 @@ def reconcile(modules, config, now):
                 entry['acceptance_reason'] = reason
             else:
                 entry.pop('acceptance_reason', None)
-            entry['last_seen_in_config'] = now
         elif module_id in incompatible_ids:
             entry['disposition'] = 'incompatible'
         elif module_id in deprecated_ids:
@@ -176,7 +175,7 @@ def main():
     rows = collect_rows(status_root)
 
     upsert_results(ledger['modules'], config, rows, now)
-    reconcile(ledger['modules'], config, now)
+    reconcile(ledger['modules'], config)
 
     ledger['schema_version'] = SCHEMA_VERSION
     ledger['generated_at'] = now
