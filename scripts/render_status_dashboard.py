@@ -20,7 +20,20 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ledger_lib import load_modules_config  # noqa: E402
 
-CLASS_ICON = {'clean': '✅', 'warning': '⚠️', 'failure': '❌', 'none': 'N/A', 'blocked': '⛔'}
+# Reporting is pass/fail only. Warnings are deliberate green-keepers (tolerated
+# metadata gaps, etc.) and count as pass; we do not surface the warning level.
+def is_pass(status_class):
+    return status_class in ('clean', 'warning')
+
+
+def class_icon(status_class):
+    if status_class == 'failure':
+        return '❌'
+    if is_pass(status_class):
+        return '✅'
+    if status_class == 'blocked':
+        return '⛔'
+    return '?'
 
 
 def utc_now():
@@ -46,29 +59,35 @@ def unit_icon(entry):
     unit = entry.get('unit')
     if not unit:
         return '—'
-    return CLASS_ICON.get(unit.get('class'), '?')
+    return class_icon(unit.get('class'))
 
 
 def acceptance_cell(entry):
     if not entry.get('acceptance_configured'):
         return 'N/A'
     acceptance = entry.get('acceptance')
-    if not acceptance:
+    if not acceptance or not acceptance.get('targets'):
         return '⏳ pending'
-    targets = acceptance.get('targets', {})
-    if not targets:
-        return '⏳ pending'
-    return ' '.join(f"{name}:{CLASS_ICON.get(cls, '?')}" for name, cls in sorted(targets.items()))
+    targets = acceptance['targets']
+    return ' '.join(f"{name}:{class_icon(cls)}" for name, cls in sorted(targets.items()))
+
+
+def unit_passed(entry):
+    unit = entry.get('unit')
+    return bool(unit) and is_pass(unit.get('class'))
+
+
+def acceptance_passed(entry):
+    acceptance = entry.get('acceptance')
+    return bool(acceptance) and bool(acceptance.get('targets')) and is_pass(acceptance.get('class'))
 
 
 def is_fully_compatible(entry):
-    unit = entry.get('unit')
-    if not unit or unit.get('class') != 'clean':
+    if not unit_passed(entry):
         return False
     if not entry.get('acceptance_configured'):
         return True  # unit-only; N/A acceptance is full coverage
-    acceptance = entry.get('acceptance') or {}
-    return acceptance.get('class') == 'clean'
+    return acceptance_passed(entry)
 
 
 def last_tested(entry):
@@ -103,13 +122,13 @@ def main():
     anomalies = {mid: e for mid, e in modules.items() if e.get('disposition') == 'removed-without-disposition'}
 
     unit_tested = [e for e in active.values() if e.get('unit')]
-    unit_clean = [e for e in unit_tested if e['unit'].get('class') == 'clean']
-    unit_warning = [e for e in unit_tested if e['unit'].get('class') == 'warning']
-    unit_failure = [e for e in unit_tested if e['unit'].get('class') == 'failure']
+    unit_pass = [e for e in unit_tested if unit_passed(e)]
+    unit_fail = [e for e in unit_tested if not unit_passed(e)]
 
     acceptance_configured = [e for e in active.values() if e.get('acceptance_configured')]
-    acceptance_run = [e for e in acceptance_configured if e.get('acceptance')]
-    acceptance_clean = [e for e in acceptance_run if e['acceptance'].get('class') == 'clean']
+    acceptance_run = [e for e in acceptance_configured if e.get('acceptance', {}).get('targets')]
+    acceptance_pass = [e for e in acceptance_run if acceptance_passed(e)]
+    acceptance_fail = [e for e in acceptance_run if not acceptance_passed(e)]
 
     fully_compatible = [e for e in active.values() if is_fully_compatible(e)]
     never_tested = [e for e in active.values() if not e.get('unit')]
@@ -138,13 +157,13 @@ def main():
     lines.append('|---|---|')
     lines.append(f"| Active modules | {len(active)} |")
     lines.append(f"| Unit-tested | {len(unit_tested)} |")
-    lines.append(f"| &nbsp;&nbsp;• unit clean | {len(unit_clean)} |")
-    lines.append(f"| &nbsp;&nbsp;• unit warning | {len(unit_warning)} |")
-    lines.append(f"| &nbsp;&nbsp;• unit failure | {len(unit_failure)} |")
+    lines.append(f"| &nbsp;&nbsp;• unit pass | {len(unit_pass)} |")
+    lines.append(f"| &nbsp;&nbsp;• unit fail | {len(unit_fail)} |")
     lines.append(f"| Acceptance-configured | {len(acceptance_configured)} |")
     lines.append(f"| &nbsp;&nbsp;• acceptance run | {len(acceptance_run)} |")
-    lines.append(f"| &nbsp;&nbsp;• acceptance clean | {len(acceptance_clean)} |")
-    lines.append(f"| **Fully compatible** (unit + acceptance/N/A all green) | **{len(fully_compatible)}** |")
+    lines.append(f"| &nbsp;&nbsp;• acceptance pass | {len(acceptance_pass)} |")
+    lines.append(f"| &nbsp;&nbsp;• acceptance fail | {len(acceptance_fail)} |")
+    lines.append(f"| **Fully compatible** (unit + acceptance/N/A all pass) | **{len(fully_compatible)}** |")
     lines.append(f"| Never tested | {len(never_tested)} |")
     lines.append(f"| Stale (> {stale_days}d) | {len(stale)} |")
     lines.append(f"| Retired (incompatible / deprecated) | {len(retired)} |")

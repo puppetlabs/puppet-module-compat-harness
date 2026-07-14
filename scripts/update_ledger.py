@@ -59,22 +59,27 @@ def collect_rows(root):
     return rows
 
 
+def is_pass(status_class):
+    # Warnings are deliberate green-keepers (e.g. tolerated metadata gaps); for
+    # reporting we only distinguish pass from fail. Warning counts as pass.
+    return status_class in ('clean', 'warning')
+
+
 def coverage_state(entry, cfg):
     unit = entry.get('unit')
     if not unit:
         return 'never-tested'
-    if unit.get('class') == 'failure':
+    if not is_pass(unit.get('class')):
         return 'unit-failing'
     acceptance_configured = bool(cfg and cfg.get('acceptance_enabled'))
     if not acceptance_configured:
         return 'unit-only'
-    acceptance = entry.get('acceptance') or {}
-    acceptance_class = acceptance.get('class')
-    if acceptance_class == 'clean':
+    acceptance = entry.get('acceptance')
+    if not acceptance or not acceptance.get('targets'):
+        return 'unit-pass/acceptance-pending'
+    if is_pass(acceptance.get('class')):
         return 'unit+acceptance'
-    if acceptance_class == 'failure':
-        return 'acceptance-failing'
-    return 'unit-pass/acceptance-pending'
+    return 'acceptance-failing'
 
 
 def upsert_results(modules, config, rows, now):
