@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-14 14:19 UTC  
+**Generated:** 2026-07-14 17:51 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -102,23 +102,4 @@
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-14 |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-14 |
 
-## Acceptance Tests Not Exercised
-
-> These modules have acceptance tests upstream, but the harness has not run them — so their compatibility is confirmed by unit tests only, **not** fully. This is distinct from `N/A` (no acceptance tests exist).
-
-| Module | Status | Reason |
-|---|---|---|
-| [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | ⛔ blocked | GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing. |
-| [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ⛔ blocked | Same fundamental blockers as puppet-elasticsearch — orchestrates the Elasticsearch stack and its acceptance tests share the same vm.max_map_count kernel requirement, systemd dependency, and artifacts.elastic.co download pattern. Requires a real VM or privileged container. |
-| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ⛔ blocked | Production-mode bootstrap enforces vm.max_map_count >= 262144 (a host kernel parameter) which cannot be set from inside an unprivileged Docker container; all acceptance specs hit a live Elasticsearch HTTP API and fail. Tests also require systemd (unavailable in standard containers), download from artifacts.elastic.co, and need the simp-beaker-helpers gem. Requires a real VM or privileged container with host kernel tuning. |
-| [puppet-jira](https://github.com/voxpupuli/puppet-jira) | 🚧 pending | Acceptance tests exist upstream but are not yet wired into a harness setfile/target. |
-| [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ⛔ blocked | Acceptance tests use Dir.mktmpdir on the Beaker controller to create temporary directories for LDAP database paths (olcDbDirectory), then reference those host-local paths inside the Docker SUT where they do not exist; slapd rejects them with "invalid path: Permission denied". The tests assume a shared controller/SUT filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT. |
-| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ⛔ blocked | The module's cleanup_helper removes the rsyslog package between tests. In the harness's persistent Docker container model (PuppetCore pre-installed in the image), RPM database entries from the image build become corrupt, so rpm -e rsyslog fails with "package not installed" even though Puppet detects it as installed. This is a Docker copy-on-write filesystem artifact unique to the persistent container model. |
-| [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ⛔ blocked | SELinux acceptance tests require kernel-level SELinux LSM support. Docker containers share the host kernel, and GitHub Actions ubuntu-latest runners use AppArmor, so the SELinux LSM is never loaded. Tests fail at setup because /etc/selinux/config does not exist and getenforce/semodule/setenforce require active kernel SELinux enforcement. Requires a self-hosted runner on a SELinux-enforcing host or a VM-based approach. |
-| [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ⛔ blocked | Manages kernel-level swap file operations via swapon/swapoff. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires a full VM or bare-metal environment for acceptance testing. |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ⛔ blocked | Attempts to manage /etc/resolv.conf via symlink replacement to /run/systemd/resolve/resolv.conf. The Docker container runtime owns /etc/resolv.conf, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |
-| [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ⛔ blocked | Tests are purpose-built for Docker and self-contained, but use a three-container topology (certs.local, vault.local, puppetserver.local) that the single-SUT harness cannot orchestrate. The VaultDockerfile and PuppetserverDockerfile use multi-stage COPY --from=certs:latest builds the harness image-build pipeline does not support, and require a live Puppet Server (not puppet apply) with mTLS cert auth via a shared PKI. Requires harness-level support for multi-container nodesets and cross-image build dependencies. |
-| [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ⛔ blocked | Acceptance tests target only legacy OSes (Debian 8-9, Ubuntu 16.04-18.04, RHEL 6-7) — none of which match any available setfile — and hardcode `su - vagrant` to run puppet apply as a Vagrant user not present in Docker-based SUT containers. Requires new legacy setfiles or upstream test modernization. |
-| [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
-| [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
-| [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
+> ⛔ **blocked** / 🚧 **pending** modules have acceptance tests upstream that the harness did not run, so their compatibility is confirmed by unit tests only — not fully. The per-module reasons are documented in [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md).

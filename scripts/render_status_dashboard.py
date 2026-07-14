@@ -219,26 +219,12 @@ def main():
         )
     lines.append('')
 
-    not_exercised = sorted(
-        [mid for mid in active if acceptance_status(active[mid]) in ('blocked', 'pending')]
-    )
+    not_exercised = [mid for mid in active if acceptance_status(active[mid]) in ('blocked', 'pending')]
     if not_exercised:
-        lines.append('## Acceptance Tests Not Exercised')
-        lines.append('')
-        lines.append('> These modules have acceptance tests upstream, but the harness has not run them — '
-                     'so their compatibility is confirmed by unit tests only, **not** fully. This is distinct '
-                     'from `N/A` (no acceptance tests exist).')
-        lines.append('')
-        lines.append('| Module | Status | Reason |')
-        lines.append('|---|---|---|')
-        for module_id in not_exercised:
-            entry = active[module_id]
-            repo = entry.get('repo', '')
-            name = f"[{module_id}]({repo})" if repo else module_id
-            status = acceptance_status(entry)
-            label = '⛔ blocked' if status == 'blocked' else '🚧 pending'
-            reason = entry.get('acceptance_reason', '').replace('\n', ' ').strip() or '—'
-            lines.append(f"| {name} | {label} | {reason} |")
+        lines.append('> ⛔ **blocked** / 🚧 **pending** modules have acceptance tests upstream that the harness '
+                     'did not run, so their compatibility is confirmed by unit tests only — not fully. The '
+                     'per-module reasons are documented in '
+                     '[docs/available-acceptance-tests.md](docs/available-acceptance-tests.md).')
         lines.append('')
 
     if retired or anomalies:
