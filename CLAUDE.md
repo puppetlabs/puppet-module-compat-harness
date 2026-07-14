@@ -55,6 +55,7 @@ scripts/
   summarize_module_statuses.py    # Final aggregated report
   update_ledger.py                # Merge run results into status/ledger.json (upsert + reconcile)
   render_status_dashboard.py      # Render STATUS.md fleet dashboard from the ledger
+  render_acceptance_audit.py      # Render docs/available-acceptance-tests.md from modules.json
   ledger_lib.py                   # Shared id-derivation + config/KNOWN_* parsing
 status/ledger.json                # Persistent per-module status ledger (committed by CI)
 STATUS.md                         # Generated fleet dashboard (do not hand-edit)
@@ -63,7 +64,7 @@ STATUS.md                         # Generated fleet dashboard (do not hand-edit)
   actions/run-module-test/action.yml   # Composite action used per matrix job
 docs/
   architecture-flow.md            # Mermaid diagram + stage reference (keep in sync with code)
-  available-acceptance-tests.md   # Audit of which modules have acceptance tests
+  available-acceptance-tests.md   # Generated acceptance-test audit (from modules.json; do not hand-edit)
 AGENTS.md                         # Operational rules for coding agents (module intake, CI rules, architecture maintenance)
 CONTRIBUTING.md                   # Contributor process and schema rules
 KNOWN_INCOMPATIBLE.md             # Modules tested and found incompatible with Puppet Core 8

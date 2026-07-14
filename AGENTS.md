@@ -28,7 +28,7 @@ This file is for coding agents working in this repository.
    - `os`: defaults to `ubuntu-latest` in workflow behavior.
   - `id`: derived from repo name for `voxpupuli/*` entries when omitted.
 6. Validate against schema before proposing completion.
-7. Update [Available Acceptance Tests](./docs/available-acceptance-tests.md) documentation with information about the module being added. Make sure to update the 'last updated' date as well.
+7. Do **not** hand-edit [Available Acceptance Tests](./docs/available-acceptance-tests.md) — it is auto-generated from `config/modules.json` by `scripts/render_acceptance_audit.py` (CI regenerates and commits it). The module's `acceptance` block (status + reason) is the source of truth for that audit, so getting the disposition right in step 4 above is what populates the doc. You may run `python scripts/render_acceptance_audit.py` locally to preview the result.
 
 ### Acceptance disposition (required)
 

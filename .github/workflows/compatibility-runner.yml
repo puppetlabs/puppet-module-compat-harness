@@ -291,13 +291,22 @@ jobs:
           STATUS_FILE: STATUS.md
           STALE_DAYS: ${{ vars.PUPPET_STALE_DAYS || '30' }}
 
+      - name: Render acceptance audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/render_acceptance_audit.py
+        env:
+          MODULES_FILE: config/modules.json
+          AUDIT_FILE: docs/available-acceptance-tests.md
+
       - name: Commit status ledger and dashboard
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add status/ledger.json STATUS.md
+          git add status/ledger.json STATUS.md docs/available-acceptance-tests.md
           if git diff --cached --quiet; then
             echo "No status changes to commit."
             exit 0
