@@ -1,8 +1,13 @@
 # Design: Lean Testing + Central Status Ledger
 
-**Status:** Draft for review
+**Status:** Phases 1 & 2 implemented (Phase 3 pending)
 **Author:** (harness maintainers)
 **Date:** 2026-07-13
+
+**Implementation status:**
+- **Phase 1 (ledger + dashboard):** done — `update_ledger.py`, `render_status_dashboard.py`, `ledger_lib.py`, `status/ledger.json`, `STATUS.md`, publish job.
+- **Phase 2 (lean matrix):** done — `detect_changes.py`, `build_matrix.rb` filtering, `lean` dispatch input, skip manifest + Skipped summary section.
+- **Phase 3 (auto-generate `KNOWN_COMPATIBLE.md`):** not started.
 
 ---
 
