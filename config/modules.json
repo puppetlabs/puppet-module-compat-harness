@@ -939,6 +939,21 @@
       }
     },
     {
+      "repo": "https://github.com/saz/puppet-timezone",
+      "ref": "master",
+      "id": "saz-puppet-timezone",
+      "acceptance": {
+        "enabled": true,
+        "status": "running",
+        "targets": [
+          {
+            "name": "el9",
+            "setfile": "el9"
+          }
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/TraGicCode/tragiccode-azure_key_vault",
       "ref": "main",
       "id": "tragiccode-azure_key_vault",
