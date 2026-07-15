@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T20:28:17Z",
+  "generated_at": "2026-07-15T20:31:15Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance": {
@@ -1656,13 +1656,31 @@
       }
     },
     "saz-puppet-timezone": {
+      "acceptance": {
+        "class": "clean",
+        "targets": {
+          "el9-systemd": "clean"
+        },
+        "tested_at": "2026-07-15T20:29:00Z"
+      },
       "acceptance_configured": true,
       "acceptance_status": "running",
-      "coverage_state": "never-tested",
+      "coverage_state": "unit+acceptance",
+      "dependency_status": "none",
       "deprecated": false,
       "disposition": "active",
+      "documentation_status": "none",
+      "metadata_status": "supported",
+      "puppet_core_version": "8.20.0",
       "ref": "master",
-      "repo": "https://github.com/saz/puppet-timezone"
+      "repo": "https://github.com/saz/puppet-timezone",
+      "unit": {
+        "class": "clean",
+        "compatibility_state": "compatible",
+        "last_harness_sha": "ce87d0a",
+        "last_run_id": "29448430412",
+        "tested_at": "2026-07-15T20:29:00Z"
+      }
     },
     "tragiccode-azure_key_vault": {
       "acceptance_configured": false,

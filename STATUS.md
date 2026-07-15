@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-15 20:28 UTC  
+**Generated:** 2026-07-15 20:31 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -12,18 +12,18 @@
 | Metric | Count |
 |---|---|
 | Active modules | 70 |
-| Unit-tested | 69 |
-| &nbsp;&nbsp;• unit pass | 69 |
+| Unit-tested | 70 |
+| &nbsp;&nbsp;• unit pass | 70 |
 | &nbsp;&nbsp;• unit fail | 0 |
 | Acceptance-enabled (running) | 41 |
-| &nbsp;&nbsp;• acceptance run | 40 |
-| &nbsp;&nbsp;• acceptance pass | 40 |
+| &nbsp;&nbsp;• acceptance run | 41 |
+| &nbsp;&nbsp;• acceptance pass | 41 |
 | &nbsp;&nbsp;• acceptance fail | 0 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 10 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 4 |
 | No acceptance tests (N/A) | 15 |
-| **Fully compatible** (unit pass + acceptance pass or N/A) | **55** |
-| Never tested | 1 |
+| **Fully compatible** (unit pass + acceptance pass or N/A) | **56** |
+| Never tested | 0 |
 | Stale (> 30d) | 0 |
 | ⚠️ Deprecated (unmaintained upstream) | 1 |
 | Retired (incompatible / deprecated) | 0 |
@@ -104,7 +104,7 @@
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-15 |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-15 |
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-15 |
-| [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | — | — | ⏳ awaiting run | never-tested | — |
+| [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-15 |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-15 |
 
 > ⛔ **blocked** / 🚧 **pending** modules have acceptance tests upstream that the harness did not run, so their compatibility is confirmed by unit tests only — not fully. The per-module reasons are documented in [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md).
