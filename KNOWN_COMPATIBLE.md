@@ -61,6 +61,7 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | 8.20.0 | ✅ | N/A |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | 8.20.0 | ✅ | ✅ |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | 8.20.0 | ✅ | ✅ |
+| [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | 8.20.0 | ✅ | ✅ |
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | 8.20.0 | ✅ | ✅ |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | 8.20.0 | ✅ | N/A |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | 8.20.0 | ✅ | ✅ |

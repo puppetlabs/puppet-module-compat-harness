@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T04:10:02Z",
+  "generated_at": "2026-07-15T19:43:16Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance": {
@@ -1279,6 +1279,33 @@
         "tested_at": "2026-07-15T02:59:28Z"
       }
     },
+    "puppet-snmp": {
+      "acceptance": {
+        "class": "warning",
+        "targets": {
+          "el9-systemd": "warning"
+        },
+        "tested_at": "2026-07-15T19:40:37Z"
+      },
+      "acceptance_configured": true,
+      "acceptance_status": "running",
+      "coverage_state": "unit+acceptance",
+      "dependency_status": "none",
+      "deprecated": false,
+      "disposition": "active",
+      "documentation_status": "none",
+      "metadata_status": "unsupported_by_metadata",
+      "puppet_core_version": "8.20.0",
+      "ref": "master",
+      "repo": "https://github.com/voxpupuli/puppet-snmp",
+      "unit": {
+        "class": "warning",
+        "compatibility_state": "conditionally_compatible",
+        "last_harness_sha": "82394f3",
+        "last_run_id": "29445366119",
+        "tested_at": "2026-07-15T19:40:31Z"
+      }
+    },
     "puppet-squid": {
       "acceptance": {
         "class": "warning",
@@ -1627,6 +1654,15 @@
         "last_run_id": "29385399936",
         "tested_at": "2026-07-15T02:59:27Z"
       }
+    },
+    "saz-puppet-timezone": {
+      "acceptance_configured": true,
+      "acceptance_status": "running",
+      "coverage_state": "never-tested",
+      "deprecated": false,
+      "disposition": "active",
+      "ref": "master",
+      "repo": "https://github.com/saz/puppet-timezone"
     },
     "tragiccode-azure_key_vault": {
       "acceptance_configured": false,
