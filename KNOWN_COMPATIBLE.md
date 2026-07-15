@@ -61,6 +61,7 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | 8.20.0 | ✅ | N/A |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | 8.20.0 | ✅ | ✅ |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | 8.20.0 | ✅ | ✅ |
+| [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | 8.20.0 | ✅ | ✅ |
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | 8.20.0 | ✅ | ✅ |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | 8.20.0 | ✅ | N/A |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | 8.20.0 | ✅ | ✅ |
@@ -69,4 +70,5 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | 8.20.0 | ✅ | N/A |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | 8.20.0 | ✅ | ✅ |
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.20.0 | ✅ | ✅ |
+| [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | 8.20.0 | ✅ | ✅ |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A |

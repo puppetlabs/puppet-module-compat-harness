@@ -5,7 +5,7 @@
 
 Audit of the acceptance-test disposition of every module in `config/modules.json`.
 
-## Modules With Acceptance Tests (53)
+## Modules With Acceptance Tests (55)
 
 Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ blocked (cannot run in this harness); 🚧 pending (not yet wired up).
 
@@ -51,6 +51,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-redis](https://github.com/voxpupuli/puppet-redis) |
 | ⛔ | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) |
 | ⛔ | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) |
+| ✅ | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) |
 | ✅ | [puppet-squid](https://github.com/voxpupuli/puppet-squid) |
 | ⛔ | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) |
 | ⛔ | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) |
@@ -64,6 +65,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) |
 | ✅ | [saz-puppet-limits](https://github.com/saz/puppet-limits) |
 | ✅ | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) |
+| ✅ | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) |
 
 ## Modules Without Acceptance Tests (15)
 

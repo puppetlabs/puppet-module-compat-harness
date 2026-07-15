@@ -179,7 +179,18 @@ module ModuleTester
       # The single modern native json for every module. normalize_runtime_gem_versions
       # has already stripped any module-level json pin (see there for why), so
       # this is the sole json declaration.
-      lines << "gem 'json', '>= 2.5.0', require: false"
+      #
+      # Pinned to the 2.6.x line to match what the target environment actually
+      # ships: Ruby 3.2 / puppet-agent 8.x carry json 2.6.3 as the default gem.
+      # Previously this was a floor-only ">= 2.5.0", which floated to the newest
+      # json on rubygems (e.g. 2.21.1) -- not faithful to Puppet Core 8, and
+      # broken: json 2.7.0 made string-escape parsing strict, which rejects the
+      # malformed escapes baked into facterdb (<= 1.27.0) bundled Windows
+      # factsets (PATH values like "...\\system32"). That makes JGrep.jgrep raise
+      # JSON::ParserError, return nil, and rspec-puppet-facts' on_supported_os
+      # crash on nil.map before a single example runs. Capping below 2.7 keeps
+      # parsing lenient, exactly as the module's own green Puppet 8 CI does.
+      lines << "gem 'json', '>= 2.5.0', '< 2.7.0', require: false"
       lines << ""
       lines << "source '#{source_url}' do"
       lines << "  gem 'puppet', '= #{puppet_version}', require: false"
@@ -230,19 +241,19 @@ module ModuleTester
       end
 
       # Also strip the module's own json pin (old or new, literal or dynamic).
-      # The overlay declares a single modern `json >= 2.5.0` (see
+      # The overlay declares a single modern `json >= 2.5.0, < 2.7.0` (see
       # write_split_gemfile); stripping here prevents a "json specified twice"
       # bootstrap failure and lets that pin override modules shipping an ancient,
       # Puppet-Core-incompatible json.
       json_content, json_changed = strip_gem_version_constraint(updated, 'json')
       if json_changed
         updated = json_content
-        changes << 'json=removed module pin (overlay forces >= 2.5.0 native json)'
+        changes << 'json=removed module pin (overlay forces 2.6.x native json)'
       else
         json_content, json_changed = strip_dynamic_gem_assignment(updated, 'json')
         if json_changed
           updated = json_content
-          changes << 'json=removed dynamic gems[] assignment (overlay forces >= 2.5.0 native json)'
+          changes << 'json=removed dynamic gems[] assignment (overlay forces 2.6.x native json)'
         end
       end
 

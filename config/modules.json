@@ -761,6 +761,21 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-snmp",
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "status": "running",
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-squid",
       "ref": "master",
       "prereqs": {
@@ -934,6 +949,22 @@
           {
             "name": "el9",
             "setfile": "el9"
+          }
+        ]
+      }
+    },
+    {
+      "repo": "https://github.com/saz/puppet-timezone",
+      "ref": "master",
+      "id": "saz-puppet-timezone",
+      "acceptance": {
+        "enabled": true,
+        "status": "running",
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
           }
         ]
       }
