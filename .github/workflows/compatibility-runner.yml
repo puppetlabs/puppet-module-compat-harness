@@ -316,7 +316,11 @@ jobs:
           STATUS_ROOT: all-artifacts
           SKIP_MANIFEST: .tmp-decisions/change-decisions.json
 
+      # Persist to the ledger/dashboard ONLY for real runs (schedule, or a
+      # manual dispatch of the configured fleet). An ad-hoc modules_json
+      # override is a throwaway experiment and must not write committed state.
       - name: Update status ledger
+        if: github.event.inputs.modules_json == ''
         shell: bash
         run: |
           set -euo pipefail
@@ -329,6 +333,7 @@ jobs:
           KNOWN_DEPRECATED_FILE: KNOWN_DEPRECATED.md
 
       - name: Render status dashboard
+        if: github.event.inputs.modules_json == ''
         shell: bash
         run: |
           set -euo pipefail
@@ -342,6 +347,7 @@ jobs:
           STALE_DAYS: ${{ vars.PUPPET_STALE_DAYS || '30' }}
 
       - name: Render acceptance audit
+        if: github.event.inputs.modules_json == ''
         shell: bash
         run: |
           set -euo pipefail
@@ -351,6 +357,7 @@ jobs:
           AUDIT_FILE: docs/available-acceptance-tests.md
 
       - name: Commit status ledger and dashboard
+        if: github.event.inputs.modules_json == ''
         shell: bash
         run: |
           set -euo pipefail
