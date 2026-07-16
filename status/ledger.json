@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T19:07:30Z",
+  "generated_at": "2026-07-16T19:14:32Z",
   "modules": {
     "memcached": {
       "coverage_state": "unit-only",
@@ -11,9 +11,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "729ccbe",
-        "last_run_id": "29526621632",
-        "tested_at": "2026-07-16T19:06:07Z"
+        "last_harness_sha": "ca84651",
+        "last_run_id": "29527095820",
+        "tested_at": "2026-07-16T19:13:08Z"
       }
     },
     "puppet-alternatives": {
