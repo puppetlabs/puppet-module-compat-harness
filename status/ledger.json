@@ -1,6 +1,21 @@
 {
-  "generated_at": "2026-07-16T04:19:53Z",
+  "generated_at": "2026-07-16T19:07:30Z",
   "modules": {
+    "memcached": {
+      "coverage_state": "unit-only",
+      "dependency_status": "none",
+      "disposition": "removed-without-disposition",
+      "documentation_status": "none",
+      "metadata_status": "unsupported_by_metadata",
+      "puppet_core_version": "8.20.0",
+      "unit": {
+        "class": "warning",
+        "compatibility_state": "conditionally_compatible",
+        "last_harness_sha": "729ccbe",
+        "last_run_id": "29526621632",
+        "tested_at": "2026-07-16T19:06:07Z"
+      }
+    },
     "puppet-alternatives": {
       "acceptance": {
         "class": "warning",
