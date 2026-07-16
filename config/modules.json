@@ -939,6 +939,22 @@
       }
     },
     {
+      "repo": "https://github.com/jst-cyr/puppet-memcached",
+      "ref": "fix-systemd-servicelimits-type",
+      "id": "saz-puppet-memcached",
+      "acceptance": {
+        "enabled": true,
+        "status": "running",
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/saz/puppet-sudo",
       "ref": "master",
       "id": "saz-puppet-sudo",
