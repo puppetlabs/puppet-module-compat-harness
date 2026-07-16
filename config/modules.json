@@ -213,6 +213,21 @@
       }
     },
     {
+      "repo": "https://github.com/voxpupuli/puppet-collectd",
+      "ref": "master",
+      "acceptance": {
+        "enabled": true,
+        "status": "running",
+        "targets": [
+          {
+            "name": "debian12-systemd",
+            "setfile": "debian12-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
+      }
+    },
+    {
       "repo": "https://github.com/voxpupuli/puppet-confluence",
       "ref": "master",
       "acceptance": {
