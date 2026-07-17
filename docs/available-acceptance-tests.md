@@ -5,7 +5,7 @@
 
 Audit of the acceptance-test disposition of every module in `config/modules.json`.
 
-## Modules With Acceptance Tests (55)
+## Modules With Acceptance Tests (57)
 
 Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ blocked (cannot run in this harness); 🚧 pending (not yet wired up).
 
@@ -20,6 +20,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) |
 | ✅ | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) |
 | ✅ | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) |
+| ✅ | [puppet-collectd](https://github.com/voxpupuli/puppet-collectd) |
 | ✅ | [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) |
 | ✅ | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) |
 | ✅ | [puppet-cron](https://github.com/voxpupuli/puppet-cron) |
@@ -64,10 +65,11 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | 🚧 | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) |
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) |
 | ✅ | [saz-puppet-limits](https://github.com/saz/puppet-limits) |
+| ✅ | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) |
 | ✅ | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) |
 | ✅ | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) |
 
-## Modules Without Acceptance Tests (15)
+## Modules Without Acceptance Tests (17)
 
 Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone is full coverage for these modules.
 
@@ -87,6 +89,8 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) |
+| [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) |
+| [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
 ## Modules With Acceptance Tests but Not Run in CI (14)
