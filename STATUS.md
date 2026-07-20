@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-19 03:05 UTC  
+**Generated:** 2026-07-20 03:02 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -109,6 +109,6 @@
 | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-18 |
 | [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-18 |
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-18 |
-| [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-18 |
+| [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-20 |
 
 > ⛔ **blocked** / 🚧 **pending** modules have acceptance tests upstream that the harness did not run, so their compatibility is confirmed by unit tests only — not fully. The per-module reasons are documented in [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md).
