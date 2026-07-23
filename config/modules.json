@@ -1026,6 +1026,16 @@
         "enabled": false,
         "status": "none"
       }
+    },
+    {
+      "repo": "https://github.com/treydock/puppet-kdump",
+      "ref": "master",
+      "id": "treydock-puppet-kdump",
+      "acceptance": {
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Acceptance tests reboot the SUT and assert crashkernel appears in /proc/cmdline, set via the grub2 kernel_parameter provider (augeasproviders_grub). Docker SUTs share the host kernel cmdline (unchangeable from inside the container) and cannot reboot into a crashkernel-reserved kernel; kdump.service also requires boot-time crash-memory reservation. Same host-kernel/reboot blocker as its own augeasproviders_grub dependency. Requires a VM-based SUT."
+      }
     }
   ]
 }
