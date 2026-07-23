@@ -5,7 +5,7 @@
 
 Audit of the acceptance-test disposition of every module in `config/modules.json`.
 
-## Modules With Acceptance Tests (57)
+## Modules With Acceptance Tests (58)
 
 Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ blocked (cannot run in this harness); 🚧 pending (not yet wired up).
 
@@ -68,6 +68,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) |
 | ✅ | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) |
 | ✅ | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) |
+| ⛔ | [treydock-puppet-kdump](https://github.com/treydock/puppet-kdump) |
 
 ## Modules Without Acceptance Tests (17)
 
@@ -93,7 +94,7 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
-## Modules With Acceptance Tests but Not Run in CI (14)
+## Modules With Acceptance Tests but Not Run in CI (15)
 
 These modules have acceptance tests upstream, but the harness does not run them — so their compatibility is confirmed by unit tests only, not fully. They are intentionally excluded from `KNOWN_COMPATIBLE.md`.
 
@@ -113,3 +114,4 @@ These modules have acceptance tests upstream, but the harness does not run them 
 | [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
 | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
 | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
+| [treydock-puppet-kdump](https://github.com/treydock/puppet-kdump) | ⛔ blocked | Acceptance tests reboot the SUT and assert crashkernel appears in /proc/cmdline, set via the grub2 kernel_parameter provider (augeasproviders_grub). Docker SUTs share the host kernel cmdline (unchangeable from inside the container) and cannot reboot into a crashkernel-reserved kernel; kdump.service also requires boot-time crash-memory reservation. Same host-kernel/reboot blocker as its own augeasproviders_grub dependency. Requires a VM-based SUT. |
