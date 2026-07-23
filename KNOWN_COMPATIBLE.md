@@ -29,6 +29,7 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | 8.20.0 | ✅ | N/A |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | 8.20.0 | ✅ | ✅ |
 | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | 8.20.0 | ✅ | ✅ |
+| [puppet-collectd](https://github.com/voxpupuli/puppet-collectd) | 8.20.0 | ✅ | ✅ |
 | [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | 8.20.0 | ✅ | ✅ |
 | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) | 8.20.0 | ✅ | ✅ |
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | 8.20.0 | ✅ | ✅ |
@@ -69,6 +70,9 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | 8.20.0 | ✅ | ✅ |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | 8.20.0 | ✅ | N/A |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | 8.20.0 | ✅ | ✅ |
+| [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | 8.20.0 | ✅ | ✅ |
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.20.0 | ✅ | ✅ |
 | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | 8.20.0 | ✅ | ✅ |
+| [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | 8.20.0 | ✅ | N/A |
+| [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | 8.20.0 | ✅ | N/A |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A |
