@@ -612,14 +612,6 @@
       }
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-openvox_bootstrap",
-      "ref": "main",
-      "acceptance": {
-        "enabled": false,
-        "status": "none"
-      }
-    },
-    {
       "repo": "https://github.com/voxpupuli/puppet-php",
       "ref": "master",
       "prereqs": {
