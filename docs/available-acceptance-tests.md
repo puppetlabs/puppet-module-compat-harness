@@ -70,7 +70,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) |
 | ⛔ | [treydock-puppet-kdump](https://github.com/treydock/puppet-kdump) |
 
-## Modules Without Acceptance Tests (17)
+## Modules Without Acceptance Tests (16)
 
 Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone is full coverage for these modules.
 
@@ -86,7 +86,6 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [puppet-format](https://github.com/voxpupuli/puppet-format) |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) |
-| [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) |

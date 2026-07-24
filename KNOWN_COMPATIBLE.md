@@ -54,7 +54,6 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | 8.20.0 | ✅ | ✅ |
 | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | 8.20.0 | ✅ | ✅ |
 | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | 8.20.0 | ✅ | ✅ |
-| [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) | 8.20.0 | ✅ | N/A |
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | 8.20.0 | ✅ | ✅ |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | 8.20.0 | ✅ | ✅ |
 | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | 8.20.0 | ✅ | ✅ |
