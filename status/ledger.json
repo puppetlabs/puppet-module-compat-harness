@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-23T03:17:14Z",
+  "generated_at": "2026-07-24T03:17:31Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance": {
@@ -1014,7 +1014,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-07-23T03:00:40Z"
+        "tested_at": "2026-07-24T03:00:20Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1030,9 +1030,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "7b302b1",
-        "last_run_id": "29975806033",
-        "tested_at": "2026-07-23T03:00:43Z"
+        "last_harness_sha": "80a9781",
+        "last_run_id": "30063043993",
+        "tested_at": "2026-07-24T03:00:10Z"
       }
     },
     "puppet-openvox_bootstrap": {
@@ -1417,9 +1417,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "7b302b1",
-        "last_run_id": "29975806033",
-        "tested_at": "2026-07-23T03:00:39Z"
+        "last_harness_sha": "80a9781",
+        "last_run_id": "30063043993",
+        "tested_at": "2026-07-24T03:00:11Z"
       }
     },
     "puppet-telegraf": {
@@ -1794,6 +1794,27 @@
         "last_harness_sha": "00beb17",
         "last_run_id": "29797297518",
         "tested_at": "2026-07-21T03:00:48Z"
+      }
+    },
+    "treydock-puppet-kdump": {
+      "acceptance_configured": false,
+      "acceptance_reason": "Acceptance tests reboot the SUT and assert crashkernel appears in /proc/cmdline, set via the grub2 kernel_parameter provider (augeasproviders_grub). Docker SUTs share the host kernel cmdline (unchangeable from inside the container) and cannot reboot into a crashkernel-reserved kernel; kdump.service also requires boot-time crash-memory reservation. Same host-kernel/reboot blocker as its own augeasproviders_grub dependency. Requires a VM-based SUT.",
+      "acceptance_status": "blocked",
+      "coverage_state": "acceptance-blocked",
+      "dependency_status": "none",
+      "deprecated": false,
+      "disposition": "active",
+      "documentation_status": "none",
+      "metadata_status": "supported",
+      "puppet_core_version": "8.20.0",
+      "ref": "master",
+      "repo": "https://github.com/treydock/puppet-kdump",
+      "unit": {
+        "class": "clean",
+        "compatibility_state": "compatible",
+        "last_harness_sha": "80a9781",
+        "last_run_id": "30063043993",
+        "tested_at": "2026-07-24T03:00:13Z"
       }
     }
   },

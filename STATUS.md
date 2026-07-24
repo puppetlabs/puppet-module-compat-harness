@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-23 03:17 UTC  
+**Generated:** 2026-07-24 03:17 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -11,15 +11,15 @@
 
 | Metric | Count |
 |---|---|
-| Active modules | 74 |
-| Unit-tested | 74 |
-| &nbsp;&nbsp;• unit pass | 74 |
+| Active modules | 75 |
+| Unit-tested | 75 |
+| &nbsp;&nbsp;• unit pass | 75 |
 | &nbsp;&nbsp;• unit fail | 0 |
 | Acceptance-enabled (running) | 43 |
 | &nbsp;&nbsp;• acceptance run | 43 |
 | &nbsp;&nbsp;• acceptance pass | 43 |
 | &nbsp;&nbsp;• acceptance fail | 0 |
-| ⛔ Acceptance blocked (tests exist, can't run here) | 10 |
+| ⛔ Acceptance blocked (tests exist, can't run here) | 11 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 4 |
 | No acceptance tests (N/A) | 17 |
 | **Fully compatible** (unit pass + acceptance pass or N/A) | **60** |
@@ -77,7 +77,7 @@
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-18 |
 | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-18 |
 | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-18 |
-| [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-23 |
+| [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-24 |
 | [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-18 |
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-18 |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-18 |
@@ -93,7 +93,7 @@
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-18 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-18 |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-18 |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-23 |
+| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-24 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-18 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | 8.20.0 | ✅ | ubuntu24:✅ | unit+acceptance | 2026-07-18 |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-18 |
@@ -110,5 +110,6 @@
 | [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-18 |
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-18 |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-21 |
+| [treydock-puppet-kdump](https://github.com/treydock/puppet-kdump) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-24 |
 
 > ⛔ **blocked** / 🚧 **pending** modules have acceptance tests upstream that the harness did not run, so their compatibility is confirmed by unit tests only — not fully. The per-module reasons are documented in [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md).
