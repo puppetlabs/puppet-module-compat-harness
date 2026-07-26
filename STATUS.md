@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-24 16:45 UTC  
+**Generated:** 2026-07-26 03:03 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -26,8 +26,7 @@
 | Never tested | 0 |
 | Stale (> 30d) | 0 |
 | ⚠️ Deprecated (unmaintained upstream) | 1 |
-| Retired (incompatible / deprecated) | 0 |
-| ⚠️ Removed without disposition | 1 |
+| Retired (incompatible / deprecated) | 1 |
 
 ## Active Modules
 
@@ -72,7 +71,7 @@
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-24 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-26 |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-24 |
@@ -85,9 +84,9 @@
 | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-24 |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-24 |
-| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
+| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-26 |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
-| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-24 |
+| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-26 |
 | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | 8.20.0 | ✅ | ⛔ blocked | acceptance-blocked | 2026-07-24 |
 | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
@@ -118,6 +117,4 @@
 
 | Module | Disposition | Last Known Unit | Last Tested |
 |---|---|---|---|
-| [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) | removed-without-disposition | ✅ | 2026-07-18 |
-
-> ⚠️ **Removed without disposition:** the module(s) above are in the ledger but no longer in `config/modules.json` and are not listed in `KNOWN_INCOMPATIBLE.md` or `KNOWN_DEPRECATED.md`. Add a disposition or restore them to the config.
+| [puppet-openvox_bootstrap](https://github.com/voxpupuli/puppet-openvox_bootstrap) | incompatible | ✅ | 2026-07-18 |
