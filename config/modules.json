@@ -993,6 +993,15 @@
       }
     },
     {
+      "repo": "https://github.com/smoeding/puppet-debconf",
+      "ref": "master",
+      "id": "smoeding-puppet-debconf",
+      "acceptance": {
+        "enabled": false,
+        "status": "none"
+      }
+    },
+    {
       "repo": "https://github.com/stschulte/puppet-oracle",
       "ref": "main",
       "id": "stschulte-puppet-oracle",
