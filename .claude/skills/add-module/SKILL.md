@@ -54,7 +54,11 @@ this as extraction, not form-parsing.
 You MUST fetch and analyze the remote repository, not the local workspace. Use the GitHub
 API / WebFetch / a shallow clone. At the target ref, inspect at minimum:
 
-- `metadata.json` — Puppet version requirement, dependencies, maintainer, deprecation status
+- `metadata.json` — Puppet version requirement, dependencies, maintainer, deprecation status.
+  Note: many modern modules declare an `openvox` requirement instead of `puppet`. That is
+  **expected and fine** — this harness swaps OpenVox for Puppet Core (see AGENTS.md "Project
+  Purpose"). A missing `puppet` requirement is only a metadata *warning*, never a reason to
+  refuse the module.
 - `Gemfile` / `Gemfile.lock` — legacy/incompatible pins
 - `Rakefile`, `.fixtures.yml`, `spec/spec_helper.rb`
 - `spec/acceptance/` **and** `acceptance/` — do acceptance tests exist?
@@ -135,7 +139,12 @@ was a GitHub issue, include a cross-link back to it (e.g. "resolves #9").
 ## Notes
 
 - Don't add anything listed in `KNOWN_INCOMPATIBLE.md` without new evidence.
-- If inspection reveals the module is incompatible (OpenVox-only, legacy toolchain, dead
-  deps), stop and use the `mark-incompatible` skill instead of adding it.
+- If inspection reveals the module is genuinely incompatible (legacy toolchain, dead deps, or
+  *genuinely* OpenVox-only), stop and use the `mark-incompatible` skill instead of adding it.
+  **"Genuinely OpenVox-only" is narrow** — see AGENTS.md "Project Purpose". A module that merely
+  declares `openvox` in `metadata.json`/`Gemfile` is a normal input (the harness swaps in Puppet
+  Core); that alone is a *warning*, not an incompatibility. Reserve mark-incompatible for a hard
+  runtime refusal of non-OpenVox (e.g. `puppet-choria`) or a module whose purpose is installing
+  OpenVox (e.g. `puppet-openvox_bootstrap`). When unsure, add it and let a run produce evidence.
 - For a narrow CI verification run, use the workflow `modules_json` input with just the new
   entry (see AGENTS.md "Quick CI Scope Test").

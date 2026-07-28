@@ -7,6 +7,31 @@ This file is for coding agents working in this repository.
 - Use this guide for automated edits related to module intake, CI behavior, and compatibility test execution.
 - Keep user-facing documentation in `README.md` and contributor process in `CONTRIBUTING.md`.
 
+## Project Purpose (read first)
+
+This harness exists to answer one question per module: **does it work with Puppet Core?** To
+find out, the runner deliberately **swaps OpenVox for Puppet Core** and runs the module's own
+tests — `lib/module_tester/bootstrap.rb` comments out the module's runtime gem declarations and
+pins `gem 'puppet', '= <version>'` from the Puppet Core source.
+
+Because of this, a module declaring **`openvox` (not `puppet`) in `metadata.json`/`Gemfile` is
+the NORMAL, expected input** — most modern Vox Pupuli modules do, since their upstream CI
+targets OpenVox. An `openvox` declaration is **not** an "OpenVox-only" incompatibility, and it
+must **not** be pre-emptively marked incompatible.
+
+- A missing `puppet` requirement in `metadata.json` surfaces only as a **metadata warning**
+  (`conditionally_compatible` under the default `warn` mode — see `lib/module_tester/metadata.rb`
+  and `lib/module_tester/classifier.rb`). It is **never** a blocking failure or an exclusion.
+- A module is **genuinely OpenVox-only** (→ use the `mark-incompatible` skill) only when it
+  cannot produce a *usable* result on Puppet Core, i.e. one of:
+  - it has a **hard runtime check that refuses non-OpenVox** distributions (e.g. `puppet-choria`
+    raising "Choria only supports OpenVox"), or
+  - its **purpose is to install/bootstrap OpenVox packages**, so even a passing test describes no
+    valid Puppet Core use case (e.g. `puppet-openvox_bootstrap`).
+- Merely declaring `openvox` in metadata/Gemfile, when the provider/manifests otherwise run under
+  Puppet Core, is **not** sufficient to mark incompatible. When in doubt, add the module and let a
+  run produce the evidence — a warning is a pass (green), only failures are red.
+
 ## Primary Files
 
 - `config/modules.json`: module definitions used by local runs and CI matrix generation.
@@ -190,6 +215,12 @@ When you need a narrow CI run, use workflow input `modules_json` with only new o
 - Put agent-specific process updates in this file.
 
 ## Adding New Incompatibilities
+
+Before ruling a module incompatible, re-read **Project Purpose** above. In particular, an
+`openvox`-in-`metadata.json` declaration (with no `puppet` requirement) is a *warning*, not an
+incompatibility — do not mark such a module incompatible on that basis alone. Reserve
+"OpenVox-only" for the two genuine cases named there (hard runtime refusal of non-OpenVox, or a
+module whose purpose is installing OpenVox).
 
 When a module is determined to be incompatible:
 

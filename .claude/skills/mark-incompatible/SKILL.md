@@ -1,6 +1,6 @@
 ---
 name: mark-incompatible
-description: Record a module as incompatible (or partially incompatible) with Puppet Core and remove it from the active test matrix. Use when the user says a module is incompatible, should be excluded, "doesn't work with Puppet Core", is OpenVox-only, or when your own testing/inspection proves a module cannot pass. Updates KNOWN_INCOMPATIBLE.md and config/modules.json per AGENTS.md.
+description: Record a module as incompatible (or partially incompatible) with Puppet Core and remove it from the active test matrix. Use when the user says a module is incompatible, should be excluded, "doesn't work with Puppet Core", or when your own testing/inspection proves a module cannot pass. Also for genuinely OpenVox-only modules — but note that is narrow (a hard runtime refusal of non-OpenVox, or a module whose purpose is installing OpenVox); a module that merely declares openvox in metadata.json is a normal add-module input, not an incompatibility. Updates KNOWN_INCOMPATIBLE.md and config/modules.json per AGENTS.md.
 ---
 
 # Mark a module incompatible
@@ -11,9 +11,9 @@ the same and are handled differently.
 
 ## Step 0 — Classify the outcome (do not conflate these)
 
-- **Incompatible** — the module cannot produce a reliable pass on Puppet Core (OpenVox-only
-  hard failure, dead legacy toolchain, unresolvable deps). → Document + **remove** from the
-  matrix.
+- **Incompatible** — the module cannot produce a reliable *usable* pass on Puppet Core
+  (genuinely OpenVox-only, dead legacy toolchain, unresolvable deps). → Document + **remove**
+  from the matrix.
 - **Partial** — core functionality works but a specific class/feature fails on Puppet Core
   (e.g. an mcollective/choria integration class). → Document as **Partial** and **keep** the
   module in `config/modules.json`; the harness tolerates the documented failure.
@@ -22,9 +22,28 @@ the same and are handled differently.
   entry in `modules.json` instead (it stays in the matrix). Deprecation is orthogonal to
   compatibility.
 
+### "OpenVox-only" is narrow — do not over-apply it
+
+This harness's whole purpose is to **swap OpenVox for Puppet Core and run the tests** (see
+AGENTS.md "Project Purpose"). So a module declaring **`openvox` (not `puppet`) in
+`metadata.json`/`Gemfile` is the normal input, NOT an incompatibility.** A missing `puppet`
+requirement is only a metadata *warning* (`conditionally_compatible`), never a blocking failure
+or exclusion.
+
+Mark a module OpenVox-only **Incompatible** only when it cannot yield a usable Puppet Core
+result — one of:
+
+- a **hard runtime check that refuses non-OpenVox** distributions (e.g. `puppet-choria` raising
+  "Choria only supports OpenVox"), or
+- its **purpose is to install/bootstrap OpenVox packages**, so even a passing test describes no
+  valid Puppet Core use case (e.g. `puppet-openvox_bootstrap`).
+
+If the module just declares `openvox` but its providers/manifests otherwise run under Puppet
+Core, it is **not** incompatible — hand it to the `add-module` skill instead.
+
 If unsure whether it's truly incompatible vs. just failing for a harness/config reason,
-gather evidence first (a scoped run, log inspection) — a harness error is not an
-incompatibility.
+gather evidence first (a scoped run, log inspection) — a harness error, or a metadata-only
+`openvox` declaration, is not an incompatibility.
 
 ## Step 1 — Add a row to KNOWN_INCOMPATIBLE.md
 
