@@ -72,6 +72,7 @@ Modules with upstream acceptance tests that cannot currently run in the harness 
 | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | 8.20.0 | ✅ | ✅ |
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.20.0 | ✅ | ✅ |
 | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | 8.20.0 | ✅ | ✅ |
+| [smoeding-puppet-debconf](https://github.com/smoeding/puppet-debconf) | 8.20.0 | ✅ | N/A |
 | [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | 8.20.0 | ✅ | N/A |
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | 8.20.0 | ✅ | N/A |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A |

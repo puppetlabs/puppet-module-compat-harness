@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-07-28 04:12 UTC  
+**Generated:** 2026-07-28 17:26 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -11,9 +11,9 @@
 
 | Metric | Count |
 |---|---|
-| Active modules | 74 |
-| Unit-tested | 74 |
-| &nbsp;&nbsp;• unit pass | 74 |
+| Active modules | 75 |
+| Unit-tested | 75 |
+| &nbsp;&nbsp;• unit pass | 75 |
 | &nbsp;&nbsp;• unit fail | 0 |
 | Acceptance-enabled (running) | 43 |
 | &nbsp;&nbsp;• acceptance run | 43 |
@@ -21,8 +21,8 @@
 | &nbsp;&nbsp;• acceptance fail | 0 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 11 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 4 |
-| No acceptance tests (N/A) | 16 |
-| **Fully compatible** (unit pass + acceptance pass or N/A) | **59** |
+| No acceptance tests (N/A) | 17 |
+| **Fully compatible** (unit pass + acceptance pass or N/A) | **60** |
 | Never tested | 0 |
 | Stale (> 30d) | 0 |
 | ⚠️ Deprecated (unmaintained upstream) | 1 |
@@ -106,6 +106,7 @@
 | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
 | [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | 8.20.0 | ✅ | el9:✅ | unit+acceptance | 2026-07-24 |
 | [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-07-24 |
+| [smoeding-puppet-debconf](https://github.com/smoeding/puppet-debconf) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-28 |
 | [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-24 |
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-24 |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | 8.20.0 | ✅ | N/A | unit-only | 2026-07-24 |

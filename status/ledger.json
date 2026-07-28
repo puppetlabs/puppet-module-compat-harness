@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-28T04:12:57Z",
+  "generated_at": "2026-07-28T17:26:15Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance": {
@@ -169,7 +169,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-07-28T03:00:17Z"
+        "tested_at": "2026-07-28T16:28:25Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -185,9 +185,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "5948184",
-        "last_run_id": "30324659847",
-        "tested_at": "2026-07-28T03:00:20Z"
+        "last_harness_sha": "efce13f",
+        "last_run_id": "30378323829",
+        "tested_at": "2026-07-28T16:28:25Z"
       }
     },
     "puppet-augeasproviders_sysctl": {
@@ -912,7 +912,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-07-28T03:00:14Z"
+        "tested_at": "2026-07-28T16:28:14Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -928,9 +928,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "5948184",
-        "last_run_id": "30324659847",
-        "tested_at": "2026-07-28T03:00:17Z"
+        "last_harness_sha": "efce13f",
+        "last_run_id": "30378323829",
+        "tested_at": "2026-07-28T16:28:12Z"
       }
     },
     "puppet-nodejs": {
@@ -1142,7 +1142,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-07-28T03:00:08Z"
+        "tested_at": "2026-07-28T16:28:10Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1158,9 +1158,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "5948184",
-        "last_run_id": "30324659847",
-        "tested_at": "2026-07-28T03:00:15Z"
+        "last_harness_sha": "efce13f",
+        "last_run_id": "30378323829",
+        "tested_at": "2026-07-28T16:28:20Z"
       }
     },
     "puppet-prometheus_reporter": {
@@ -1734,6 +1734,26 @@
         "last_harness_sha": "857b9f4",
         "last_run_id": "30105785376",
         "tested_at": "2026-07-24T15:33:46Z"
+      }
+    },
+    "smoeding-puppet-debconf": {
+      "acceptance_configured": false,
+      "acceptance_status": "none",
+      "coverage_state": "unit-only",
+      "dependency_status": "none",
+      "deprecated": false,
+      "disposition": "active",
+      "documentation_status": "none",
+      "metadata_status": "unsupported_by_metadata",
+      "puppet_core_version": "8.20.0",
+      "ref": "master",
+      "repo": "https://github.com/smoeding/puppet-debconf",
+      "unit": {
+        "class": "warning",
+        "compatibility_state": "conditionally_compatible",
+        "last_harness_sha": "efce13f",
+        "last_run_id": "30378323829",
+        "tested_at": "2026-07-28T16:28:18Z"
       }
     },
     "stschulte-puppet-oracle": {
