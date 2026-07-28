@@ -19,6 +19,10 @@ This file is for coding agents working in this repository.
 
 ## Module Addition Workflow (Agent)
 
+0. A request may arrive as a GitHub issue URL instead of a repo name (the `add-module` skill
+   handles crawling it for the target repo/ref — see `.claude/skills/add-module/SKILL.md`).
+   Resolve it to a concrete repo/ref before starting step 1; do not guess the target repo from
+   the issue title alone if the body is ambiguous.
 1. Inspect the target module repository first (do not skip this step). If the module is not present locally, agents MUST fetch and analyze the remote repository (e.g., via GitHub API or by cloning/downloading the repo) to discover acceptance tests and other required files. Acceptance test discovery must NOT be limited to the local workspace.
 2. Add a module object under `modules` in `config/modules.json`.
 3. **Insert Vox Pupuli modules first and alternative maintainers second.** Keep all `voxpupuli/*` entries grouped at the top and sorted alphabetically by repo name (the segment after the final `/`, lowercase, case-insensitive). Keep all non-`voxpupuli` entries grouped at the bottom and sorted alphabetically by explicit `id`. This preserves a clean primary Vox Pupuli block while keeping alternative maintainer jobs easy to identify in the GitHub Actions UI.
