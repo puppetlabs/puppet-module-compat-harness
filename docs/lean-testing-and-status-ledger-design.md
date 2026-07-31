@@ -197,15 +197,44 @@ especially older ones, change infrequently) is force-included regardless of the
 48h upstream check. The dashboard flags stale
 entries so the reported confidence level is accurate.
 
-### 3.6 Empty matrix is valid
+### 3.6 Empty matrix is valid — but must be gated explicitly
 
 If no module needs testing, `unit_matrix` / `acceptance_matrix` are `[]`.
-A GitHub Actions matrix over an empty array produces **zero job combinations**, so
-`test_unit` / `test_acceptance` simply do not run — this is not an error. The
-`summarize`/publish job runs with `if: always()`, reports every skip with its
-reason, updates the ledger (no-op for tested modules, since none ran), and the run
-**succeeds**. This satisfies "if no modules need to run, the run should succeed and
-it should be obvious why each was skipped."
+
+> **Correction (2026-07-31).** This section originally assumed a GitHub Actions
+> matrix over an empty array produces zero job combinations. It does not: GitHub
+> fails the **whole workflow** at strategy-evaluation time with
+> `Error when evaluating 'strategy' for job 'test_unit' … Matrix vector 'module'
+> does not contain any values`. The first genuinely delta-free nightly run
+> ([run 30600425334](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/30600425334))
+> went red for exactly this reason. `test_acceptance` was already gated on
+> `has_acceptance` (empty acceptance matrices are common), which is why only the
+> unit lane hit it.
+
+So an empty matrix is only valid if the job never evaluates it. `build_matrix.rb`
+emits `has_unit` and `has_acceptance`, and each test job is gated on its flag:
+
+```yaml
+test_unit:
+  if: needs.prepare.outputs.has_unit == 'true'
+test_acceptance:
+  if: needs.prepare.outputs.has_acceptance == 'true'
+```
+
+With both test jobs skipped, `publish` still runs
+(`if: always() && needs.prepare.result == 'success'`) so the ledger is still
+reconciled against `modules.json` + KNOWN_* — this matters when a module is
+removed or marked incompatible on a day when nothing else needs testing. It
+skips the artifact download (there is nothing to download) and
+`summarize_module_statuses.py` writes a **`Result: NO-OP`** summary listing every
+skip with its reason instead of an empty results table, emits a `Run result`
+notice annotation, and exits 0.
+
+The run therefore **succeeds** with the two test jobs shown as skipped — no
+failure notification, and obvious from the run summary that nothing needed
+testing. (GitHub has no third run conclusion available to a workflow: a run whose
+first job succeeds is green regardless, so "no-op" is expressed through skipped
+jobs plus the summary banner, not through run colour.)
 
 ---
 
@@ -382,9 +411,11 @@ unconditionally.
 3. New change-detection script → `{ run_all, changed_ids[], skipped[] }`
    (uses `GITHUB_TOKEN` for the commits API; reads ledger for not-green/stale).
 4. `build_matrix.rb` accepts the allowlist + `run_all` flag → filtered
-   `unit_matrix` / `acceptance_matrix` + emits the skip manifest.
+   `unit_matrix` / `acceptance_matrix` + `has_unit` / `has_acceptance` flags,
+   and emits the skip manifest.
 
-`test_unit` / `test_acceptance`: **unchanged.** Empty matrix ⇒ jobs skip.
+`test_unit` / `test_acceptance`: gated on `has_unit` / `has_acceptance` so an
+empty matrix skips the job instead of failing the workflow (see §3.6).
 
 `summarize` → renamed/extended to **`publish`** job:
 - `permissions: contents: write`

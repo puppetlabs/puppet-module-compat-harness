@@ -9,7 +9,13 @@
 # Outputs a single JSON object to stdout with keys:
 #   unit_matrix       — array of unit test matrix entries
 #   acceptance_matrix — array of acceptance test matrix entries
+#   has_unit          — "true" or "false"
 #   has_acceptance    — "true" or "false"
+#
+# The has_* flags exist because GitHub Actions treats an empty matrix vector as a
+# hard workflow error ("Matrix vector 'module' does not contain any values"), not
+# as zero combinations. Every matrix job must be gated on the matching flag so a
+# legitimate "nothing to test" run stays a successful no-op.
 
 require 'json'
 require 'set'
@@ -87,5 +93,6 @@ end
 puts JSON.generate({
   'unit_matrix' => unit,
   'acceptance_matrix' => acceptance,
+  'has_unit' => (!unit.empty?).to_s,
   'has_acceptance' => (!acceptance.empty?).to_s
 })

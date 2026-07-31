@@ -22,6 +22,40 @@ def load_skip_manifest():
         return None
 
 
+def write_run_mode(summary, manifest) -> None:
+    """Write the lean/full run-mode line plus the collapsed skip table."""
+    skipped = manifest.get('skipped', [])
+    included = manifest.get('included', [])
+    if manifest.get('run_all'):
+        summary.write(f"**Run mode:** full — {manifest.get('run_all_reason', 'run_all')}\n\n")
+    else:
+        summary.write(
+            f"**Run mode:** lean — {len(included)} module(s) tested, "
+            f"{len(skipped)} skipped (no changes). {manifest.get('run_all_reason', '')}\n\n"
+        )
+    if skipped:
+        summary.write('<details><summary>')
+        summary.write(f'Skipped {len(skipped)} module(s) — no changes detected')
+        summary.write('</summary>\n\n')
+        summary.write('| Module | Reason skipped |\n')
+        summary.write('|---|---|\n')
+        for row in sorted(skipped, key=lambda item: item['id']):
+            summary.write(f"| {row['id']} | {row.get('reason', '')} |\n")
+        summary.write('\n</details>\n\n')
+
+
+def write_noop_summary(summary_path: str, manifest) -> None:
+    with open(summary_path, 'a', encoding='utf-8') as summary:
+        summary.write('# Compatibility Run Summary\n\n')
+        summary.write('## Result: NO-OP — nothing required testing\n\n')
+        summary.write(
+            'Every module in `config/modules.json` is green in the ledger, recently '
+            'tested, and had no upstream commit in the change window; the harness '
+            'itself did not change either. No test jobs were dispatched.\n\n'
+        )
+        write_run_mode(summary, manifest)
+
+
 def main() -> int:
     root = os.environ.get('STATUS_ROOT', 'all-artifacts')
     summary_path = os.environ['GITHUB_STEP_SUMMARY']
@@ -41,6 +75,24 @@ def main() -> int:
                 row = json.load(handle)
 
             rows.append(row)
+
+    # A lean run that selected no modules is a legitimate no-op, not a failure and
+    # not a green "all modules pass" claim. Say so and stop before the results
+    # tables, which would otherwise render as empty and read as zero coverage.
+    if not rows and manifest is not None and not manifest.get('included'):
+        write_noop_summary(summary_path, manifest)
+        print('Run result: NO-OP - no module required testing this run.')
+        print(f"  {len(manifest.get('skipped', []))} module(s) skipped; harness unchanged.")
+        emit('notice', 'Run result', 'no-op: no module required testing this run')
+        return 0
+
+    if not rows and manifest is not None and manifest.get('included'):
+        emit(
+            'warning',
+            'Missing results',
+            f"{len(manifest['included'])} module(s) were selected for testing but no "
+            'status artifacts were found; test jobs may have failed to start.',
+        )
 
     rows.sort(key=lambda item: (item.get('lane', 'unit'), item['id'], item.get('acceptance_target', '')))
 
@@ -62,24 +114,7 @@ def main() -> int:
         summary.write('# Compatibility Run Summary\n\n')
 
         if manifest is not None:
-            skipped = manifest.get('skipped', [])
-            included = manifest.get('included', [])
-            if manifest.get('run_all'):
-                summary.write(f"**Run mode:** full — {manifest.get('run_all_reason', 'run_all')}\n\n")
-            else:
-                summary.write(
-                    f"**Run mode:** lean — {len(included)} module(s) tested, "
-                    f"{len(skipped)} skipped (no changes). {manifest.get('run_all_reason', '')}\n\n"
-                )
-            if skipped:
-                summary.write('<details><summary>')
-                summary.write(f'Skipped {len(skipped)} module(s) — no changes detected')
-                summary.write('</summary>\n\n')
-                summary.write('| Module | Reason skipped |\n')
-                summary.write('|---|---|\n')
-                for row in sorted(skipped, key=lambda item: item['id']):
-                    summary.write(f"| {row['id']} | {row.get('reason', '')} |\n")
-                summary.write('\n</details>\n\n')
+            write_run_mode(summary, manifest)
 
         summary.write('## Unit Compatibility (gating)\n\n')
         summary.write('| Module | Class | State | Metadata | Dependency | Documentation |\n')

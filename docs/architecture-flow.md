@@ -122,7 +122,8 @@ flowchart TD
 | JavaScript action runtime | Workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` so JavaScript-based actions run on Node 24 ahead of runner defaults. |
 | Validate schema | `validate_modules_config.py` checks `config/modules.json` against the JSON schema before anything fans out. |
 | Detect changes (lean matrix) | `detect_changes.py` decides which modules need testing this run. It sets `run_all` if a **material harness path** (`lib/`, `bin/`, `profiles/`, `scripts/`, `.github/`, `Gemfile*`) changed within the window, or on a manual dispatch with `lean=false`. Otherwise it includes a module only if its ledger status is **not green** (never-tested / unit-failing / acceptance-failing), it is **stale** (`> STALE_DAYS`, default 30), or it had an **upstream commit** on its ref within the window (GitHub commits API). Any indeterminate signal (git failure, API error, non-GitHub host) **fails safe by including** the module. Writes `.tmp/change-decisions.json` (uploaded as the `change-decisions` artifact) and exposes `run_all` + `include_ids` as step outputs. Skipped when a `modules_json` override is supplied — the override runs verbatim. |
-| Build matrix | `build_matrix.rb` expands the module list into two matrices (unit + acceptance, one row per module × target OS), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance entry carries `docker_mode`, `install_puppetserver`, `setup_commands`, and `pre_acceptance_commands` from `modules.json`. If the filter yields an empty matrix, the corresponding test job produces zero combinations and is skipped — a valid, successful "nothing to test" run. |
+| Build matrix | `build_matrix.rb` expands the module list into two matrices (unit + acceptance, one row per module × target OS), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance entry carries `docker_mode`, `install_puppetserver`, `setup_commands`, and `pre_acceptance_commands` from `modules.json`. It also emits `has_unit` / `has_acceptance` flags. |
+| Empty-matrix gating | GitHub Actions treats an **empty matrix vector as a hard workflow error** (`Matrix vector 'module' does not contain any values`) rather than as zero combinations, so `test_unit` and `test_acceptance` are each gated on the matching `has_*` flag from the matrix step. When the filter selects nothing, both test jobs are skipped, `publish` reports a **NO-OP** run, and the workflow **succeeds**. |
 
 ### Per-Job Finalisation (end of every parallel job)
 
@@ -136,11 +137,12 @@ After the runner writes its outputs, each matrix job runs three additional steps
 
 ### CI: Publish (fan-in)
 
-The `publish` job runs after **all** unit and acceptance jobs finish (with `if: always()` so it runs even when individual jobs fail). It holds `permissions: contents: write` so it can commit status back to the repo, and the whole workflow uses a `concurrency` group so ledger commits on the same ref never race. It:
+The `publish` job runs after **all** unit and acceptance jobs finish (`if: always() && needs.prepare.result == 'success'`, so it runs even when individual test jobs fail **or when both test jobs were skipped as a no-op**). It holds `permissions: contents: write` so it can commit status back to the repo, and the whole workflow uses a `concurrency` group so ledger commits on the same ref never race. It:
 
-1. Downloads every `compatibility-*` artifact into `all-artifacts/` via `actions/download-artifact@v8`.
+1. Downloads every `compatibility-*` artifact into `all-artifacts/` via `actions/download-artifact@v8`. Skipped on a no-op run, when there are no artifacts to fetch.
 2. Runs `summarize_module_statuses.py`, which walks the artifact tree collecting every `module-status.json`, sorts results by lane and module id, and writes a consolidated `GITHUB_STEP_SUMMARY` with:
    - A **Run mode** banner (full vs lean) and, when lean, a collapsible **Skipped** table listing each untested module and why (read from the `change-decisions` skip manifest). This makes a "nothing changed → nothing tested" run explicit in both the summary and the job log.
+   - On a **no-op** run (no results collected *and* the skip manifest selected zero modules), a `Result: NO-OP` banner instead of the results tables — an empty table would otherwise read as zero coverage — plus a `Run result` notice annotation. Exit status stays 0.
    - A **Unit Compatibility** table (gating results).
    - An **Acceptance Compatibility** table (if any acceptance jobs ran).
    - Counters for clean / warning / failure across both lanes.
