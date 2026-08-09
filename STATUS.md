@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-08-08 02:50 UTC  
+**Generated:** 2026-08-09 02:52 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
@@ -63,7 +63,7 @@
 | [puppet-format](https://github.com/voxpupuli/puppet-format) | 8.20.0 | ✅ | N/A | unit-only | 2026-08-02 |
 | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-08-02 |
 | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-08-02 |
-| [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-08-08 |
+| [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-08-09 |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | 8.20.0 | ✅ | N/A | unit-only | 2026-08-02 |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | 8.20.0 | ✅ | el9-systemd:✅ | unit+acceptance | 2026-08-02 |
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | 8.20.0 | ✅ | 🚧 pending | unit-pass/acceptance-pending | 2026-08-02 |
