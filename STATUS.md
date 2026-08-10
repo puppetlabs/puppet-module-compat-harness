@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-08-09 02:52 UTC  
+**Generated:** 2026-08-10 02:44 UTC  
 **Puppet Core:** 8.20.0  
 **Staleness threshold:** 30 days
 
