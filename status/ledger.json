@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T03:09:03Z",
+  "generated_at": "2026-08-15T02:40:39Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance": {
@@ -597,9 +597,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "fbef1f0",
-        "last_run_id": "31764926375",
-        "tested_at": "2026-08-14T02:50:50Z"
+        "last_harness_sha": "faac4d9",
+        "last_run_id": "31858929730",
+        "tested_at": "2026-08-15T02:21:07Z"
       }
     },
     "puppet-gitlab": {
@@ -1417,9 +1417,9 @@
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "fbef1f0",
-        "last_run_id": "31764926375",
-        "tested_at": "2026-08-14T02:50:48Z"
+        "last_harness_sha": "faac4d9",
+        "last_run_id": "31858929730",
+        "tested_at": "2026-08-15T02:21:07Z"
       }
     },
     "puppet-telegraf": {
