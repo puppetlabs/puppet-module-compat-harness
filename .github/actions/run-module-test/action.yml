@@ -116,10 +116,30 @@ runs:
           brew install $brew_pkgs
         fi
 
+    - name: Resolve Ruby version from profile
+      id: resolve_ruby
+      shell: bash
+      env:
+        PROFILE_NAME: ${{ inputs.profile }}
+      run: |
+        set -euo pipefail
+        version=$(python -c "
+        import json, os, sys
+        with open('profiles/puppet_profiles.json') as f:
+            data = json.load(f)
+        name = os.environ['PROFILE_NAME']
+        match = next((p for p in data['profiles'] if p['name'] == name), None)
+        if not match:
+            sys.exit(f\"Profile '{name}' not found in profiles/puppet_profiles.json\")
+        print(match['ruby_version'])
+        ")
+        echo "Resolved ruby_version=$version for profile '$PROFILE_NAME'"
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.4'
+        ruby-version: ${{ steps.resolve_ruby.outputs.version }}
         bundler-cache: true
 
     - name: Install runner

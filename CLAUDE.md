@@ -23,7 +23,7 @@ ruby bin/puppet-module-tester \
 
 ## Tech stack
 
-- **Ruby 3.4.x** — core runner (`lib/`, `bin/`, `scripts/*.rb`)
+- **Ruby, profile-driven** — core runner (`lib/`, `bin/`, `scripts/*.rb`) runs under whichever Ruby the active profile's `ruby_version` specifies (`.github/actions/run-module-test/action.yml` resolves it before `ruby/setup-ruby`). Puppet 8 profiles use 3.2.x; Puppet 9 profiles require >= 3.4 (see `docs/puppet-core-9-dual-major-support.md` §8).
 - **Python 3.8+** — validation and reporting scripts (`scripts/*.py`)
 - **Bundler 2.5.22** — pinned per profile in `profiles/puppet_profiles.json`
 - **PDK** (Puppet Development Kit) — primary test execution path; Rake is the fallback
@@ -130,6 +130,6 @@ See **AGENTS.md** for the full set of rules governing module intake, ordering, p
 ## Known constraints
 
 - Acceptance tests require Docker (Linux containers); acceptance always runs on `ubuntu-latest` in CI.
-- Ruby 3.4.x required (bumped from 3.2.x to support Puppet Core 9's `>= 3.4.0` gemspec requirement — see `docs/puppet-core-9-dual-major-support.md` §8).
+- Ruby version is profile-driven, not a single harness-wide pin: 3.2.x for Puppet 8 profiles, >= 3.4 for Puppet 9 profiles (Puppet 8.21.0's own code was found to crash under Ruby 3.4 — see `docs/puppet-core-9-dual-major-support.md` §8 — so the two majors intentionally run under different Rubies).
 - Windows local development requires long-path support and MSYS2/UCRT build tools (see `README_Windows.md`).
 - Modules in `KNOWN_INCOMPATIBLE.md` are excluded from `modules.json` — do not re-add them without new evidence.
