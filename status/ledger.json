@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T02:39:00Z",
+  "generated_at": "2026-08-20T21:53:30Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance": {
@@ -7,7 +7,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:37Z"
+        "tested_at": "2026-08-20T20:39:02Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -17,15 +17,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-alternatives",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:40Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "puppet-archive": {
@@ -34,7 +34,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:43Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -44,15 +44,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-archive",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:43Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-augeas": {
@@ -61,7 +61,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:54Z"
+        "tested_at": "2026-08-20T20:39:11Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -71,15 +71,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeas",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:49Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:12Z"
       }
     },
     "puppet-augeasproviders_core": {
@@ -91,15 +91,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_core",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:53Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:12Z"
       }
     },
     "puppet-augeasproviders_grub": {
@@ -112,15 +112,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_grub",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "8fea7e6",
-        "last_run_id": "31142896750",
-        "tested_at": "2026-08-07T02:59:30Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:10Z"
       }
     },
     "puppet-augeasproviders_pam": {
@@ -132,15 +132,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_pam",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:51Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:17Z"
       }
     },
     "puppet-augeasproviders_shellvar": {
@@ -152,15 +152,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_shellvar",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:48Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:12Z"
       }
     },
     "puppet-augeasproviders_ssh": {
@@ -169,7 +169,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:55Z"
+        "tested_at": "2026-08-20T20:39:21Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -179,15 +179,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_ssh",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:45Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:22Z"
       }
     },
     "puppet-augeasproviders_sysctl": {
@@ -196,7 +196,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:43Z"
+        "tested_at": "2026-08-20T20:39:19Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -206,15 +206,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-augeasproviders_sysctl",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:43Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:13Z"
       }
     },
     "puppet-autofs": {
@@ -223,7 +223,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:40Z"
+        "tested_at": "2026-08-20T20:39:11Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -233,15 +233,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-autofs",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:38Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-boolean": {
@@ -253,15 +253,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-boolean",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-ca_cert": {
@@ -270,7 +270,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:43Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -280,15 +280,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-ca_cert",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:41Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:01Z"
       }
     },
     "puppet-chrony": {
@@ -297,7 +297,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-20T02:23:44Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -307,15 +307,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-chrony",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "a66cc0e",
-        "last_run_id": "32324421975",
-        "tested_at": "2026-08-20T02:23:40Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:06Z"
       }
     },
     "puppet-collectd": {
@@ -324,7 +324,7 @@
         "targets": {
           "debian12-systemd": "warning"
         },
-        "tested_at": "2026-08-13T02:51:30Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -334,15 +334,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-collectd",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "a872544",
-        "last_run_id": "31662062291",
-        "tested_at": "2026-08-13T02:51:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "puppet-confluence": {
@@ -351,7 +351,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:41Z"
+        "tested_at": "2026-08-20T20:39:00Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -361,15 +361,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-confluence",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:34Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-corosync": {
@@ -378,7 +378,7 @@
         "targets": {
           "debian12-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:34Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -388,15 +388,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-corosync",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:40Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-cron": {
@@ -405,7 +405,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:42Z"
+        "tested_at": "2026-08-20T20:39:05Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -415,15 +415,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-cron",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "puppet-dnsquery": {
@@ -435,15 +435,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-dnsquery",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:38Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-elastic_stack": {
@@ -456,15 +456,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-elastic_stack",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:40Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-elasticsearch": {
@@ -477,15 +477,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-elasticsearch",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:39Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-epel": {
@@ -494,7 +494,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:36Z"
+        "tested_at": "2026-08-20T20:39:03Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -504,15 +504,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-epel",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:44Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-extlib": {
@@ -524,15 +524,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-extlib",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:41Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-filemapper": {
@@ -544,15 +544,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-filemapper",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:00Z"
       }
     },
     "puppet-firewalld": {
@@ -561,7 +561,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:34Z"
+        "tested_at": "2026-08-20T20:39:06Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -571,15 +571,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-firewalld",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-format": {
@@ -591,15 +591,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-format",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "faac4d9",
-        "last_run_id": "31858929730",
-        "tested_at": "2026-08-15T02:21:07Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:01Z"
       }
     },
     "puppet-gitlab": {
@@ -608,7 +608,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:36Z"
+        "tested_at": "2026-08-20T20:39:03Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -618,15 +618,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-gitlab",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-gitlab_ci_runner": {
@@ -635,7 +635,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:37Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -645,15 +645,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-gitlab_ci_runner",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:02Z"
       }
     },
     "puppet-grafana": {
@@ -662,7 +662,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-09T02:40:53Z"
+        "tested_at": "2026-08-20T20:39:06Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -672,15 +672,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-grafana",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "b871db1",
-        "last_run_id": "31290799184",
-        "tested_at": "2026-08-09T02:40:52Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-hdm": {
@@ -692,15 +692,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-hdm",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:06Z"
       }
     },
     "puppet-hiera": {
@@ -709,7 +709,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:37Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -719,15 +719,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-hiera",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "puppet-jira": {
@@ -740,15 +740,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-jira",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:34Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "puppet-keepalived": {
@@ -757,7 +757,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:41Z"
+        "tested_at": "2026-08-20T20:39:03Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -767,15 +767,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-keepalived",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:34Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-kibana": {
@@ -784,7 +784,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:47Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -794,15 +794,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "fix-plugin-tls-certificate",
       "repo": "https://github.com/jst-cyr/puppet-kibana",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-kmod": {
@@ -814,15 +814,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-kmod",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:47Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:09Z"
       }
     },
     "puppet-logrotate": {
@@ -831,7 +831,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:39Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -841,15 +841,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-logrotate",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-nfs": {
@@ -858,7 +858,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-12T02:50:48Z"
+        "tested_at": "2026-08-20T20:39:22Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -868,15 +868,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nfs",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "32e0d37",
-        "last_run_id": "31558108141",
-        "tested_at": "2026-08-12T02:50:44Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:18Z"
       }
     },
     "puppet-nftables": {
@@ -885,7 +885,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:43Z"
+        "tested_at": "2026-08-20T20:39:19Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -895,15 +895,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nftables",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:51Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:19Z"
       }
     },
     "puppet-nginx": {
@@ -912,7 +912,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:35Z"
+        "tested_at": "2026-08-20T20:39:07Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -922,15 +922,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nginx",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:42Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:00Z"
       }
     },
     "puppet-nodejs": {
@@ -939,7 +939,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:34Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -949,15 +949,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nodejs",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:40Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:06Z"
       }
     },
     "puppet-nsswitch": {
@@ -966,7 +966,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:41Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -976,15 +976,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-nsswitch",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:11Z"
       }
     },
     "puppet-openldap": {
@@ -997,15 +997,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-openldap",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:46Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:30Z"
       }
     },
     "puppet-openssl": {
@@ -1014,7 +1014,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:37Z"
+        "tested_at": "2026-08-20T20:39:05Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1024,15 +1024,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-openssl",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:39Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:01Z"
       }
     },
     "puppet-openvox_bootstrap": {
@@ -1061,7 +1061,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:47Z"
+        "tested_at": "2026-08-20T20:39:19Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1071,15 +1071,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-php",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:50Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:21Z"
       }
     },
     "puppet-posix_acl": {
@@ -1088,7 +1088,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:44Z"
+        "tested_at": "2026-08-20T20:39:10Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1098,15 +1098,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-posix_acl",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:43Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:27Z"
       }
     },
     "puppet-postfix": {
@@ -1115,7 +1115,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-07T02:59:43Z"
+        "tested_at": "2026-08-20T20:39:27Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1125,15 +1125,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-postfix",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "8fea7e6",
-        "last_run_id": "31142896750",
-        "tested_at": "2026-08-07T02:59:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:15Z"
       }
     },
     "puppet-prometheus": {
@@ -1142,7 +1142,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-06T02:59:58Z"
+        "tested_at": "2026-08-20T20:39:03Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1152,15 +1152,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-prometheus",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "b3ad9c4",
-        "last_run_id": "31067149945",
-        "tested_at": "2026-08-06T02:59:54Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:02Z"
       }
     },
     "puppet-prometheus_reporter": {
@@ -1172,15 +1172,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-prometheus_reporter",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:38Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:07Z"
       }
     },
     "puppet-python": {
@@ -1189,7 +1189,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:37Z"
+        "tested_at": "2026-08-20T20:39:05Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1199,15 +1199,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-python",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:02Z"
       }
     },
     "puppet-r10k": {
@@ -1216,7 +1216,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:35Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1226,15 +1226,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-r10k",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:35Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:02Z"
       }
     },
     "puppet-redis": {
@@ -1243,7 +1243,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:44Z"
+        "tested_at": "2026-08-20T20:39:15Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1253,15 +1253,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-redis",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:44Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:30Z"
       }
     },
     "puppet-rsyslog": {
@@ -1274,15 +1274,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-rsyslog",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "7a9a6c6",
-        "last_run_id": "31235330954",
-        "tested_at": "2026-08-08T02:36:58Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "puppet-selinux": {
@@ -1295,15 +1295,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-selinux",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:38Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:07Z"
       }
     },
     "puppet-snmp": {
@@ -1312,7 +1312,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:41Z"
+        "tested_at": "2026-08-20T20:39:07Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1322,15 +1322,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-snmp",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-squid": {
@@ -1339,7 +1339,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:52Z"
+        "tested_at": "2026-08-20T20:39:12Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1349,15 +1349,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-squid",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:52Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:13Z"
       }
     },
     "puppet-sssd": {
@@ -1369,15 +1369,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "main",
       "repo": "https://github.com/voxpupuli/puppet-sssd",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:41Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-swap_file": {
@@ -1390,15 +1390,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-swap_file",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:42Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:06Z"
       }
     },
     "puppet-systemd": {
@@ -1411,15 +1411,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-systemd",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "a66cc0e",
-        "last_run_id": "32324421975",
-        "tested_at": "2026-08-20T02:23:41Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-telegraf": {
@@ -1428,7 +1428,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:36Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1438,15 +1438,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-telegraf",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:41Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-unattended_upgrades": {
@@ -1455,7 +1455,7 @@
         "targets": {
           "ubuntu24": "warning"
         },
-        "tested_at": "2026-08-02T18:02:41Z"
+        "tested_at": "2026-08-20T20:39:02Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1465,15 +1465,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-unattended_upgrades",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:44Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:00Z"
       }
     },
     "puppet-vault_lookup": {
@@ -1486,15 +1486,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-vault_lookup",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:37Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "puppet-wget": {
@@ -1507,15 +1507,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-wget",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:34Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:02Z"
       }
     },
     "puppet-windows_env": {
@@ -1528,15 +1528,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "supported",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "main",
       "repo": "https://github.com/voxpupuli/puppet-windows_env",
       "unit": {
         "class": "clean",
         "compatibility_state": "compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:38Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:03Z"
       }
     },
     "puppet-windows_firewall": {
@@ -1549,15 +1549,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-windows_firewall",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:06Z"
       }
     },
     "puppet-windowsfeature": {
@@ -1570,15 +1570,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-windowsfeature",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "puppet-yum": {
@@ -1587,7 +1587,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:36Z"
+        "tested_at": "2026-08-20T20:39:04Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1597,15 +1597,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-yum",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:35Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:07Z"
       }
     },
     "puppet-zypprepo": {
@@ -1617,15 +1617,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-zypprepo",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "saz-puppet-limits": {
@@ -1634,7 +1634,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:36Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1644,15 +1644,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/saz/puppet-limits",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:45Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:07Z"
       }
     },
     "saz-puppet-memcached": {
@@ -1661,7 +1661,7 @@
         "targets": {
           "el9-systemd": "warning"
         },
-        "tested_at": "2026-08-02T18:02:35Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1671,15 +1671,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "fix-systemd-servicelimits-type",
       "repo": "https://github.com/jst-cyr/puppet-memcached",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:39Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:11Z"
       }
     },
     "saz-puppet-sudo": {
@@ -1688,7 +1688,7 @@
         "targets": {
           "el9": "warning"
         },
-        "tested_at": "2026-08-02T18:02:34Z"
+        "tested_at": "2026-08-20T20:39:01Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1698,15 +1698,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/saz/puppet-sudo",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     },
     "saz-puppet-timezone": {
@@ -1715,7 +1715,7 @@
         "targets": {
           "el9-systemd": "clean"
         },
-        "tested_at": "2026-08-02T18:02:37Z"
+        "tested_at": "2026-08-20T20:39:03Z"
       },
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -1725,15 +1725,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "supported",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/saz/puppet-timezone",
       "unit": {
         "class": "clean",
         "compatibility_state": "compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:33Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "smoeding-puppet-debconf": {
@@ -1745,15 +1745,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "unsupported_by_metadata",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/smoeding/puppet-debconf",
       "unit": {
         "class": "warning",
         "compatibility_state": "conditionally_compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:07Z"
       }
     },
     "stschulte-puppet-oracle": {
@@ -1765,15 +1765,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "supported",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "main",
       "repo": "https://github.com/stschulte/puppet-oracle",
       "unit": {
         "class": "clean",
         "compatibility_state": "compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:38Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:01Z"
       }
     },
     "suchpuppet-puppet-resolvconf": {
@@ -1785,15 +1785,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "supported",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/suchpuppet/puppet-resolvconf",
       "unit": {
         "class": "clean",
         "compatibility_state": "compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:38Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:07Z"
       }
     },
     "tragiccode-azure_key_vault": {
@@ -1805,15 +1805,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "supported",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "main",
       "repo": "https://github.com/TraGicCode/tragiccode-azure_key_vault",
       "unit": {
         "class": "clean",
         "compatibility_state": "compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:41Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:04Z"
       }
     },
     "treydock-puppet-kdump": {
@@ -1826,15 +1826,15 @@
       "disposition": "active",
       "documentation_status": "none",
       "metadata_status": "supported",
-      "puppet_core_version": "8.20.0",
+      "puppet_core_version": "8.21.0",
       "ref": "master",
       "repo": "https://github.com/treydock/puppet-kdump",
       "unit": {
         "class": "clean",
         "compatibility_state": "compatible",
-        "last_harness_sha": "68b4965",
-        "last_run_id": "30760194993",
-        "tested_at": "2026-08-02T18:02:36Z"
+        "last_harness_sha": "e7c6732",
+        "last_run_id": "32415186213",
+        "tested_at": "2026-08-20T20:39:05Z"
       }
     }
   },
