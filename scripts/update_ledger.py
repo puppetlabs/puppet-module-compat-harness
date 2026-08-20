@@ -1,10 +1,16 @@
 """Merge this run's module-status.json results into the persistent status ledger.
 
-Semantics (see docs/lean-testing-and-status-ledger-design.md):
+Semantics (see docs/lean-testing-and-status-ledger-design.md and
+docs/puppet-core-9-dual-major-support.md §3):
 - Upsert ONLY the modules present in this run's artifacts. A module absent from
   the run is left untouched — absence never downgrades or deletes an entry.
 - Seed a `never-tested` entry for any modules.json module not yet in the ledger.
 - Reconcile every entry against modules.json + KNOWN_* files to set disposition.
+- Test outcomes (`unit`, `acceptance`, `puppet_core_version`, `metadata_status`,
+  `dependency_status`, `documentation_status`, `coverage_state`) are nested per
+  Puppet major under `puppet_majors[major]`. A row without a stamped
+  `puppet_major` (no profile has been changed to stamp one yet) defaults to
+  major 8 — today's only tested major.
 
 Environment:
   STATUS_ROOT              artifact root to walk (default: all-artifacts)
@@ -23,7 +29,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ledger_lib import derive_id, load_modules_config, parse_known_ids  # noqa: E402
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+DEFAULT_MAJOR = '8'
 _CLASS_RANK = {'clean': 0, 'warning': 1, 'failure': 2}
 
 
@@ -65,8 +72,8 @@ def is_pass(status_class):
     return status_class in ('clean', 'warning')
 
 
-def coverage_state(entry, cfg):
-    unit = entry.get('unit')
+def coverage_state(major_entry, cfg):
+    unit = major_entry.get('unit')
     if not unit:
         return 'never-tested'
     if not is_pass(unit.get('class')):
@@ -82,7 +89,7 @@ def coverage_state(entry, cfg):
     if status == 'pending':
         return 'unit-pass/acceptance-pending'
     # status == 'running': coverage depends on whether acceptance actually ran/passed.
-    acceptance = entry.get('acceptance')
+    acceptance = major_entry.get('acceptance')
     if not acceptance or not acceptance.get('targets'):
         return 'unit-pass/acceptance-pending'
     if is_pass(acceptance.get('class')):
@@ -94,11 +101,12 @@ def upsert_results(modules, config, rows, now):
     run_id = os.environ.get('GITHUB_RUN_ID', '')
     harness_sha = os.environ.get('GITHUB_SHA', '')[:7]
 
-    by_id = {}
+    by_id_major = {}
     for row in rows:
-        by_id.setdefault(row['id'], []).append(row)
+        major = str(row.get('puppet_major') or DEFAULT_MAJOR)
+        by_id_major.setdefault((row['id'], major), []).append(row)
 
-    for module_id, group in by_id.items():
+    for (module_id, major), group in by_id_major.items():
         entry = modules.setdefault(module_id, {})
         cfg = config.get(module_id, {})
         if cfg.get('repo'):
@@ -106,31 +114,33 @@ def upsert_results(modules, config, rows, now):
         if cfg.get('ref'):
             entry['ref'] = cfg['ref']
 
+        major_entry = entry.setdefault('puppet_majors', {}).setdefault(major, {})
+
         for row in group:
             version = row.get('puppet_core_version')
             if version and version != 'unknown':
-                entry['puppet_core_version'] = version
+                major_entry['puppet_core_version'] = version
 
             if row.get('lane', 'unit') == 'unit':
-                entry['unit'] = {
+                major_entry['unit'] = {
                     'class': row.get('class', 'failure'),
                     'compatibility_state': row.get('compatibility_state', 'unknown'),
                     'tested_at': row.get('tested_at', now),
                     'last_run_id': run_id,
                     'last_harness_sha': harness_sha,
                 }
-                entry['metadata_status'] = row.get('metadata_status', 'unknown')
-                entry['dependency_status'] = row.get('dependency_status', 'unknown')
-                entry['documentation_status'] = row.get('documentation_status', 'unknown')
+                major_entry['metadata_status'] = row.get('metadata_status', 'unknown')
+                major_entry['dependency_status'] = row.get('dependency_status', 'unknown')
+                major_entry['documentation_status'] = row.get('documentation_status', 'unknown')
             else:
-                acceptance = entry.setdefault('acceptance', {})
+                acceptance = major_entry.setdefault('acceptance', {})
                 targets = acceptance.setdefault('targets', {})
                 target_name = row.get('acceptance_target') or 'default'
                 targets[target_name] = row.get('class', 'failure')
                 acceptance['tested_at'] = row.get('tested_at', now)
 
-        if 'acceptance' in entry:
-            entry['acceptance']['class'] = worst_class(entry['acceptance'].get('targets', {}).values())
+        if 'acceptance' in major_entry:
+            major_entry['acceptance']['class'] = worst_class(major_entry['acceptance'].get('targets', {}).values())
 
 
 def reconcile(modules, config):
@@ -161,7 +171,8 @@ def reconcile(modules, config):
         else:
             entry['disposition'] = 'removed-without-disposition'
 
-        entry['coverage_state'] = coverage_state(entry, cfg)
+        for major_entry in entry.get('puppet_majors', {}).values():
+            major_entry['coverage_state'] = coverage_state(major_entry, cfg)
 
 
 def main():
@@ -171,6 +182,11 @@ def main():
 
     now = utc_now()
     ledger = load_ledger(ledger_file)
+    if ledger['modules'] and ledger.get('schema_version') != SCHEMA_VERSION:
+        sys.exit(
+            f"{ledger_file} is schema_version {ledger.get('schema_version')!r}, expected {SCHEMA_VERSION}. "
+            'Run scripts/migrate_ledger_v2.py against it first.'
+        )
     config = load_modules_config(modules_file)
     rows = collect_rows(status_root)
 

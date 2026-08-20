@@ -8,6 +8,14 @@ tracked module. It produces:
   - KNOWN_COMPATIBLE.md — the curated "fully validated" list, derived from the
     same `is_fully_compatible` predicate, so it can never drift from the ledger.
 
+Reads ledger schema v2: per-module test outcomes (unit/acceptance/coverage_state)
+live under `puppet_majors[major]`, so every count and the `is_fully_compatible`
+verdict are computed once per tracked major (see
+docs/puppet-core-9-dual-major-support.md §3, §6) rather than once per module.
+Only major "8" is tested today, so output is equivalent to the pre-v2 dashboard
+modulo the per-major column labels; a second major's columns appear
+automatically once it starts reporting into the ledger.
+
 Environment:
   LEDGER_FILE            ledger path (default: status/ledger.json)
   MODULES_FILE           modules config (default: config/modules.json)
@@ -23,6 +31,10 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ledger_lib import load_modules_config, parse_known_ids  # noqa: E402
+
+# The one major that's tested today; always shown even if a module has no
+# puppet_majors entry yet (never-tested), so the dashboard shape is stable.
+GATING_MAJOR = '8'
 
 # Reporting is pass/fail only. Warnings are deliberate green-keepers (tolerated
 # metadata gaps, etc.) and count as pass; we do not surface the warning level.
@@ -59,8 +71,21 @@ def parse_ts(value):
     return parsed
 
 
-def unit_icon(entry):
-    unit = entry.get('unit')
+def discover_majors(modules):
+    """Every Puppet major with at least one module reporting into it, plus the
+    gating major so the dashboard always has a stable shape even before any
+    result has landed."""
+    found = {major for entry in modules.values() for major in entry.get('puppet_majors', {})}
+    found.add(GATING_MAJOR)
+    return sorted(found, key=int)
+
+
+def major_entry(entry, major):
+    return entry.get('puppet_majors', {}).get(major, {})
+
+
+def unit_icon(major_slice):
+    unit = major_slice.get('unit')
     if not unit:
         return '—'
     return class_icon(unit.get('class'))
@@ -74,7 +99,7 @@ def acceptance_status(entry):
     return 'running' if entry.get('acceptance_configured') else 'none'
 
 
-def acceptance_cell(entry):
+def acceptance_cell(major_slice, entry):
     status = acceptance_status(entry)
     if status == 'none':
         return 'N/A'
@@ -83,60 +108,85 @@ def acceptance_cell(entry):
     if status == 'pending':
         return '🚧 pending'
     # status == 'running'
-    acceptance = entry.get('acceptance')
+    acceptance = major_slice.get('acceptance')
     if not acceptance or not acceptance.get('targets'):
         return '⏳ awaiting run'
     targets = acceptance['targets']
     return ' '.join(f"{name}:{class_icon(cls)}" for name, cls in sorted(targets.items()))
 
 
-def unit_passed(entry):
-    unit = entry.get('unit')
+def unit_passed(major_slice):
+    unit = major_slice.get('unit')
     return bool(unit) and is_pass(unit.get('class'))
 
 
-def acceptance_passed(entry):
-    acceptance = entry.get('acceptance')
+def acceptance_passed(major_slice):
+    acceptance = major_slice.get('acceptance')
     return bool(acceptance) and bool(acceptance.get('targets')) and is_pass(acceptance.get('class'))
 
 
-def is_fully_compatible(entry):
-    if not unit_passed(entry):
+def is_fully_compatible(major_slice, entry):
+    if not unit_passed(major_slice):
         return False
     status = acceptance_status(entry)
     if status == 'none':
         return True  # no acceptance tests exist — unit coverage is full coverage
     if status == 'running':
-        return acceptance_passed(entry)
+        return acceptance_passed(major_slice)
     # blocked / pending: acceptance tests exist but were never exercised here, so
     # coverage is incomplete. These are NOT fully compatible.
     return False
 
 
-def last_tested(entry):
+def last_tested(major_slice):
     stamps = []
-    if entry.get('unit', {}).get('tested_at'):
-        stamps.append(parse_ts(entry['unit']['tested_at']))
-    if entry.get('acceptance', {}).get('tested_at'):
-        stamps.append(parse_ts(entry['acceptance']['tested_at']))
+    if major_slice.get('unit', {}).get('tested_at'):
+        stamps.append(parse_ts(major_slice['unit']['tested_at']))
+    if major_slice.get('acceptance', {}).get('tested_at'):
+        stamps.append(parse_ts(major_slice['acceptance']['tested_at']))
     stamps = [s for s in stamps if s]
     return max(stamps) if stamps else None
 
 
-def render_known_compatible(active, path, excluded_ids):
-    """Write KNOWN_COMPATIBLE.md — modules that pass every test available to the
-    harness. Blocked/pending modules are excluded by `is_fully_compatible` because
-    their acceptance tests were never exercised here. Modules in `excluded_ids`
-    (from KNOWN_INCOMPATIBLE.md) are also excluded — a compatibility verdict is
-    mutually exclusive with the compatible list, even for a module still in the test
-    matrix whose only failures are downgraded to warnings (e.g. a "Partial" entry).
-    Deprecation is NOT an exclusion: it is a lifecycle status orthogonal to
-    compatibility, so a deprecated-but-passing module is still listed here.
+def module_last_tested(entry):
+    """Latest tested_at across every major, for the combined table's one column."""
+    stamps = [last_tested(slice_) for slice_ in entry.get('puppet_majors', {}).values()]
+    stamps = [s for s in stamps if s]
+    return max(stamps) if stamps else None
+
+
+def render_known_compatible(active, path, excluded_ids, majors):
+    """Write KNOWN_COMPATIBLE.md — modules fully compatible on at least one
+    tested major. Each major gets its own column so a module can show ✅ on one
+    major and ❌ (tested, not compatible) or — (not yet tested on that major) on
+    another in the same row. Blocked/pending acceptance disposition is treated
+    as NOT fully compatible on that major, same as `is_fully_compatible`.
+    Modules in `excluded_ids` (from KNOWN_INCOMPATIBLE.md) are excluded outright —
+    a compatibility verdict is mutually exclusive with the compatible list, even
+    for a module still in the test matrix whose only failures are downgraded to
+    warnings (e.g. a "Partial" entry). Deprecation is NOT an exclusion: it is a
+    lifecycle status orthogonal to compatibility.
     """
-    compatible = sorted(
-        mid for mid, entry in active.items()
-        if is_fully_compatible(entry) and mid not in excluded_ids
-    )
+    rows = []
+    for module_id in sorted(active):
+        if module_id in excluded_ids:
+            continue
+        entry = active[module_id]
+        cells = {}
+        compatible_on_any = False
+        for major in majors:
+            slice_ = major_entry(entry, major)
+            if not slice_.get('unit'):
+                cells[major] = '—'
+                continue
+            if is_fully_compatible(slice_, entry):
+                compatible_on_any = True
+                version = slice_.get('puppet_core_version', '')
+                cells[major] = f'✅ {version}'.strip() if version else '✅'
+            else:
+                cells[major] = '❌'
+        if compatible_on_any:
+            rows.append((module_id, entry, cells))
 
     lines = [
         '# Known Compatible Modules',
@@ -144,44 +194,89 @@ def render_known_compatible(active, path, excluded_ids):
         '> Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.',
         '> Do not edit by hand — changes will be overwritten on the next run.',
         '',
-        'This document lists modules that have been fully validated against Puppet Core — '
-        'meaning all available tests have passed.',
+        'This document lists modules that have been fully validated against Puppet Core on at '
+        'least one tested major version — meaning all available tests have passed for that major.',
         '',
-        '**N/A in the Acceptance column** means the module has no acceptance tests in its upstream '
-        'repository. Unit tests alone constitute full coverage for that module, and N/A is an '
-        'intentional distinction from ✅: it does not mean acceptance was skipped or blocked — there '
-        'is simply nothing to run.',
+        'Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible on that '
+        'major, **❌** = tested on that major but not fully compatible, **—** = not yet tested on '
+        'that major.',
         '',
-        'Modules with upstream acceptance tests that cannot currently run in the harness (due to '
-        'Docker/container limitations) are **not listed here** — they have not had all available '
-        'tests exercised. See [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md) '
-        'for the full audit including blocked modules.',
+        '**N/A in a major column context** (shown in [STATUS.md](STATUS.md), not here) means the '
+        'module has no acceptance tests in its upstream repository; unit tests alone constitute '
+        'full coverage. Modules with upstream acceptance tests that cannot currently run in the '
+        'harness (due to Docker/container limitations) do not count as fully compatible on that '
+        'major — see [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md) for '
+        'the full audit including blocked modules.',
         '',
         '**Distinction from [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md):** Modules listed here have '
-        'passed all tests available to this harness. KNOWN_INCOMPATIBLE.md lists modules tested and '
-        'found to have compatibility failures.',
+        'passed all tests available to this harness on at least one major. KNOWN_INCOMPATIBLE.md lists '
+        'modules tested and found to have compatibility failures on the gating major (or every tested '
+        'major) and removed from the matrix entirely.',
         '',
         '**⚠️ next to a module name** marks it deprecated / no longer maintained upstream. It remains '
         'compatible, but consider migrating away from it.',
         '',
         '## Compatibility Summary',
         '',
-        '| Module | Puppet Core | Unit | Acceptance |',
-        '|--------|-------------|------|------------|',
+        '| Module | ' + ' | '.join(f'Puppet {major}' for major in majors) + ' |',
+        '|--------|' + '|'.join('---' for _ in majors) + '|',
     ]
-    for module_id in compatible:
-        entry = active[module_id]
+    for module_id, entry, cells in rows:
         repo = entry.get('repo', '')
         name = f"[{module_id}]({repo})" if repo else module_id
         if entry.get('deprecated'):
             name += ' ⚠️'
-        acceptance = '✅' if acceptance_status(entry) == 'running' else 'N/A'
-        lines.append(f"| {name} | {entry.get('puppet_core_version', '—')} | ✅ | {acceptance} |")
+        lines.append(f"| {name} | " + ' | '.join(cells[major] for major in majors) + ' |')
 
     os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
     with open(path, 'w', encoding='utf-8') as handle:
         handle.write('\n'.join(lines) + '\n')
-    return len(compatible)
+    return len(rows)
+
+
+def render_major_summary(major, active, stale_cutoff):
+    unit_tested = [e for e in active.values() if major_entry(e, major).get('unit')]
+    unit_pass = [e for e in unit_tested if unit_passed(major_entry(e, major))]
+    unit_fail = [e for e in unit_tested if not unit_passed(major_entry(e, major))]
+
+    acceptance_running = [e for e in active.values() if acceptance_status(e) == 'running']
+    acceptance_run = [e for e in acceptance_running if major_entry(e, major).get('acceptance', {}).get('targets')]
+    acceptance_pass = [e for e in acceptance_run if acceptance_passed(major_entry(e, major))]
+    acceptance_fail = [e for e in acceptance_run if not acceptance_passed(major_entry(e, major))]
+    acceptance_blocked = [e for e in active.values() if acceptance_status(e) == 'blocked']
+    acceptance_pending = [e for e in active.values() if acceptance_status(e) == 'pending']
+    acceptance_none = [e for e in active.values() if acceptance_status(e) == 'none']
+
+    fully_compatible = [e for e in active.values() if is_fully_compatible(major_entry(e, major), e)]
+    never_tested = [e for e in active.values() if not major_entry(e, major).get('unit')]
+    stale = [e for e in unit_tested if (lambda s: s is not None and s < stale_cutoff)(last_tested(major_entry(e, major)))]
+
+    versions = sorted({
+        major_entry(e, major).get('puppet_core_version')
+        for e in active.values()
+        if major_entry(e, major).get('puppet_core_version')
+    })
+
+    lines = [f'### Puppet {major}', '']
+    lines.append(f"**Puppet Core version(s) seen:** {', '.join(versions) if versions else 'none yet'}  ")
+    lines.append('')
+    lines.append('| Metric | Count |')
+    lines.append('|---|---|')
+    lines.append(f"| Unit-tested | {len(unit_tested)} |")
+    lines.append(f"| &nbsp;&nbsp;• unit pass | {len(unit_pass)} |")
+    lines.append(f"| &nbsp;&nbsp;• unit fail | {len(unit_fail)} |")
+    lines.append(f"| Acceptance-enabled (running) | {len(acceptance_running)} |")
+    lines.append(f"| &nbsp;&nbsp;• acceptance run | {len(acceptance_run)} |")
+    lines.append(f"| &nbsp;&nbsp;• acceptance pass | {len(acceptance_pass)} |")
+    lines.append(f"| &nbsp;&nbsp;• acceptance fail | {len(acceptance_fail)} |")
+    lines.append(f"| ⛔ Acceptance blocked (tests exist, can't run here) | {len(acceptance_blocked)} |")
+    lines.append(f"| 🚧 Acceptance pending (tests exist, not yet wired) | {len(acceptance_pending)} |")
+    lines.append(f"| No acceptance tests (N/A) | {len(acceptance_none)} |")
+    lines.append(f"| **Fully compatible** (unit pass + acceptance pass or N/A) | **{len(fully_compatible)}** |")
+    lines.append(f"| Never tested | {len(never_tested)} |")
+    lines.append(f"| Stale | {len(stale)} |")
+    lines.append('')
+    return lines
 
 
 def main():
@@ -206,28 +301,9 @@ def main():
     retired = {mid: e for mid, e in modules.items() if e.get('disposition') in ('incompatible', 'deprecated')}
     anomalies = {mid: e for mid, e in modules.items() if e.get('disposition') == 'removed-without-disposition'}
 
-    unit_tested = [e for e in active.values() if e.get('unit')]
-    unit_pass = [e for e in unit_tested if unit_passed(e)]
-    unit_fail = [e for e in unit_tested if not unit_passed(e)]
+    majors = discover_majors(modules)
 
-    acceptance_running = [e for e in active.values() if acceptance_status(e) == 'running']
-    acceptance_run = [e for e in acceptance_running if e.get('acceptance', {}).get('targets')]
-    acceptance_pass = [e for e in acceptance_run if acceptance_passed(e)]
-    acceptance_fail = [e for e in acceptance_run if not acceptance_passed(e)]
-    acceptance_blocked = [e for e in active.values() if acceptance_status(e) == 'blocked']
-    acceptance_pending = [e for e in active.values() if acceptance_status(e) == 'pending']
-    acceptance_none = [e for e in active.values() if acceptance_status(e) == 'none']
-
-    fully_compatible = [e for e in active.values() if is_fully_compatible(e)]
     deprecated_active = [e for e in active.values() if e.get('deprecated')]
-    never_tested = [e for e in active.values() if not e.get('unit')]
-    stale = []
-    for entry in unit_tested:
-        stamp = last_tested(entry)
-        if stamp is not None and stamp < stale_cutoff:
-            stale.append(entry)
-
-    versions = sorted({e['puppet_core_version'] for e in active.values() if e.get('puppet_core_version')})
 
     lines = []
     lines.append('# Module Compatibility Status')
@@ -236,60 +312,60 @@ def main():
     lines.append('> Do not edit by hand — changes will be overwritten on the next run.')
     lines.append('')
     lines.append(f"**Generated:** {now.strftime('%Y-%m-%d %H:%M UTC')}  ")
-    lines.append(f"**Puppet Core:** {', '.join(versions) if versions else 'unknown'}  ")
     lines.append(f"**Staleness threshold:** {stale_days} days")
     lines.append('')
 
     lines.append('## Summary')
     lines.append('')
-    lines.append('| Metric | Count |')
+    lines.append(f"| Metric | Count |")
     lines.append('|---|---|')
     lines.append(f"| Active modules | {len(active)} |")
-    lines.append(f"| Unit-tested | {len(unit_tested)} |")
-    lines.append(f"| &nbsp;&nbsp;• unit pass | {len(unit_pass)} |")
-    lines.append(f"| &nbsp;&nbsp;• unit fail | {len(unit_fail)} |")
-    lines.append(f"| Acceptance-enabled (running) | {len(acceptance_running)} |")
-    lines.append(f"| &nbsp;&nbsp;• acceptance run | {len(acceptance_run)} |")
-    lines.append(f"| &nbsp;&nbsp;• acceptance pass | {len(acceptance_pass)} |")
-    lines.append(f"| &nbsp;&nbsp;• acceptance fail | {len(acceptance_fail)} |")
-    lines.append(f"| ⛔ Acceptance blocked (tests exist, can't run here) | {len(acceptance_blocked)} |")
-    lines.append(f"| 🚧 Acceptance pending (tests exist, not yet wired) | {len(acceptance_pending)} |")
-    lines.append(f"| No acceptance tests (N/A) | {len(acceptance_none)} |")
-    lines.append(f"| **Fully compatible** (unit pass + acceptance pass or N/A) | **{len(fully_compatible)}** |")
-    lines.append(f"| Never tested | {len(never_tested)} |")
-    lines.append(f"| Stale (> {stale_days}d) | {len(stale)} |")
     lines.append(f"| ⚠️ Deprecated (unmaintained upstream) | {len(deprecated_active)} |")
     lines.append(f"| Retired (incompatible / deprecated) | {len(retired)} |")
     if anomalies:
         lines.append(f"| ⚠️ Removed without disposition | {len(anomalies)} |")
     lines.append('')
+    lines.append('Per-major coverage is tracked independently — a Puppet 9 regression does not affect '
+                 "Puppet 8's numbers or vice versa (docs/puppet-core-9-dual-major-support.md §5).")
+    lines.append('')
+
+    for major in majors:
+        lines.extend(render_major_summary(major, active, stale_cutoff))
 
     lines.append('## Active Modules')
     lines.append('')
-    lines.append('> Acceptance column: `target:✅/❌` = ran, `N/A` = no acceptance tests exist upstream, '
+    lines.append('> Per major: `target:✅/❌` = ran, `N/A` = no acceptance tests exist upstream, '
                  '`⛔ blocked` = tests exist but cannot run in this harness, `🚧 pending` = tests exist but '
-                 'not yet wired up, `⏳ awaiting run` = enabled but no result yet. Only ✅/N/A count toward '
-                 '**Fully compatible**.')
+                 'not yet wired up, `⏳ awaiting run` = enabled but no result yet, `—` = not yet tested on '
+                 'that major. Only ✅/N/A count toward that major\'s **Fully compatible**.')
     lines.append('>')
     lines.append('> ⚠️ next to a module name marks it **deprecated / no longer maintained upstream** — '
                  'independent of compatibility (a deprecated module can still be fully compatible).')
     lines.append('')
-    lines.append('| Module | Puppet Core | Unit | Acceptance | Coverage | Last Tested |')
-    lines.append('|---|---|---|---|---|---|')
+    header = ['Module']
+    for major in majors:
+        header.append(f'{major}: Unit')
+        header.append(f'{major}: Acceptance')
+    header.append('Last Tested')
+    lines.append('| ' + ' | '.join(header) + ' |')
+    lines.append('|' + '|'.join('---' for _ in header) + '|')
     for module_id in sorted(active):
         entry = active[module_id]
         repo = entry.get('repo', '')
         name = f"[{module_id}]({repo})" if repo else module_id
         if entry.get('deprecated'):
             name += ' ⚠️'
-        stamp = last_tested(entry)
+        row = [name]
+        for major in majors:
+            slice_ = major_entry(entry, major)
+            row.append(unit_icon(slice_))
+            row.append(acceptance_cell(slice_, entry))
+        stamp = module_last_tested(entry)
         when = stamp.strftime('%Y-%m-%d') if stamp else '—'
         if stamp is not None and stamp < stale_cutoff:
             when += ' ⏰'
-        lines.append(
-            f"| {name} | {entry.get('puppet_core_version', '—')} | {unit_icon(entry)} "
-            f"| {acceptance_cell(entry)} | {entry.get('coverage_state', '—')} | {when} |"
-        )
+        row.append(when)
+        lines.append('| ' + ' | '.join(row) + ' |')
     lines.append('')
 
     not_exercised = [mid for mid in active if acceptance_status(active[mid]) in ('blocked', 'pending')]
@@ -303,15 +379,15 @@ def main():
     if retired or anomalies:
         lines.append('## Retired / Removed')
         lines.append('')
-        lines.append('| Module | Disposition | Last Known Unit | Last Tested |')
+        lines.append(f'| Module | Disposition | Last Known Unit ({GATING_MAJOR}) | Last Tested |')
         lines.append('|---|---|---|---|')
         for module_id in sorted({**retired, **anomalies}):
             entry = modules[module_id]
             repo = entry.get('repo', '')
             name = f"[{module_id}]({repo})" if repo else module_id
-            stamp = last_tested(entry)
+            stamp = module_last_tested(entry)
             when = stamp.strftime('%Y-%m-%d') if stamp else '—'
-            lines.append(f"| {name} | {entry.get('disposition')} | {unit_icon(entry)} | {when} |")
+            lines.append(f"| {name} | {entry.get('disposition')} | {unit_icon(major_entry(entry, GATING_MAJOR))} | {when} |")
         lines.append('')
 
     if anomalies:
@@ -329,13 +405,15 @@ def main():
     # compatibility (a module can be both deprecated and fully compatible, e.g. an
     # archived module whose unit tests still pass), so it does NOT exclude.
     excluded_ids = parse_known_ids(os.environ.get('KNOWN_INCOMPATIBLE_FILE', 'KNOWN_INCOMPATIBLE.md'))
-    compatible_count = render_known_compatible(active, known_compatible_file, excluded_ids)
+    compatible_count = render_known_compatible(active, known_compatible_file, excluded_ids, majors)
 
+    fully_compatible_gating = [e for e in active.values() if is_fully_compatible(major_entry(e, GATING_MAJOR), e)]
     print(
-        f"STATUS.md rendered: {len(active)} active, {len(fully_compatible)} fully compatible, "
-        f"{len(stale)} stale, {len(retired)} retired, {len(anomalies)} anomalies."
+        f"STATUS.md rendered: {len(active)} active, "
+        f"{len(fully_compatible_gating)} fully compatible on Puppet {GATING_MAJOR}, "
+        f"{len(retired)} retired, {len(anomalies)} anomalies."
     )
-    print(f"KNOWN_COMPATIBLE.md rendered: {compatible_count} fully-compatible module(s).")
+    print(f"KNOWN_COMPATIBLE.md rendered: {compatible_count} module(s) compatible on at least one major.")
     return 0
 
 

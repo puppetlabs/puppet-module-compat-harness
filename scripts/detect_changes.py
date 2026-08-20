@@ -14,6 +14,13 @@ See docs/lean-testing-and-status-ledger-design.md. Rules:
 Everything else is skipped and recorded with a reason. Any indeterminate signal
 (git failure, API error, non-GitHub host) fails safe by INCLUDING the module.
 
+Ledger reads are scoped to a single Puppet major's slice
+(`modules[id].puppet_majors[major]`, see
+docs/puppet-core-9-dual-major-support.md §3, §5.1) so a module's leanness on
+one major is never influenced by its status on another. Only major 8 is
+tested today, so `DEFAULT_MAJOR` is hardcoded here; a `major` parameter to
+generalize this across callers lands in a later step.
+
 Outputs:
   - OUTPUT_FILE (default .tmp/change-decisions.json): full decision record.
   - GITHUB_OUTPUT (if set): `run_all` and `include_ids` (compact JSON array).
@@ -44,7 +51,12 @@ from ledger_lib import load_modules_config  # noqa: E402
 
 MATERIAL_PATHS = ['lib', 'bin', 'profiles', 'scripts', '.github', 'Gemfile', 'Gemfile.lock']
 NOT_GREEN_STATES = {'never-tested', 'unit-failing', 'acceptance-failing'}
+DEFAULT_MAJOR = '8'
 _GITHUB_URL = re.compile(r'https?://github\.com/([^/]+)/([^/]+?)(?:\.git)?/?$')
+
+
+def major_slice(entry, major):
+    return (entry or {}).get('puppet_majors', {}).get(major, {})
 
 
 def utc_now():
@@ -88,10 +100,10 @@ def harness_changed(window_hours):
     return False, None
 
 
-def last_tested(entry):
+def last_tested(major_entry):
     stamps = [
-        parse_ts(entry.get('unit', {}).get('tested_at')),
-        parse_ts(entry.get('acceptance', {}).get('tested_at')),
+        parse_ts(major_entry.get('unit', {}).get('tested_at')),
+        parse_ts(major_entry.get('acceptance', {}).get('tested_at')),
     ]
     stamps = [s for s in stamps if s]
     return max(stamps) if stamps else None
@@ -154,7 +166,8 @@ def main():
     for module_id in sorted(config):
         cfg = config[module_id]
         entry = ledger_modules.get(module_id)
-        coverage = entry.get('coverage_state', 'never-tested') if entry else 'never-tested'
+        major_entry = major_slice(entry, DEFAULT_MAJOR)
+        coverage = major_entry.get('coverage_state', 'never-tested')
 
         if run_all:
             included.append({'id': module_id, 'reason': f'run_all: {run_all_reason}'})
@@ -164,7 +177,7 @@ def main():
         if coverage in NOT_GREEN_STATES:
             reason = f'ledger status: {coverage}'
         else:
-            stamp = last_tested(entry) if entry else None
+            stamp = last_tested(major_entry)
             if stamp is None or stamp < stale_cutoff:
                 when = stamp.strftime('%Y-%m-%d') if stamp else 'never'
                 reason = f'stale: last tested {when} (> {stale_days}d)'
@@ -176,7 +189,7 @@ def main():
         if reason:
             included.append({'id': module_id, 'reason': reason})
         else:
-            stamp = last_tested(entry)
+            stamp = last_tested(major_entry)
             when = stamp.strftime('%Y-%m-%d') if stamp else 'never'
             skipped.append({
                 'id': module_id,
