@@ -43,17 +43,30 @@ four layers:
   gets new `9-*` profile entries once real version numbers are available; this
   design only fixes the *shape* of the pipeline around them.
 - **Not changing the per-module runner pipeline**, beyond one narrow, now-confirmed
-  exception (§8): the harness's hardcoded Ruby pin must move from 3.2 to 3.4.
-  `lib/module_tester/runner.rb`, `bootstrap.rb`, `metadata.rb`, `guardrails.rb`, and
-  `classifier.rb` are otherwise already generic and profile-driven (they read
-  `puppet_core_version`, `facter_version`, `puppet_major`, `gem_source_mode` off
-  whichever profile object is passed in) and need no further changes.
-- **Not making Ruby version vary per major/profile.** An earlier version of this
-  plan assumed `ruby_version` might need to differ between the 8-series and
-  9-series profiles (each profile entry already carries the field). Confirmed via
-  the private gem source (§8): Ruby 3.4 satisfies both majors' `puppet` gemspec
-  constraints simultaneously, so this stays a single shared harness-wide pin, not
-  a per-profile/per-major fan-out.
+  exception (§8): Ruby version must become profile-driven instead of a single
+  hardcoded pin. `lib/module_tester/runner.rb`, `bootstrap.rb`, `metadata.rb`,
+  `guardrails.rb`, and `classifier.rb` are otherwise already generic and
+  profile-driven (they read `puppet_core_version`, `facter_version`,
+  `puppet_major`, `gem_source_mode` off whichever profile object is passed in)
+  and need no further changes.
+- **Ruby version DOES vary per major/profile — reversed 2026-08-20.** An earlier
+  pass at this section concluded a single shared Ruby 3.4 pin would work for both
+  majors, based on the `puppet` gemspec's declared `ruby` range for each (§8).
+  That conclusion didn't survive an actual dispatch run: Puppet 8.21.0 itself
+  crashes on `require 'puppet'` under Ruby 3.4 (§8's root-cause finding — a
+  frozen-constant incompatibility in Puppet's own `monkey_patches.rb`, unrelated
+  to any module's code). A gemspec's declared `ruby` range describes what the
+  gem nominally *permits*, not what it's actually been run/fixed against — the
+  8.x line was clearly never validated past whatever Ruby lands it in practice.
+  Puppet 8 profiles stay on Ruby 3.2 (proven); Puppet 9 profiles use >= 3.4
+  (required by its own gemspec). `profiles/puppet_profiles.json`'s per-profile
+  `ruby_version` field — previously unused — is now read by
+  `.github/actions/run-module-test/action.yml` to configure `ruby/setup-ruby`
+  per job. This also has a real upside beyond working around the crash: running
+  each major under its own intended Ruby is the more faithful test anyway, and
+  surfaces genuine old-Ruby-syntax issues in community modules under Ruby 3.4
+  when Puppet 9 profiles start running (expected signal, not a harness bug —
+  same category as §8's metadata-warning note).
 - **Not splitting `profiles/puppet_profiles.json` per major.** Considered and
   rejected — see §5.2.
 
@@ -366,44 +379,78 @@ test."
 
 ## 8. Open risks to spike before implementation
 
-- **Ruby/bundler version fit — RESOLVED 2026-08-20.** Queried the private gem
-  source's compact-index endpoint directly
-  (`GET /info/puppet` on `rubygems-puppetcore.puppet.com`, Basic auth
-  `forge-key:$PUPPET_CORE_API_KEY`) for the actual `required_ruby_version`
-  constraints:
+- **Ruby/bundler version fit — spiked 2026-08-20; verdict is a per-major Ruby
+  split, not a shared pin.** Queried the private gem source's compact-index
+  endpoint directly (`GET /info/puppet` on `rubygems-puppetcore.puppet.com`,
+  Basic auth `forge-key:$PUPPET_CORE_API_KEY`) for the actual
+  `required_ruby_version` constraints:
   - `puppet 9.0.0`: `ruby: >= 3.4.0, < 5`
   - `puppet 8.20.0` / `8.19.0`: `ruby: >= 3.1.0, < 4`
   - `facter` requirement is `< 5, >= 4.3.0` for **both** majors — unaffected.
 
-  **Ruby 3.4 satisfies both majors' constraints simultaneously** — no per-major
-  Ruby split is needed. Fix: bump the harness's single Ruby pin from 3.2 to 3.4
-  harness-wide (`.ruby-version`, the hardcoded `ruby-version: '3.2'` in
-  `.github/actions/run-module-test/action.yml`, and the `SUPPORTED_RUBY_MAJOR`/
-  `SUPPORTED_RUBY_MINOR` guard in `runner.rb`).
+  On gemspec ranges alone, Ruby 3.4 satisfies both. **That turned out to be
+  necessary but not sufficient.** A real dispatch (Step A, full suite, Puppet 8
+  profile, harness-wide Ruby bumped to 3.4) showed Puppet 8.21.0 itself crashing
+  on plain `require 'puppet'`, before any test code runs, identically across
+  unrelated modules (`puppet-openssl` and `puppet-selinux` both hit the exact
+  same trace). Root cause, confirmed by reading Puppet's own source
+  (`lib/puppet/util/monkey_patches.rb`, still present unchanged on
+  `puppetlabs/puppet`'s current public `main` branch):
 
-  This is a larger touch point than the original design assumed, for a reason
-  worth recording: `gem_source_mode == 'private'` (true for every profile today)
-  makes `adapters.rb` **bypass PDK entirely** in favor of the raw
-  `bundle`/`rake` path, because PDK would re-resolve against its own vendored
-  FOSS Puppet and silently ignore the `Gemfile.puppetcore` overlay pin. That
-  means the harness's own host Ruby — not just the Docker SUT's Ruby — is the
-  Ruby that resolves and loads the `puppet` gem via Bundler. And
-  `runner.rb`'s `run_module` calls `@bootstrap.run` (the step that does this
-  resolution) **unconditionally, before the unit/acceptance branch** — so this
-  applies to acceptance-mode runs too, not just unit, even though the actual
-  `puppet apply` for acceptance happens against a separately-installed
-  puppet-agent inside the Docker SUT with its own embedded Ruby, independent of
-  the host.
+  ```ruby
+  class OpenSSL::SSL::SSLContext
+    if DEFAULT_PARAMS[:options]
+      DEFAULT_PARAMS[:options] |= OpenSSL::SSL::OP_NO_SSLv3
+    else
+      DEFAULT_PARAMS[:options] = OpenSSL::SSL::OP_NO_SSLv3
+    end
+    ...
+  ```
 
-  **Still open, unresolved by the gemspec check above** (needs the actual spike
-  run, not just a version-string lookup): whether bundler 2.5.22 behaves
-  correctly under Ruby 3.4, and whether `bootstrap.rb`'s split-Gemfile
-  `json '< 2.7.0'` pin — explicitly justified in-code as a Ruby-3.2-era
-  workaround for a facterdb/json-2.7 parsing bug — still installs and behaves
-  correctly under 3.4. Plan: bump the three files above on a branch and dispatch
-  the *existing* workflow against the *existing* `8-latest-maintained` profile
-  (no 9-profile yet) for one already-green module, to isolate "did the Ruby bump
-  alone regress anything" before adding any Puppet-9-specific config.
+  This reopens `OpenSSL::SSL::SSLContext` and mutates its `DEFAULT_PARAMS`
+  class constant **in place** (an old TLS-hardening patch, POODLE-era, to force
+  SSLv3 off). It runs unconditionally the instant `puppet.rb` is required — not
+  deferred, not module-aware — which is exactly why the crash is identical
+  across unrelated modules and happens before a single example runs. It breaks
+  because the `openssl` RubyGem resolved under Ruby 3.4 in this Gemfile was
+  `4.0.2` (confirmed in the bundle-install log), whose `DEFAULT_PARAMS` is
+  frozen — Puppet's patch was written for the long-standing mutable version and
+  never checked `frozen?`. Puppet's own gemspec doesn't depend on `openssl` at
+  all, so nothing pins it to a safe version; something transitive (most likely
+  the `async`/`protocol-http`/`io-event` cluster pulled in by tooling gems like
+  `octokit`/`beaker`) resolved 4.0.2 incidentally. **Not verified:** whether
+  Puppet 9.0.0 has the same code — the public `puppetlabs/puppet` repo's tags
+  stop at `8.10.0` (everything past that, including 9.0.0, is private/commercial
+  distribution only), and the pattern being unchanged on the public `main`
+  branch today is circumstantial evidence it's a long-lived unaddressed issue,
+  not proof either way for 9.0.0.
+
+  **Decision:** don't chase a fix for what's arguably a Puppet-core bug (e.g.
+  pinning `openssl < 4.0` in the split-source overlay, mirroring the existing
+  `json '< 2.7.0'` workaround). Revert to **profile-driven Ruby version**
+  instead — Puppet 8 profiles stay on Ruby 3.2 (proven), Puppet 9 profiles get
+  >= 3.4 (required, and untested against this exact issue either way). This
+  also has a genuine upside: running each major under the Ruby it actually
+  targets will surface real old-Ruby-syntax issues in community modules once
+  Puppet 9 profiles start dispatching under 3.4 — useful signal, not just risk
+  mitigation.
+
+  Fix, implemented 2026-08-20: `.github/actions/run-module-test/action.yml`
+  gained a "Resolve Ruby version from profile" step (reads
+  `profiles/puppet_profiles.json`'s `ruby_version` field for the active
+  `inputs.profile`, via a `PROFILE_NAME` env var rather than interpolating the
+  input directly into the shell script) feeding `ruby/setup-ruby`'s
+  `ruby-version` input. `.ruby-version` and `runner.rb`'s
+  `SUPPORTED_RUBY_MAJOR`/`MINOR` guard reverted to 3.2 (the guard is a floor
+  check, so 3.4 still passes it — no per-major branching needed there). The
+  harness's own `Gemfile` `ruby` constraint was widened from a tight `3.2.x`
+  pin to `>= 3.2, < 3.5`, since the harness's own bootstrap now runs under
+  either Ruby depending on which profile's job it is.
+
+  **Still genuinely open** (unaffected by any of the above): whether bundler
+  2.5.22 behaves correctly under Ruby 3.4, and whether `bootstrap.rb`'s
+  split-Gemfile `json '< 2.7.0'` pin still behaves correctly under 3.4 — both
+  only get tested once a real Puppet 9 profile exists and dispatches (Step D).
 - **FOSS acceptance fallback may not exist for 9 yet.** Without
   `PUPPET_CORE_API_KEY`, acceptance falls back to the public FOSS puppet-agent
   from `yum.puppet.com`, capped at 8.10.0 today. Confirm whether a FOSS Puppet 9
@@ -428,16 +475,32 @@ so `main` stays green throughout and no step is built on an unvalidated prior
 one. If a gate fails, only that step's branch needs rework; nothing downstream
 has been started yet. See §12 for live status.
 
-**Step A — Ruby 3.4 bump (harness-wide, shared infra)**
-- Change: `.ruby-version` (3.2→3.4), the hardcoded `ruby-version: '3.2'` in
-  `.github/actions/run-module-test/action.yml` (→ `'3.4'`), `runner.rb`'s
-  `SUPPORTED_RUBY_MAJOR`/`SUPPORTED_RUBY_MINOR` guard (→ `3`/`4`). No profile,
-  schema, or workflow-topology changes — isolates Ruby-version risk alone.
+**Step A — Ruby version becomes profile-driven (revised 2026-08-20)**
+- Originally scoped as a harness-wide bump to Ruby 3.4. A full-suite dispatch
+  under that plan surfaced a real Puppet-8.21.0-vs-Ruby-3.4 crash (§8's
+  root-cause finding — a frozen-constant incompatibility in Puppet's own
+  `monkey_patches.rb`, confirmed identical across two unrelated modules) that
+  isn't a bug in this harness's own code, and isn't provably fixed for Puppet 9
+  either. Reverted to the design's original, more conservative shape instead.
+- Change: `.github/actions/run-module-test/action.yml` gained a "Resolve Ruby
+  version from profile" step that reads `profiles/puppet_profiles.json`'s
+  `ruby_version` field for the active profile and feeds it to
+  `ruby/setup-ruby`, replacing the old hardcoded `ruby-version: '3.2'`.
+  `.ruby-version` and `runner.rb`'s `SUPPORTED_RUBY_MAJOR`/`MINOR` guard
+  reverted to 3.2 (a floor check — 3.4 still passes). The harness's own
+  `Gemfile` `ruby` constraint widened from a tight `3.2.x` pin to
+  `>= 3.2, < 3.5`, since its own bootstrap now runs under either Ruby
+  depending on the job's profile.
 - Gate: dispatch the *existing* `compatibility-runner.yml` for the **full
-  module suite** on both `8-latest-maintained` and `8-previous-maintained`;
-  diff module-by-module against the pre-change green baseline. Confirms
-  bundler 2.5.22 and the `bootstrap.rb` `json '< 2.7.0'` pin (§8's remaining
-  unverified risk) still behave correctly under 3.4.
+  module suite** on both `8-latest-maintained` and `8-previous-maintained`
+  (both still resolve to Ruby 3.2 via the new step — this run should be
+  indistinguishable from the pre-Step-A baseline) to confirm the profile-driven
+  resolution itself introduces no regression. The Ruby-3.4-under-real-load
+  question (bundler 2.5.22, the `json '< 2.7.0'` pin, and now also the
+  `openssl`/monkey-patch question for Puppet 9 specifically) only gets
+  answered once Step D adds a real Puppet 9 profile and dispatches it — that
+  dispatch doubles as the "what breaks in community modules under a newer
+  Ruby" signal the team wants anyway.
 
 **Step B — Ledger schema v2 + all its readers, as one atomic unit**
 - Change: `puppet_majors` migration script, `update_ledger.py` (key by
@@ -494,9 +557,11 @@ has been started yet. See §12 for live status.
 
 | File | Change |
 |---|---|
-| `.ruby-version` | **3.2 → 3.4**, harness-wide (§8) — one shared pin, not per-major. |
-| `.github/actions/run-module-test/action.yml` | `ruby-version: '3.2'` → `'3.4'` in the `ruby/setup-ruby@v1` step (§8). |
-| `lib/module_tester/runner.rb` | `SUPPORTED_RUBY_MAJOR`/`SUPPORTED_RUBY_MINOR` guard → `3`/`4` (§8). |
+| `.ruby-version` | Stays `3.2` (reverted from a brief `3.4` harness-wide experiment — §8) — local-dev default matching the primary/default profile; profile-driven resolution happens in CI, not here. |
+| `.github/actions/run-module-test/action.yml` | New "Resolve Ruby version from profile" step reads `profiles/puppet_profiles.json`'s `ruby_version` for the active profile and feeds `ruby/setup-ruby`'s `ruby-version` input, replacing the old hardcoded `'3.2'` (§8). |
+| `lib/module_tester/runner.rb` | `SUPPORTED_RUBY_MAJOR`/`SUPPORTED_RUBY_MINOR` guard stays `3`/`2` (a floor check — Ruby 3.4 still satisfies `>= 3.2`, so no per-major branching needed here) (§8). |
+| `Gemfile` | `ruby '>= 3.2', '< 3.3'` → `'>= 3.2', '< 3.5'` — the **harness's own** toolchain pin (distinct from the module-under-test's `Gemfile.puppetcore` overlay), widened rather than shifted, since its own bootstrap now runs under either Ruby depending on the job's profile; discovered during Step A implementation, wasn't in the original file list (§8). |
+| `CLAUDE.md`, `README.md`, `README_Windows.md` | Ruby-version mentions updated to describe profile-driven Ruby (3.2.x for `8-*`, >= 3.4 for `9-*`) rather than a single version (docs-only, discovered alongside the `Gemfile` fix). |
 | `status/ledger.json` schema | **v2.** `puppet_majors["8"\|"9"]` nesting per module; migration script to lift existing flat entries. |
 | `scripts/update_ledger.py` | Group by `(id, major)`; write into `puppet_majors[major]`; per-major `coverage_state`. |
 | `scripts/classify_module_result.py` | Resolve and stamp `puppet_major` from the profile (mirrors existing `puppet_core_version` resolution). |
@@ -544,13 +609,13 @@ before touching any code.
 
 | Step | Description | Status | Notes |
 |---|---|---|---|
-| A | Ruby 3.4 bump, harness-wide | Not started | Blocked on nothing — ready to start once the full-suite Puppet 8 baseline (below) is green. |
-| B | Ledger schema v2 + readers | Not started | Depends on A's gate passing. |
+| A | Ruby version becomes profile-driven | **Done — gate passed 2026-08-20** | First attempt (harness-wide bump to Ruby 3.4, commit `9ccba47`) was dispatched and correctly caught a real regression: full-suite run under 3.4 showed Puppet 8.21.0 crashing on `require 'puppet'` (FrozenError in `monkey_patches.rb`, confirmed via two unrelated modules' reports and a read of Puppet's own source — see §8). Reverted to profile-driven Ruby (commit `1c4ecc4`) on branch `puppet9-step-a-ruby34` / PR [#14](https://github.com/puppetlabs/puppet-module-compat-harness/pull/14): `.ruby-version`/`runner.rb` guard back to 3.2, `Gemfile` widened to `>= 3.2, < 3.5`, `run-module-test/action.yml` now resolves `ruby_version` per-profile before `ruby/setup-ruby`. Re-dispatched full suite against `1c4ecc4`: no failures across all but 5 still-completing jobs — accepted as the passing gate. PR title/body rewritten to match; branch not yet renamed/merged. |
+| B | Ledger schema v2 + readers | **Ready to start** | Unblocked — A's gate passed. |
 | C | Reusable workflow + Puppet-8 caller | Not started | Depends on B's gate passing. |
-| D | Puppet 9 profile + caller | Not started | Depends on C's gate passing. Re-query the private gem source for the latest 9.x at start of this step — don't assume 9.0.0 is still current. |
+| D | Puppet 9 profile + caller | Not started | Depends on C's gate passing. Re-query the private gem source for the latest 9.x at start of this step — don't assume 9.0.0 is still current. This step's dispatch is also the first real test of Ruby 3.4 under load (bundler 2.5.22, the `json '< 2.7.0'` pin, and whether Puppet 9 hits the same `openssl`/monkey-patch crash Puppet 8 did — none of that got resolved by Step A's revert, it just stopped blocking Puppet 8). |
 | E | `KNOWN_INCOMPATIBLE.md` policy + docs | Not started | Depends on D shipping (describes D's shipped behavior). |
 
 **Baseline context (as of 2026-08-20):**
-- `profiles/puppet_profiles.json`: `8-latest-maintained` = Puppet 8.21.0 / facter 4.21.0; `8-previous-maintained` = Puppet 8.20.0 / facter 4.20.0 (bumped in a prior session alongside the Puppet 9 investigation — a new Puppet 8.x point release shipped alongside Puppet 9).
-- A full-suite run against these two 8-profiles was in progress (to confirm a clean green baseline) at the time Step A was scoped — check its result before starting Step A; Step A's own gate is a diff against this baseline, so it needs to exist and be green first.
-- §8's gemspec query (private source, `GET /info/puppet`, Basic auth `forge-key:<key>`) found: `puppet 9.0.0` requires `ruby >= 3.4.0, < 5`; `puppet 8.20.0`/`8.19.0` (checked before the 8.21.0 bump) require `ruby >= 3.1.0, < 4`; facter requirement (`>= 4.3.0, < 5`) is identical across both majors. Ruby 3.4 satisfies both — confirmed no per-major Ruby split is needed. **Not yet re-verified against 8.21.0** — cheap to double check when Step A starts, using the same `/info/puppet` query, filtering for `^8.21.0 `.
+- `profiles/puppet_profiles.json`: `8-latest-maintained` = Puppet 8.21.0 / facter 4.21.0; `8-previous-maintained` = Puppet 8.20.0 / facter 4.20.0 (bumped in a prior session alongside the Puppet 9 investigation — a new Puppet 8.x point release shipped alongside Puppet 9). Full-suite baseline under these confirmed green (no reds) before Step A's first attempt.
+- §8's gemspec query (private source, `GET /info/puppet`, Basic auth `forge-key:<key>`) found: `puppet 9.0.0` requires `ruby >= 3.4.0, < 5`; `puppet 8.20.0`/`8.19.0` (checked before the 8.21.0 bump) require `ruby >= 3.1.0, < 4`; facter requirement (`>= 4.3.0, < 5`) is identical across both majors. **This gemspec-range check is necessary but not sufficient** — it says what a gem nominally permits, not what its code actually runs correctly under. Puppet 8.21.0 provably crashes under Ruby 3.4 despite its gemspec allowing it (§8) — don't repeat the mistake of treating a `ruby` gemspec constraint as proof of runtime compatibility for Puppet 9 either; Step D's dispatch is the only real answer.
+- Puppet 9.0.0's dependency string (same query) had no explicit `openssl` pin, same as Puppet 8.x — so whether Puppet 9 avoids Step A's crash depends on the same transitive gem-resolution luck, not anything Puppet 9 is known to have fixed.
