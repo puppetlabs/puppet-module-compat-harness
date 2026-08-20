@@ -497,6 +497,8 @@ has been started yet. See §12 for live status.
 | `.ruby-version` | **3.2 → 3.4**, harness-wide (§8) — one shared pin, not per-major. |
 | `.github/actions/run-module-test/action.yml` | `ruby-version: '3.2'` → `'3.4'` in the `ruby/setup-ruby@v1` step (§8). |
 | `lib/module_tester/runner.rb` | `SUPPORTED_RUBY_MAJOR`/`SUPPORTED_RUBY_MINOR` guard → `3`/`4` (§8). |
+| `Gemfile` | `ruby '>= 3.2', '< 3.3'` → `'>= 3.4', '< 3.5'` — the **harness's own** toolchain pin (distinct from the module-under-test's `Gemfile.puppetcore` overlay); discovered during Step A implementation, wasn't in the original file list. `Gemfile.lock`'s `RUBY VERSION` stanza is stale (still says `3.2.10p266`) until CI's own `bundle install`/`bundler-cache` step regenerates it under the new Ruby — no local Ruby 3.4 was available to regenerate it by hand. |
+| `CLAUDE.md`, `README.md`, `README_Windows.md` | Ruby-version mentions updated 3.2.x → 3.4.x for consistency (docs-only, discovered alongside the `Gemfile` fix). |
 | `status/ledger.json` schema | **v2.** `puppet_majors["8"\|"9"]` nesting per module; migration script to lift existing flat entries. |
 | `scripts/update_ledger.py` | Group by `(id, major)`; write into `puppet_majors[major]`; per-major `coverage_state`. |
 | `scripts/classify_module_result.py` | Resolve and stamp `puppet_major` from the profile (mirrors existing `puppet_core_version` resolution). |
@@ -544,7 +546,7 @@ before touching any code.
 
 | Step | Description | Status | Notes |
 |---|---|---|---|
-| A | Ruby 3.4 bump, harness-wide | Not started | Blocked on nothing — ready to start once the full-suite Puppet 8 baseline (below) is green. |
+| A | Ruby 3.4 bump, harness-wide | **In progress** | Baseline (8.21.0/8.20.0 full suite) confirmed green with no reds as of 2026-08-20. Branch `puppet9-step-a-ruby34` created; edits made: `.ruby-version`, `runner.rb` guard, `run-module-test/action.yml`, plus the harness's own `Gemfile` `ruby` constraint (3.2→3.4 — found during implementation, wasn't in the original §10 list) and doc mentions in `CLAUDE.md`/`README.md`/`README_Windows.md`. Not yet pushed or dispatched. No Ruby 3.4 available locally to pre-validate `bundle install`/lockfile regen — first real signal comes from the GitHub dispatch gate itself. |
 | B | Ledger schema v2 + readers | Not started | Depends on A's gate passing. |
 | C | Reusable workflow + Puppet-8 caller | Not started | Depends on B's gate passing. |
 | D | Puppet 9 profile + caller | Not started | Depends on C's gate passing. Re-query the private gem source for the latest 9.x at start of this step — don't assume 9.0.0 is still current. |

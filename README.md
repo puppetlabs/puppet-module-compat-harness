@@ -35,7 +35,7 @@ Some modules are no longer maintained or are incompatible with Puppet Core:
 
 ## Quick start (local)
 
-1. Install Ruby 3.2.x and Bundler.
+1. Install Ruby 3.4.x and Bundler.
 2. From repo root:
 
 	 `bundle install`

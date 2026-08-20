@@ -8,7 +8,7 @@ require 'open3'
 module ModuleTester
   class Runner
     SUPPORTED_RUBY_MAJOR = 3
-    SUPPORTED_RUBY_MINOR = 2
+    SUPPORTED_RUBY_MINOR = 4
 
     DEFAULTS = {
       modules_file: 'config/modules.json',
