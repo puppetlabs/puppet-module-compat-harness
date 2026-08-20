@@ -421,28 +421,72 @@ test."
 
 ## 9. Rollout phasing
 
-1. **Spike** (§8) — gemspec check confirmed Ruby 3.4 covers both majors; bundler
-   2.5.22 and the `json < 2.7.0` pin's behavior under 3.4 are still unverified.
-   Bump `.ruby-version`, `run-module-test/action.yml`'s `ruby-version` input, and
-   `runner.rb`'s `SUPPORTED_RUBY_MAJOR`/`MINOR` guard to 3.4 on a branch; dispatch
-   the existing workflow against the existing `8-latest-maintained` profile (no
-   9-profile yet) for one known-green module to isolate any regression from the
-   Ruby bump alone. Blocker check — land this before any of the schema/CI work
-   below, not after.
-2. **Ledger schema v2** (§3) — `puppet_majors` nesting, migration script,
-   `update_ledger.py` keyed by `(id, major)`. Land this before any matrix
-   fan-out so nothing has a chance to silently overwrite.
-3. **Dashboard rework** (§6) — per-major columns in `STATUS.md` and
-   `KNOWN_COMPATIBLE.md`.
-4. **Reusable workflow extraction + two thin callers** (§4), including the
-   shared-vs-per-caller concurrency groups and the scoped material-path fix (§5.3).
-5. **`profiles/puppet_profiles.json`** — add `9-latest-maintained` (+ `previous`,
-   once available), pending the spike's findings.
-6. **`KNOWN_INCOMPATIBLE.md` / `mark-incompatible` policy update** (§7) — docs
-   only, no schema change.
-7. **Docs** — update `docs/architecture-flow.md` (CI section, reporting section)
-   and `AGENTS.md` per the existing "Architecture Diagram Maintenance" table,
-   plus the `mark-incompatible` skill's incompatibility-removal criteria.
+Reworked 2026-08-20 into steps **A–E**, each a separate branch/PR merged only
+after its own gate passes. The gate is always a real dispatch of the Puppet 8
+path on GitHub Actions — never just a local script run or a gemspec lookup —
+so `main` stays green throughout and no step is built on an unvalidated prior
+one. If a gate fails, only that step's branch needs rework; nothing downstream
+has been started yet. See §12 for live status.
+
+**Step A — Ruby 3.4 bump (harness-wide, shared infra)**
+- Change: `.ruby-version` (3.2→3.4), the hardcoded `ruby-version: '3.2'` in
+  `.github/actions/run-module-test/action.yml` (→ `'3.4'`), `runner.rb`'s
+  `SUPPORTED_RUBY_MAJOR`/`SUPPORTED_RUBY_MINOR` guard (→ `3`/`4`). No profile,
+  schema, or workflow-topology changes — isolates Ruby-version risk alone.
+- Gate: dispatch the *existing* `compatibility-runner.yml` for the **full
+  module suite** on both `8-latest-maintained` and `8-previous-maintained`;
+  diff module-by-module against the pre-change green baseline. Confirms
+  bundler 2.5.22 and the `bootstrap.rb` `json '< 2.7.0'` pin (§8's remaining
+  unverified risk) still behave correctly under 3.4.
+
+**Step B — Ledger schema v2 + all its readers, as one atomic unit**
+- Change: `puppet_majors` migration script, `update_ledger.py` (key by
+  `(id, major)`, write into `puppet_majors[major]`), `detect_changes.py` (read
+  `puppet_majors["8"]` slice instead of module-level fields),
+  `render_status_dashboard.py` (per-major `is_fully_compatible`, per-major
+  columns). These four must land together — splitting them leaves the
+  publish job reading a schema shape its own dashboard renderer doesn't
+  understand yet, breaking `STATUS.md`/`KNOWN_COMPATIBLE.md` on the very next
+  run.
+- Gate: run the migration script against the real `status/ledger.json` and
+  diff dashboard output locally first (should be equivalent to today, modulo
+  the new column, since only major `"8"` exists so far). Then dispatch the
+  existing workflow for the full suite on GitHub and confirm the ledger
+  commits correctly and `STATUS.md`/`KNOWN_COMPATIBLE.md` render with no
+  regressions.
+
+**Step C — CI topology: reusable workflow + Puppet-8 thin caller**
+- Change: new `.github/workflows/_compatibility-runner-reusable.yml` (§4.1),
+  new `.github/workflows/compatibility-runner-puppet8.yml` (the only active
+  caller at this point), scoped material-path lists (§5.3). Old
+  `compatibility-runner.yml` stays in place until the gate below passes, then
+  is retired.
+- Gate: dispatch the full suite through the **new** `compatibility-runner-
+  puppet8.yml` caller and confirm byte-for-byte parity with Step B's
+  baseline (same pass/fail/warn per module, ledger/dashboard unchanged).
+  Highest structural risk of the five steps, since it replaces the pipeline's
+  entry point — don't delete the old workflow file until this run is clean.
+
+**Step D — Add Puppet 9: profile entry + thin caller**
+- Change: `profiles/puppet_profiles.json` gets `9-latest-maintained` (real
+  `puppet_core_version`/`facter_version` pinned per §8's gem-source query —
+  re-check for a newer 9.x at implementation time the same way 8.21.0 was
+  found), new `.github/workflows/compatibility-runner-puppet9.yml` caller,
+  `major` param wired through `detect_changes.py`/`build_matrix.rb` (§3.2,
+  §5.1), shared publish concurrency group (§4.2).
+- Gate: dispatch the new Puppet-9 caller for the full suite — expect real
+  failures/warnings, that's signal not a bug (§8's metadata-warning note) —
+  **and** re-dispatch the Puppet-8 caller in the same round, to prove the two
+  majors' lean-matrix/ledger state stay fully independent (§5's core
+  requirement: a Puppet 9 regression must not touch Puppet 8's leanness or
+  status).
+
+**Step E — `KNOWN_INCOMPATIBLE.md` policy + docs**
+- Change: `AGENTS.md`, the `mark-incompatible` skill (§7's removal-criteria
+  update), `docs/architecture-flow.md` (CI + reporting sections per the
+  existing "Architecture Diagram Maintenance" table). Doc/policy-only, no CI
+  risk, no dispatch gate needed — just consistency with the shipped behavior
+  from Steps A–D.
 
 ---
 
@@ -488,3 +532,25 @@ test."
 - **Ledger write collision** → fixed structurally by per-major keys (§3) plus a
   shared concurrency group on just the publish job (§4.2) — not by serializing
   the entire pipeline across majors.
+
+---
+
+## 12. Implementation progress tracker
+
+Living status for §9's Steps A–E. Update this table (and add a dated note
+under it) whenever a step's gate passes, fails, or its scope changes — this is
+the section a new session should read first to know exactly where things stand
+before touching any code.
+
+| Step | Description | Status | Notes |
+|---|---|---|---|
+| A | Ruby 3.4 bump, harness-wide | Not started | Blocked on nothing — ready to start once the full-suite Puppet 8 baseline (below) is green. |
+| B | Ledger schema v2 + readers | Not started | Depends on A's gate passing. |
+| C | Reusable workflow + Puppet-8 caller | Not started | Depends on B's gate passing. |
+| D | Puppet 9 profile + caller | Not started | Depends on C's gate passing. Re-query the private gem source for the latest 9.x at start of this step — don't assume 9.0.0 is still current. |
+| E | `KNOWN_INCOMPATIBLE.md` policy + docs | Not started | Depends on D shipping (describes D's shipped behavior). |
+
+**Baseline context (as of 2026-08-20):**
+- `profiles/puppet_profiles.json`: `8-latest-maintained` = Puppet 8.21.0 / facter 4.21.0; `8-previous-maintained` = Puppet 8.20.0 / facter 4.20.0 (bumped in a prior session alongside the Puppet 9 investigation — a new Puppet 8.x point release shipped alongside Puppet 9).
+- A full-suite run against these two 8-profiles was in progress (to confirm a clean green baseline) at the time Step A was scoped — check its result before starting Step A; Step A's own gate is a diff against this baseline, so it needs to exist and be green first.
+- §8's gemspec query (private source, `GET /info/puppet`, Basic auth `forge-key:<key>`) found: `puppet 9.0.0` requires `ruby >= 3.4.0, < 5`; `puppet 8.20.0`/`8.19.0` (checked before the 8.21.0 bump) require `ruby >= 3.1.0, < 4`; facter requirement (`>= 4.3.0, < 5`) is identical across both majors. Ruby 3.4 satisfies both — confirmed no per-major Ruby split is needed. **Not yet re-verified against 8.21.0** — cheap to double check when Step A starts, using the same `/info/puppet` query, filtering for `^8.21.0 `.
