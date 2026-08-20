@@ -42,12 +42,18 @@ four layers:
 - **Not pinning actual Puppet Core 9 version numbers here.** `profiles/puppet_profiles.json`
   gets new `9-*` profile entries once real version numbers are available; this
   design only fixes the *shape* of the pipeline around them.
-- **Not changing the per-module runner pipeline.** `lib/module_tester/runner.rb`,
-  `bootstrap.rb`, `metadata.rb`, `guardrails.rb`, and `classifier.rb` are already
-  generic and profile-driven (they read `puppet_core_version`, `facter_version`,
-  `puppet_major`, `gem_source_mode` off whichever profile object is passed in).
-  No code changes are anticipated there — see §8 for the one thing worth
-  double-checking before relying on that.
+- **Not changing the per-module runner pipeline**, beyond one narrow, now-confirmed
+  exception (§8): the harness's hardcoded Ruby pin must move from 3.2 to 3.4.
+  `lib/module_tester/runner.rb`, `bootstrap.rb`, `metadata.rb`, `guardrails.rb`, and
+  `classifier.rb` are otherwise already generic and profile-driven (they read
+  `puppet_core_version`, `facter_version`, `puppet_major`, `gem_source_mode` off
+  whichever profile object is passed in) and need no further changes.
+- **Not making Ruby version vary per major/profile.** An earlier version of this
+  plan assumed `ruby_version` might need to differ between the 8-series and
+  9-series profiles (each profile entry already carries the field). Confirmed via
+  the private gem source (§8): Ruby 3.4 satisfies both majors' `puppet` gemspec
+  constraints simultaneously, so this stays a single shared harness-wide pin, not
+  a per-profile/per-major fan-out.
 - **Not splitting `profiles/puppet_profiles.json` per major.** Considered and
   rejected — see §5.2.
 
@@ -360,13 +366,44 @@ test."
 
 ## 8. Open risks to spike before implementation
 
-- **Ruby/bundler version fit.** `CLAUDE.md` states Ruby 3.3+ is not supported by
-  this harness (pinned to 3.2.x), and `bootstrap.rb`'s split-Gemfile `json` gem
-  pin (`< 2.7.0`) is explicitly justified in-code by "Ruby 3.2 / puppet-agent 8.x."
-  If Puppet Core 9 requires a newer Ruby/Bundler/facter baseline than this harness
-  currently runs, that's a blocker to resolve *before* any of the schema/CI work
-  above, not after. Recommend a manual smoke-test run against one or two
-  known-good modules with a throwaway 9 profile before touching any shared code.
+- **Ruby/bundler version fit — RESOLVED 2026-08-20.** Queried the private gem
+  source's compact-index endpoint directly
+  (`GET /info/puppet` on `rubygems-puppetcore.puppet.com`, Basic auth
+  `forge-key:$PUPPET_CORE_API_KEY`) for the actual `required_ruby_version`
+  constraints:
+  - `puppet 9.0.0`: `ruby: >= 3.4.0, < 5`
+  - `puppet 8.20.0` / `8.19.0`: `ruby: >= 3.1.0, < 4`
+  - `facter` requirement is `< 5, >= 4.3.0` for **both** majors — unaffected.
+
+  **Ruby 3.4 satisfies both majors' constraints simultaneously** — no per-major
+  Ruby split is needed. Fix: bump the harness's single Ruby pin from 3.2 to 3.4
+  harness-wide (`.ruby-version`, the hardcoded `ruby-version: '3.2'` in
+  `.github/actions/run-module-test/action.yml`, and the `SUPPORTED_RUBY_MAJOR`/
+  `SUPPORTED_RUBY_MINOR` guard in `runner.rb`).
+
+  This is a larger touch point than the original design assumed, for a reason
+  worth recording: `gem_source_mode == 'private'` (true for every profile today)
+  makes `adapters.rb` **bypass PDK entirely** in favor of the raw
+  `bundle`/`rake` path, because PDK would re-resolve against its own vendored
+  FOSS Puppet and silently ignore the `Gemfile.puppetcore` overlay pin. That
+  means the harness's own host Ruby — not just the Docker SUT's Ruby — is the
+  Ruby that resolves and loads the `puppet` gem via Bundler. And
+  `runner.rb`'s `run_module` calls `@bootstrap.run` (the step that does this
+  resolution) **unconditionally, before the unit/acceptance branch** — so this
+  applies to acceptance-mode runs too, not just unit, even though the actual
+  `puppet apply` for acceptance happens against a separately-installed
+  puppet-agent inside the Docker SUT with its own embedded Ruby, independent of
+  the host.
+
+  **Still open, unresolved by the gemspec check above** (needs the actual spike
+  run, not just a version-string lookup): whether bundler 2.5.22 behaves
+  correctly under Ruby 3.4, and whether `bootstrap.rb`'s split-Gemfile
+  `json '< 2.7.0'` pin — explicitly justified in-code as a Ruby-3.2-era
+  workaround for a facterdb/json-2.7 parsing bug — still installs and behaves
+  correctly under 3.4. Plan: bump the three files above on a branch and dispatch
+  the *existing* workflow against the *existing* `8-latest-maintained` profile
+  (no 9-profile yet) for one already-green module, to isolate "did the Ruby bump
+  alone regress anything" before adding any Puppet-9-specific config.
 - **FOSS acceptance fallback may not exist for 9 yet.** Without
   `PUPPET_CORE_API_KEY`, acceptance falls back to the public FOSS puppet-agent
   from `yum.puppet.com`, capped at 8.10.0 today. Confirm whether a FOSS Puppet 9
@@ -384,8 +421,14 @@ test."
 
 ## 9. Rollout phasing
 
-1. **Spike** (§8) — confirm Puppet Core 9's actual Ruby/facter/bundler
-   requirements against this harness's toolchain. Blocker check, no code changes.
+1. **Spike** (§8) — gemspec check confirmed Ruby 3.4 covers both majors; bundler
+   2.5.22 and the `json < 2.7.0` pin's behavior under 3.4 are still unverified.
+   Bump `.ruby-version`, `run-module-test/action.yml`'s `ruby-version` input, and
+   `runner.rb`'s `SUPPORTED_RUBY_MAJOR`/`MINOR` guard to 3.4 on a branch; dispatch
+   the existing workflow against the existing `8-latest-maintained` profile (no
+   9-profile yet) for one known-green module to isolate any regression from the
+   Ruby bump alone. Blocker check — land this before any of the schema/CI work
+   below, not after.
 2. **Ledger schema v2** (§3) — `puppet_majors` nesting, migration script,
    `update_ledger.py` keyed by `(id, major)`. Land this before any matrix
    fan-out so nothing has a chance to silently overwrite.
@@ -407,6 +450,9 @@ test."
 
 | File | Change |
 |---|---|
+| `.ruby-version` | **3.2 → 3.4**, harness-wide (§8) — one shared pin, not per-major. |
+| `.github/actions/run-module-test/action.yml` | `ruby-version: '3.2'` → `'3.4'` in the `ruby/setup-ruby@v1` step (§8). |
+| `lib/module_tester/runner.rb` | `SUPPORTED_RUBY_MAJOR`/`SUPPORTED_RUBY_MINOR` guard → `3`/`4` (§8). |
 | `status/ledger.json` schema | **v2.** `puppet_majors["8"\|"9"]` nesting per module; migration script to lift existing flat entries. |
 | `scripts/update_ledger.py` | Group by `(id, major)`; write into `puppet_majors[major]`; per-major `coverage_state`. |
 | `scripts/classify_module_result.py` | Resolve and stamp `puppet_major` from the profile (mirrors existing `puppet_core_version` resolution). |
