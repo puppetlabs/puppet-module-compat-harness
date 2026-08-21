@@ -26,14 +26,16 @@ name: Puppet Module Compatibility Runner (Puppet 8)
 # compatibility-runner-puppet9.yml (once Step D adds it) except for the
 # profile name and concurrency-group suffix.
 #
-# NOTE: the `schedule:` trigger is intentionally NOT enabled yet. The old
-# compatibility-runner.yml still owns the nightly cron until this caller's
-# gate dispatch passes; enabling both on the same cron would double-fire and
-# race on the ledger (different concurrency group names, so they would not
-# serialize against each other). The cron entry moves here in the same
-# commit that retires compatibility-runner.yml.
+# This is now the sole owner of the nightly cron: the old
+# compatibility-runner.yml (retired in this same commit, per its gate
+# passing — see docs/puppet-core-9-dual-major-support.md §12) previously
+# owned it. Both never ran on the same cron at once — that would have
+# double-fired and raced on the ledger, since they used different
+# concurrency-group names and would not have serialized against each other.
 
 on:
+  schedule:
+    - cron: "0 2 * * *"  # Nightly at 02:00 UTC
   workflow_dispatch:
     inputs:
       profile:

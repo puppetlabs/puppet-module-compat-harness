@@ -24,11 +24,11 @@ generalize this across callers lands in a later step.
 Material-path change detection (harness_changed) is scoped per caller (see
 docs/puppet-core-9-dual-major-support.md §5.3): SHARED_MATERIAL_PATHS covers
 code every major's pipeline actually executes (lib/, bin/, profiles/,
-scripts/, the reusable workflow, Gemfile*), plus CALLER_WORKFLOW_FILE — the
-calling thin trigger workflow's own file. This deliberately excludes the
-sibling major's thin wrapper file, so editing only
-compatibility-runner-puppet9.yml doesn't force a full run on the Puppet 8
-caller, and vice versa.
+scripts/, .github/actions/ — the composite actions shared across majors,
+Gemfile*), plus CALLER_WORKFLOW_FILE — the calling thin trigger workflow's
+own file. This deliberately excludes the sibling major's caller file, so
+editing only compatibility-runner-puppet9.yml doesn't force a full run on
+the Puppet 8 caller, and vice versa.
 
 Outputs:
   - OUTPUT_FILE (default .tmp/change-decisions.json): full decision record.
@@ -64,7 +64,6 @@ from ledger_lib import load_modules_config  # noqa: E402
 SHARED_MATERIAL_PATHS = [
     'lib', 'bin', 'profiles', 'scripts', 'Gemfile', 'Gemfile.lock',
     '.github/actions',
-    '.github/workflows/_compatibility-runner-reusable.yml',
 ]
 NOT_GREEN_STATES = {'never-tested', 'unit-failing', 'acceptance-failing'}
 DEFAULT_MAJOR = '8'

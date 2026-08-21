@@ -80,11 +80,16 @@ ledger and dashboard. There is no combined verdict — a module's Puppet 8 statu
 and Puppet 9 status are reported side by side, never collapsed into one.
 
 **One workflow run per trigger, or two?**
-**Two thin trigger workflows, one shared reusable pipeline.** See §4. This gives
-Puppet 8 and Puppet 9 independent run history, independent status visibility, and
-independent failure blast radius (a Puppet 9 regression does not turn the Puppet 8
-run red) — without duplicating the actual pipeline logic, which lives once in a
-reusable workflow.
+**Two independent, self-contained trigger workflows.** See §4 (revised after
+Step C found that sharing the matrix jobs via a `workflow_call` reusable
+workflow breaks the Actions UI — §4's revision note). This gives Puppet 8 and
+Puppet 9 independent run history, independent status visibility, and
+independent failure blast radius (a Puppet 9 regression does not turn the
+Puppet 8 run red). The actual pipeline logic still isn't duplicated at the
+business-logic level — it's shared via composite actions
+(`.github/actions/prepare-test-matrix`, `run-module-test`,
+`publish-compatibility-results`) rather than a shared workflow — only a
+small, mostly-static job-level YAML shape is duplicated per major.
 
 **Will they collide writing to the same file?**
 Yes, under the *current* ledger schema — and that was true even within a single
@@ -184,34 +189,54 @@ profile-name string.
 
 ---
 
-## 4. CI topology — two thin trigger workflows, one reusable pipeline
+## 4. CI topology — two self-contained trigger workflows, shared composite actions
 
-### 4.1 Structure
+**Revised 2026-08-21 — the design originally called for below (one
+`workflow_call` reusable workflow holding the whole job graph) was built,
+dispatched, and found to cause a real regression: GitHub's Actions run page
+left sidebar collapsed every unit-test job's displayed name down to just the
+last "/"-segment (`unit`, identical across every module), even though the
+job's actual name was correct and unique everywhere else (Jobs API, Checks
+API, per-job detail header). Isolated via a controlled A/B dispatch (same
+job/matrix/name YAML, only the workflow_call boundary differed) — this is a
+platform limitation: GitHub cannot correctly render a job's
+`strategy.matrix`-derived dynamic name in that sidebar when the job is
+defined inside a workflow invoked via `workflow_call`. There is no YAML-level
+workaround; the matrix has to live in a job that isn't nested behind
+`workflow_call`. See §12's Step C entry for the full investigation, including
+why an input-passing trick suggested as a possible fix doesn't apply (it only
+disambiguates multiple *static* calls to a reusable workflow, not one job
+that internally fans out via a matrix).**
 
-- **`.github/workflows/_compatibility-runner-reusable.yml`** (new) — a
-  `workflow_call`-triggered workflow containing today's `prepare` →
-  `test_unit`/`test_acceptance` → `publish` job graph, parameterized by which
-  profile(s) to test (input, e.g. `profiles: '["9-latest-maintained"]'`) and which
-  major it represents (input, e.g. `major: "9"`, threaded into `detect_changes.py`
-  and `build_matrix.rb`). This is where essentially all existing pipeline logic
-  continues to live — **exactly once**.
-- **`.github/workflows/compatibility-runner-puppet8.yml`** (new, thin) — its own
-  `schedule`/`workflow_dispatch` triggers, calls the reusable workflow with
-  `profiles: ["8-latest-maintained", "8-previous-maintained"]`, `major: "8"`,
-  `secrets: inherit`.
-- **`.github/workflows/compatibility-runner-puppet9.yml`** (new, thin) — same
-  shape, `profiles: ["9-latest-maintained", ...]`, `major: "9"`.
-- `.github/workflows/compatibility-runner.yml` (current single file) is retired /
-  replaced by the three files above.
+### 4.1 Structure (as shipped)
 
-Each caller file is on the order of the trigger block plus one job that does
-`uses: ./.github/workflows/_compatibility-runner-reusable.yml`. **No pipeline
-logic is duplicated** — the two files exist only to get independent triggers,
-independent Actions-tab history/status badges, independent manual-dispatch forms
-(each pre-scoped to the right profile choices), and independent concurrency
-groups, without conditional branching on `github.event.schedule` cron strings
-inside one shared file. (A single-file alternative was considered and rejected —
-see §4.4.)
+- **`.github/workflows/compatibility-runner-puppet8.yml`** — fully
+  self-contained: defines `prepare` → `test_unit`/`test_acceptance` →
+  `publish` directly, with its own `schedule`/`workflow_dispatch` triggers and
+  concurrency group. No `workflow_call` anywhere in this file.
+- **`.github/workflows/compatibility-runner-puppet9.yml`** (Step D) — the same
+  shape, copied rather than shared, differing only in profile name(s) and
+  concurrency-group suffix.
+- **`.github/actions/prepare-test-matrix/action.yml`** and
+  **`.github/actions/publish-compatibility-results/action.yml`** (new,
+  composite actions) — hold the actual shared logic (schema validation +
+  `detect_changes.py` + `build_matrix.rb`; and artifact summary +
+  `update_ledger.py` + `render_status_dashboard.py` +
+  `render_acceptance_audit.py` + the ledger commit/push, respectively).
+  Composite actions never create a separate job/check-run, so they never hit
+  the sidebar bug above — this is how DRY is achieved instead of a reusable
+  workflow. `.github/actions/run-module-test/action.yml` (pre-existing) is
+  shared the same way by both `test_unit` and `test_acceptance`.
+- `.github/workflows/compatibility-runner.yml` (the original single file) is
+  retired, replaced by the file above (and its Step D sibling).
+
+What's duplicated per major, since GitHub has no sharing primitive below a
+full reusable workflow for job-level properties: `test_unit`/`test_acceptance`'s
+`strategy.matrix`, dynamic `name:`, `runs-on`, `timeout-minutes`, `needs`/`if`
+gates, and job-level `env:` block, plus `publish`'s `concurrency:` block. This
+is a small, mostly-static block — reviewing a diff between the two callers
+should show almost nothing besides the profile name and concurrency-group
+suffix; anything more is drift to catch in review.
 
 ### 4.2 Concurrency
 
@@ -219,11 +244,14 @@ see §4.4.)
   (`compat-8-${{ github.ref }}` / `compat-9-${{ github.ref }}`), so a Puppet 8 run
   and a Puppet 9 run proceed **in parallel** — no 2x wall-clock penalty from
   serializing unrelated majors.
-- **Publish job** (ledger merge + commit + push): both callers pass the **same**
-  concurrency group name into the reusable workflow's publish job (e.g.
-  `compat-ledger-${{ github.ref }}`) via a job-level `concurrency:` block. This
-  serializes only the ledger-write-and-push step across both workflows — the
-  actual piece that would otherwise race on `git push status/ledger.json`.
+- **Publish job** (ledger merge + commit + push): both callers' `publish` jobs
+  carry the **same** concurrency-group string (`compat-ledger-${{ github.ref }}`)
+  via a job-level `concurrency:` block. This works identically whether
+  `publish`'s own step logic lives in a reusable workflow or (as shipped) a
+  composite action — concurrency groups key off the group name, not where the
+  job's steps are defined. This serializes only the ledger-write-and-push step
+  across both workflows — the actual piece that would otherwise race on
+  `git push status/ledger.json`.
 
 ### 4.3 Artifact naming
 
@@ -254,9 +282,28 @@ A single workflow file with two `schedule:` cron entries, branching on
   distinguishing "scheduled-8" from "scheduled-9" from "dispatch-either," which is
   exactly the kind of logic that's easy to get subtly wrong.
 
-None of these costs buy anything, since the reusable-workflow split already
-eliminates the pipeline-duplication concern that would otherwise justify
-minimizing file count.
+None of these costs buy anything — a two-file split with duplicated job
+shapes is still strictly better on every point above than one file branching
+on cron strings, and (per this section's revision) that duplication is
+already minimized to a small, mostly-static block via the composite-action
+extraction, so there's no real file-count savings to trade away in the first
+place.
+
+### 4.5 Alternative considered and rejected: sharing the matrix jobs via a reusable workflow
+
+The original plan for this section — one `workflow_call`-triggered reusable
+workflow holding the entire `prepare`/`test_unit`/`test_acceptance`/`publish`
+graph, with each major's file reduced to a few lines calling it — was
+actually built and dispatched (Step C, first attempt) before being reverted.
+It looked strictly better on paper (zero duplicated job YAML at all, not just
+a small static block) but broke a real, load-bearing requirement: the
+Actions run page's left sidebar must show which module and platform a job
+belongs to, sorted alphabetically, so a human triaging a red run can tell
+what's failing at a glance. That's precisely the display GitHub's sidebar
+degrades for matrix jobs nested behind `workflow_call` (§4's revision note).
+Once real names collapsed to a single repeated string across every unit-test
+job, the option was dead regardless of its DRY appeal — see §12's Step C
+entry for the investigation that isolated this.
 
 ---
 
@@ -303,13 +350,14 @@ it just gains `9-*` entries alongside the existing `8-*` ones.
 
 ### 5.3 The real remaining leak: `.github/` material-path matching
 
-Once the reusable-workflow split (§4) exists, `.github/workflows/` contains three
-files: the shared reusable workflow and **two major-specific thin caller files**.
-`detect_changes.py`'s current `harness_changed()` check matches the whole
-`.github` directory as one material path — so editing *only*
-`compatibility-runner-puppet9.yml` (a cron tweak, an input default change) would
-still register as "`.github` changed" and force `run_all=true` on the **Puppet 8**
-workflow too, even though nothing Puppet-8-relevant changed.
+Once Step D lands, `.github/workflows/` contains two files: the Puppet 8 and
+Puppet 9 caller files (each self-contained per §4's revision — no shared
+reusable workflow). `detect_changes.py`'s original `harness_changed()` check
+matched the whole `.github` directory as one material path — so editing
+*only* `compatibility-runner-puppet9.yml` (a cron tweak, an input default
+change) would still register as "`.github` changed" and force
+`run_all=true` on the **Puppet 8** workflow too, even though nothing
+Puppet-8-relevant changed.
 
 Unlike the profiles case, this doesn't get an "usually released together"
 exemption — CI/workflow-maintenance edits to one caller happen independently of
@@ -317,18 +365,21 @@ the other far more often than a coordinated major-version release does. Left
 unfixed, this would be the single most likely way for the "Puppet 8 should get
 leaner and leaner" requirement to silently break in practice.
 
-**Fix:** stop matching `.github` as one blanket path. Each caller passes
-`detect_changes.py` an explicit material-path list scoped to itself:
+**Fix (shipped in Step C, ahead of Step D actually needing it):** stop
+matching `.github` as one blanket path. Each caller passes `detect_changes.py`
+an explicit material-path list scoped to itself, via `SHARED_MATERIAL_PATHS`
+(module-level constant) plus a `CALLER_WORKFLOW_FILE` env var:
 
-- Shared, included by both: `.github/actions/`, the reusable workflow file
-  itself, plus `lib/`, `bin/`, `scripts/`, `Gemfile`, `Gemfile.lock` (these are
-  shared, parameterized code executed by both majors' pipelines — a change here
-  legitimately warrants retesting both, so keeping them coarse/shared is correct,
-  not a leak; the leak only happens where genuinely major-dedicated *files*
-  exist).
-- Caller-specific: its own thin wrapper file (`compatibility-runner-puppet8.yml`
-  for the 8 caller, `compatibility-runner-puppet9.yml` for the 9 caller) —
-  explicitly **excluding** the sibling major's wrapper file.
+- Shared, included by both: `.github/actions/` (covers all three composite
+  actions — `prepare-test-matrix`, `run-module-test`,
+  `publish-compatibility-results`), plus `lib/`, `bin/`, `scripts/`,
+  `Gemfile`, `Gemfile.lock` (these are shared, parameterized code executed by
+  both majors' pipelines — a change here legitimately warrants retesting
+  both, so keeping them coarse/shared is correct, not a leak; the leak only
+  happens where genuinely major-dedicated *files* exist).
+- Caller-specific: its own file (`compatibility-runner-puppet8.yml` for the 8
+  caller, `compatibility-runner-puppet9.yml` for the 9 caller) — explicitly
+  **excluding** the sibling major's file.
 
 ---
 
@@ -518,25 +569,36 @@ has been started yet. See §12 for live status.
   commits correctly and `STATUS.md`/`KNOWN_COMPATIBLE.md` render with no
   regressions.
 
-**Step C — CI topology: reusable workflow + Puppet-8 thin caller**
-- Change: new `.github/workflows/_compatibility-runner-reusable.yml` (§4.1),
-  new `.github/workflows/compatibility-runner-puppet8.yml` (the only active
-  caller at this point), scoped material-path lists (§5.3). Old
-  `compatibility-runner.yml` stays in place until the gate below passes, then
-  is retired.
+**Step C — CI topology: self-contained Puppet-8 caller + shared composite actions**
+- Change (as shipped — see §4's revision note and §12 for the full
+  investigation): new `.github/workflows/compatibility-runner-puppet8.yml`,
+  fully self-contained (no `workflow_call`); new
+  `.github/actions/prepare-test-matrix/action.yml` and
+  `.github/actions/publish-compatibility-results/action.yml` composite
+  actions holding the shared logic; scoped material-path lists (§5.3). A
+  first attempt built a `_compatibility-runner-reusable.yml` reusable
+  workflow per the original §4.1 plan, dispatched it, and found it broke the
+  Actions run page's job-name sidebar for matrix jobs — reverted in favor of
+  the composite-action approach. Old `compatibility-runner.yml` stayed in
+  place until the gate below passed, then was retired (its nightly cron
+  moved to the new caller in the same commit).
 - Gate: dispatch the full suite through the **new** `compatibility-runner-
   puppet8.yml` caller and confirm byte-for-byte parity with Step B's
   baseline (same pass/fail/warn per module, ledger/dashboard unchanged).
   Highest structural risk of the five steps, since it replaces the pipeline's
   entry point — don't delete the old workflow file until this run is clean.
 
-**Step D — Add Puppet 9: profile entry + thin caller**
+**Step D — Add Puppet 9: profile entry + self-contained caller**
 - Change: `profiles/puppet_profiles.json` gets `9-latest-maintained` (real
   `puppet_core_version`/`facter_version` pinned per §8's gem-source query —
   re-check for a newer 9.x at implementation time the same way 8.21.0 was
-  found), new `.github/workflows/compatibility-runner-puppet9.yml` caller,
-  `major` param wired through `detect_changes.py`/`build_matrix.rb` (§3.2,
-  §5.1), shared publish concurrency group (§4.2).
+  found), new `.github/workflows/compatibility-runner-puppet9.yml` — built by
+  copying `compatibility-runner-puppet8.yml`'s shape (self-contained,
+  delegating to the same `.github/actions/prepare-test-matrix` /
+  `run-module-test` / `publish-compatibility-results` composite actions), not
+  by calling anything new — `major` param wired through
+  `detect_changes.py`/`build_matrix.rb` (§3.2, §5.1), shared publish
+  concurrency group (§4.2).
 - Gate: dispatch the new Puppet-9 caller for the full suite — expect real
   failures/warnings, that's signal not a bug (§8's metadata-warning note) —
   **and** re-dispatch the Puppet-8 caller in the same round, to prove the two
@@ -568,10 +630,11 @@ has been started yet. See §12 for live status.
 | `scripts/render_status_dashboard.py` | Per-major `is_fully_compatible`; per-major columns in `STATUS.md` and `KNOWN_COMPATIBLE.md`. |
 | `scripts/detect_changes.py` | Accept a `major` parameter; scope all ledger reads to `puppet_majors[major]`; accept a caller-scoped material-path list (shared paths + own wrapper file only). |
 | `scripts/build_matrix.rb` | Parameterize by the caller's profile set (no cross-major fan-out needed — each caller already only tests its own major). |
-| `.github/workflows/_compatibility-runner-reusable.yml` | **New.** Holds the full `prepare`/`test_unit`/`test_acceptance`/`publish` job graph, parameterized by `profiles` + `major` inputs. |
-| `.github/workflows/compatibility-runner-puppet8.yml` | **New, thin.** Triggers + call into the reusable workflow with the 8-series profiles. |
-| `.github/workflows/compatibility-runner-puppet9.yml` | **New, thin.** Same shape, 9-series profiles. |
-| `.github/workflows/compatibility-runner.yml` | Retired, replaced by the three files above. |
+| `.github/workflows/compatibility-runner-puppet8.yml` | **New, self-contained.** Own triggers (including the nightly cron, moved from the retired file) + full `prepare`/`test_unit`/`test_acceptance`/`publish` job graph for the 8-series profiles, delegating shared logic to two new composite actions (below). Superseded an earlier `_compatibility-runner-reusable.yml` + thin-caller design that was built, dispatched, and reverted — see §4's revision note and §12. |
+| `.github/actions/prepare-test-matrix/action.yml` | **New composite action.** Schema validation + `detect_changes.py` + `build_matrix.rb`, with `unit-matrix`/`acceptance-matrix`/`has-unit`/`has-acceptance` outputs. Shared by every major's caller without the reusable-workflow sidebar bug (composite actions never create a separate job/check-run). |
+| `.github/actions/publish-compatibility-results/action.yml` | **New composite action.** Artifact download/summary + `update_ledger.py` + `render_status_dashboard.py` + `render_acceptance_audit.py` + the ledger commit/push. Same sharing mechanism as above. |
+| `.github/workflows/compatibility-runner-puppet9.yml` | **Step D.** Same shape as the Puppet 8 caller, built by copying it (self-contained, same two composite actions) rather than calling anything shared at the job level. |
+| `.github/workflows/compatibility-runner.yml` | Retired, replaced by `compatibility-runner-puppet8.yml` (+ its Step D sibling). |
 | `profiles/puppet_profiles.json` | Add `9-latest-maintained` (+ `previous`) entries. No structural change — `puppet_major` field already exists. |
 | `KNOWN_INCOMPATIBLE.md` / `AGENTS.md` / `mark-incompatible` skill | Policy update: removal from `modules.json` requires incompatibility on the gating major or all tested majors, not any single major. |
 | `docs/architecture-flow.md` | Update CI + reporting sections per existing maintenance rule. |
@@ -611,7 +674,7 @@ before touching any code.
 |---|---|---|---|
 | A | Ruby version becomes profile-driven | **Done — gate passed 2026-08-20** | First attempt (harness-wide bump to Ruby 3.4, commit `9ccba47`) was dispatched and correctly caught a real regression: full-suite run under 3.4 showed Puppet 8.21.0 crashing on `require 'puppet'` (FrozenError in `monkey_patches.rb`, confirmed via two unrelated modules' reports and a read of Puppet's own source — see §8). Reverted to profile-driven Ruby (commit `1c4ecc4`) on branch `puppet9-step-a-ruby34` / PR [#14](https://github.com/puppetlabs/puppet-module-compat-harness/pull/14): `.ruby-version`/`runner.rb` guard back to 3.2, `Gemfile` widened to `>= 3.2, < 3.5`, `run-module-test/action.yml` now resolves `ruby_version` per-profile before `ruby/setup-ruby`. Re-dispatched full suite against `1c4ecc4`: no failures across all but 5 still-completing jobs — accepted as the passing gate. PR title/body rewritten to match; branch not yet renamed/merged. |
 | B | Ledger schema v2 + readers | **Done — gate passed 2026-08-20** | `scripts/migrate_ledger_v2.py` (new, one-time), `update_ledger.py` (groups by `(id, major)`, writes `puppet_majors[major]`, refuses to run against a pre-v2 ledger), `detect_changes.py` (reads `puppet_majors["8"]` via a `major_slice` helper — hardcoded to major 8 for now; the `major` parameter generalizing this is Step D's job), `render_status_dashboard.py` (per-major summary blocks, per-major Unit/Acceptance column pairs in `STATUS.md`, per-major compatibility column in `KNOWN_COMPATIBLE.md`) landed together on branch `puppet9-step-b-ledger-v2` / PR [#15](https://github.com/puppetlabs/puppet-module-compat-harness/pull/15). Local gate: migrated the real `status/ledger.json` and diffed rendered output against the pre-migration baseline — 75 active / 60 fully compatible on Puppet 8 / 1 retired / 59 in `KNOWN_COMPATIBLE.md`, identical to before; row-by-row diff of both generated files confirmed no data changes, only the expected column restructuring (Coverage column dropped in favor of explicit per-major Unit + Acceptance cells, per §6's "column pair" reading). CI dispatch gate: full-suite `workflow_dispatch` run against the branch (run `32423307929`, commit `ab9451c`) came back fully green — verified afterward that all 75 active modules' `puppet_majors.8.unit` entries got fresh `last_run_id`/`last_harness_sha` stamps (proving `update_ledger.py`'s v2 write path executed for real, not just locally), zero modules retained stray flat top-level fields, the one retired module (`puppet-openvox_bootstrap`) was correctly left untouched, and `STATUS.md`/`KNOWN_COMPATIBLE.md` counts (75/60/1/59) came back unchanged from the pre-dispatch baseline. |
-| C | Reusable workflow + Puppet-8 caller | **In progress** | New `.github/workflows/_compatibility-runner-reusable.yml` (`workflow_call`, holds the full `prepare`/`test_unit`/`test_acceptance`/`publish` graph) and `.github/workflows/compatibility-runner-puppet8.yml` (thin caller, `secrets: inherit`, its own `compat-8-${{ github.ref }}` concurrency group) on branch `puppet9-step-c-ci-topology` / PR [#16](https://github.com/puppetlabs/puppet-module-compat-harness/pull/16). `detect_changes.py`'s material-path check split into `SHARED_MATERIAL_PATHS` (`.github/actions`, the reusable workflow file, `lib`/`bin`/`profiles`/`scripts`/`Gemfile*`) plus a `CALLER_WORKFLOW_FILE` env var for the caller's own wrapper file (§5.3), so a future Puppet-9 wrapper edit can't force a full run on this Puppet-8 caller. The `publish` job carries the shared `compat-ledger-${{ github.ref }}` concurrency group (§4.2) so a future second caller only serializes on the ledger write, not the whole pipeline. **New caller's `schedule:` trigger deliberately deferred** — the old `compatibility-runner.yml` keeps sole ownership of the 02:00 UTC cron until the gate below passes, because the two workflows use different concurrency-group names and would not serialize against each other if both fired nightly. **Blocked on a GitHub platform constraint, not a design gap:** `workflow_dispatch` on a brand-new workflow file is only discoverable once the file exists on the default branch, even when dispatching with `--ref` pointed at a branch — this never came up in Steps A/B since those only edited files that already existed on `main`. PR #16 is open for manual review/merge (user opted to merge it themselves rather than have the agent merge). **Next steps once merged:** dispatch `compatibility-runner-puppet8.yml` for the full suite (`lean=false`) and confirm byte-for-byte parity with Step B's baseline (same pass/fail/warn per module, ledger/dashboard unchanged); if clean, add the `schedule:` cron to the new caller and delete `compatibility-runner.yml` in the same commit, and update `AGENTS.md`/`CLAUDE.md`/`CONTRIBUTING.md`/`README.md`/`docs/architecture-flow.md` references to the old file. |
+| C | Self-contained Puppet-8 caller + shared composite actions | **Architecture finalized 2026-08-21; awaiting final full-suite gate dispatch (user-run)** | **First attempt (reverted):** built `.github/workflows/_compatibility-runner-reusable.yml` (`workflow_call`, held the full `prepare`/`test_unit`/`test_acceptance`/`publish` graph) + thin `compatibility-runner-puppet8.yml` caller, per the original §4.1 plan, on branch `puppet9-step-c-ci-topology` / PR [#16](https://github.com/puppetlabs/puppet-module-compat-harness/pull/16) (merged). Hit a GitHub platform constraint first (workflow_dispatch on a brand-new workflow file is only discoverable once the file exists on the default branch, even with `--ref` pointed at a branch — never came up in Steps A/B since those only edited files already on `main`); PR #16 was merged by the user for that reason. Live dispatch after merge then surfaced a real regression the constraint-check hadn't: the Actions run page's **left sidebar** collapsed every unit-test job's name down to just `unit` (identical across all of them), even though the Jobs API, Checks API, and the job detail header all showed the correct, unique name (`test / <module> / unit`) the whole time. A renaming fix (matching the caller job's name to the pre-existing first name segment, to avoid an extra nesting level) did NOT fix it — proven by re-checking the same "fixed" run's sidebar. **Root cause, isolated via a controlled A/B dispatch** (identical job/matrix/name YAML; only the `workflow_call` boundary itself differed): GitHub cannot correctly render a job's `strategy.matrix`-derived dynamic name in that sidebar specifically when the job is defined inside a workflow invoked via `workflow_call` — a platform limitation with no YAML-level workaround. A suggestion (from a second agent consulted by the user) to pass the parent job's name into the child as an input doesn't apply: it only disambiguates multiple *static* calls to a reusable workflow, not one job that internally fans out via a matrix — the matrix expansion itself is what's inside the broken boundary. **Fix shipped:** dropped the reusable workflow entirely; `compatibility-runner-puppet8.yml` now defines all four jobs directly (no `workflow_call`), and DRY is achieved at the *step* level instead via two new composite actions — `.github/actions/prepare-test-matrix` and `.github/actions/publish-compatibility-results` — which never create a separate job/check-run and so never hit this bug (same reason the pre-existing `.github/actions/run-module-test` composite action, shared by both matrix jobs since before Step C, was never affected). `detect_changes.py`'s material-path scoping (§5.3) is unaffected by any of this churn — `SHARED_MATERIAL_PATHS` now points at `.github/actions` (covering all three composite actions) plus a `CALLER_WORKFLOW_FILE` env var for the caller's own file. Verified via three live dispatches on `main`: two unit-only smoke tests (`puppet-boolean`, `puppet-autofs`) and one including an acceptance target (`puppet-telegraf`, `el9-systemd`) — all green, all with correct sidebar names confirmed by the user directly. Branch `puppet9-step-c-retire-old-workflow` (prepared, not yet merged) does the swap-over: adds the `schedule:` cron to the new caller and deletes the old `compatibility-runner.yml` in one commit, plus doc reference updates (`AGENTS.md`/`CLAUDE.md`/`CONTRIBUTING.md`/`README.md`/this file). **Remaining before Step C closes:** the user is running a full-suite (`lean=false`) dispatch of the new caller themselves to confirm byte-for-byte parity with Step B's baseline across the whole module fleet (the smoke tests above used 2-3 modules, not the full ~75) — merge the swap-over branch once that passes. |
 | D | Puppet 9 profile + caller | Not started | Depends on C's gate passing. Re-query the private gem source for the latest 9.x at start of this step — don't assume 9.0.0 is still current. This step's dispatch is also the first real test of Ruby 3.4 under load (bundler 2.5.22, the `json '< 2.7.0'` pin, and whether Puppet 9 hits the same `openssl`/monkey-patch crash Puppet 8 did — none of that got resolved by Step A's revert, it just stopped blocking Puppet 8). |
 | E | `KNOWN_INCOMPATIBLE.md` policy + docs | Not started | Depends on D shipping (describes D's shipped behavior). |
 
