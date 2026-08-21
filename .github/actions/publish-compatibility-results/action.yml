@@ -6,10 +6,10 @@ description: >
   read-modify-write logic (scripts/update_ledger.py,
   scripts/render_status_dashboard.py, scripts/render_acceptance_audit.py) is
   defined exactly once (see docs/puppet-core-9-dual-major-support.md §12,
-  Step C). The calling job must check out the repo (with fetch-depth: 0 and
-  ref: github.ref_name) before calling this action, and must carry the
-  compat-ledger-${{ github.ref }} concurrency group and contents:write
-  permission, since composite actions cannot declare either themselves.
+  Step C). The calling job must check out the repo (with fetch-depth 0 and
+  ref set to the current branch name) before calling this action, and must
+  carry the shared ledger-write concurrency group and contents write
+  permission itself, since composite actions cannot declare either.
 
 inputs:
   modules-json:
