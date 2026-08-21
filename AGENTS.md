@@ -222,7 +222,22 @@ incompatibility — do not mark such a module incompatible on that basis alone. 
 "OpenVox-only" for the two genuine cases named there (hard runtime refusal of non-OpenVox, or a
 module whose purpose is installing OpenVox).
 
-When a module is determined to be incompatible:
+**Removal from the matrix is scoped to which major(s) the incompatibility applies to** (see
+`docs/puppet-core-9-dual-major-support.md` §7). Puppet 8 is the gating/primary major:
+
+- **Incompatible on Puppet 8 (the gating major), or on every actively tested major** — this is a
+  removal. Add the `KNOWN_INCOMPATIBLE.md` entry and remove the module from `config/modules.json`
+  entirely; this also stops its testing on every other major, which is accepted (there is no value
+  tracking a module's Puppet 9 status once the harness has fully retired it).
+- **Incompatible on a non-gating major only (e.g. Puppet 9, with Puppet 8 unaffected)** — this is
+  **not** a `KNOWN_INCOMPATIBLE.md` event. Do not remove the module from `config/modules.json`; it
+  keeps running on every major so a future upstream fix is caught automatically. Its failure is
+  simply visible as a red cell in that major's column in `STATUS.md` / `KNOWN_COMPATIBLE.md` — no
+  special-casing needed. A categorical, major-agnostic ruling (genuinely OpenVox-only, dead legacy
+  toolchain) fails identically on every major and is always a removal regardless of which major's
+  run happened to surface the evidence.
+
+When a module is determined incompatible on the gating major or on every tested major:
 
 1. Add an entry to the table in [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md) with module name, Puppet Core version tested, status, and detailed reason
 2. Remove the module from `config/modules.json` so it is no longer included in test runs
