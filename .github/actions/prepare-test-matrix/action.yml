@@ -1,0 +1,116 @@
+name: Prepare Test Matrix
+description: >
+  Validates config/modules.json, runs lean-matrix change detection, and
+  builds the CI module matrix (unit + acceptance). Shared by every Puppet
+  major's thin trigger workflow so the actual decision logic
+  (scripts/detect_changes.py, scripts/build_matrix.rb) is defined exactly
+  once, without routing matrix-strategy jobs through a workflow_call
+  boundary (see docs/puppet-core-9-dual-major-support.md §12, Step C).
+
+inputs:
+  modules-json:
+    description: 'Optional JSON array override; when non-empty, change detection is skipped and every listed module is included'
+    required: false
+    default: ''
+  event-name:
+    description: "The caller's own github.event_name (schedule|workflow_dispatch|...)"
+    required: false
+    default: 'schedule'
+  lean:
+    description: "Lean run toggle: 'true' or 'false' (manual dispatch override)"
+    required: false
+    default: 'true'
+  caller-workflow-file:
+    description: 'Path to the calling thin trigger workflow file, scoped out of the sibling major material-path matching'
+    required: false
+    default: ''
+  window-hours:
+    description: 'Upstream/harness change window in hours'
+    required: false
+    default: '48'
+  stale-days:
+    description: 'Staleness threshold in days'
+    required: false
+    default: '30'
+
+outputs:
+  unit-matrix:
+    description: 'JSON array for the unit-test matrix'
+    value: ${{ steps.matrix.outputs.unit_matrix }}
+  acceptance-matrix:
+    description: 'JSON array for the acceptance-test matrix'
+    value: ${{ steps.matrix.outputs.acceptance_matrix }}
+  has-unit:
+    description: "'true' if the unit matrix is non-empty"
+    value: ${{ steps.matrix.outputs.has_unit }}
+  has-acceptance:
+    description: "'true' if the acceptance matrix is non-empty"
+    value: ${{ steps.matrix.outputs.has_acceptance }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.11'
+
+    - name: Validate modules config schema
+      shell: bash
+      run: |
+        set -euo pipefail
+        python -m pip install --disable-pip-version-check jsonschema
+        python scripts/validate_modules_config.py --config config/modules.json --schema config/modules.schema.json
+
+    - name: Detect changes (lean matrix)
+      id: detect
+      if: inputs.modules-json == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p .tmp
+        python scripts/detect_changes.py
+      env:
+        MODULES_FILE: config/modules.json
+        LEDGER_FILE: status/ledger.json
+        OUTPUT_FILE: .tmp/change-decisions.json
+        WINDOW_HOURS: ${{ inputs.window-hours }}
+        STALE_DAYS: ${{ inputs.stale-days }}
+        EVENT_NAME: ${{ inputs.event-name }}
+        LEAN: ${{ inputs.lean }}
+        GITHUB_TOKEN: ${{ github.token }}
+        CALLER_WORKFLOW_FILE: ${{ inputs.caller-workflow-file }}
+
+    - name: Build module matrix
+      id: matrix
+      shell: bash
+      run: |
+        set -euo pipefail
+        OVERRIDE='${{ inputs.modules-json }}'
+        RUN_ALL='${{ steps.detect.outputs.run_all }}'
+        INCLUDE_IDS='${{ steps.detect.outputs.include_ids }}'
+        # No detection ran (modules_json override) -> include everything.
+        if [ -z "$RUN_ALL" ]; then RUN_ALL='true'; fi
+        RUN_ALL="$RUN_ALL" INCLUDE_IDS="$INCLUDE_IDS" ruby scripts/build_matrix.rb "$OVERRIDE" > .tmp-matrix.json
+
+        UNIT_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['unit_matrix']))")
+        ACCEPTANCE_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['acceptance_matrix']))")
+        HAS_UNIT=$(python -c "import json; print(json.load(open('.tmp-matrix.json', encoding='utf-8'))['has_unit'])")
+        HAS_ACCEPTANCE=$(python -c "import json; print(json.load(open('.tmp-matrix.json', encoding='utf-8'))['has_acceptance'])")
+        echo "unit_matrix=$UNIT_MATRIX" >> "$GITHUB_OUTPUT"
+        echo "acceptance_matrix=$ACCEPTANCE_MATRIX" >> "$GITHUB_OUTPUT"
+        echo "has_unit=$HAS_UNIT" >> "$GITHUB_OUTPUT"
+        echo "has_acceptance=$HAS_ACCEPTANCE" >> "$GITHUB_OUTPUT"
+
+        if [ "$HAS_UNIT" != 'true' ] && [ "$HAS_ACCEPTANCE" != 'true' ]; then
+          echo "::notice title=Run result::no-op: no module required testing this run"
+          echo "No modules selected for testing — test jobs will be skipped (no-op run)."
+        fi
+
+    - name: Upload change decisions
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: change-decisions
+        path: .tmp/change-decisions.json
+        if-no-files-found: ignore

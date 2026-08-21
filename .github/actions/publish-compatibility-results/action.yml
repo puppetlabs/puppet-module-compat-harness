@@ -1,0 +1,121 @@
+name: Publish Compatibility Results
+description: >
+  Downloads per-module artifacts, summarizes results, and (for real runs)
+  updates the status ledger, renders the dashboard/audit docs, and commits
+  them. Shared by every Puppet major's thin trigger workflow so the ledger
+  read-modify-write logic (scripts/update_ledger.py,
+  scripts/render_status_dashboard.py, scripts/render_acceptance_audit.py) is
+  defined exactly once (see docs/puppet-core-9-dual-major-support.md §12,
+  Step C). The calling job must check out the repo (with fetch-depth: 0 and
+  ref: github.ref_name) before calling this action, and must carry the
+  compat-ledger-${{ github.ref }} concurrency group and contents:write
+  permission, since composite actions cannot declare either themselves.
+
+inputs:
+  modules-json:
+    description: >
+      Optional JSON array override from this run's dispatch input. When
+      non-empty, this was a throwaway ad-hoc run: the ledger/dashboard/audit
+      steps are skipped so committed state is never written from an
+      experiment.
+    required: false
+    default: ''
+  has-unit:
+    description: "'true' if this run's unit matrix was non-empty"
+    required: false
+    default: 'false'
+  has-acceptance:
+    description: "'true' if this run's acceptance matrix was non-empty"
+    required: false
+    default: 'false'
+  stale-days:
+    description: 'Staleness threshold in days (for the dashboard staleness column)'
+    required: false
+    default: '30'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.11'
+
+    - name: Download module artifacts
+      if: inputs.has-unit == 'true' || inputs.has-acceptance == 'true'
+      uses: actions/download-artifact@v8
+      with:
+        path: all-artifacts
+        pattern: compatibility-*
+        merge-multiple: false
+
+    - name: Download change decisions
+      continue-on-error: true
+      uses: actions/download-artifact@v8
+      with:
+        name: change-decisions
+        path: .tmp-decisions
+
+    - name: Summarize results
+      shell: bash
+      run: |
+        set -euo pipefail
+        python scripts/summarize_module_statuses.py
+      env:
+        STATUS_ROOT: all-artifacts
+        SKIP_MANIFEST: .tmp-decisions/change-decisions.json
+
+    # Persist to the ledger/dashboard ONLY for real runs (schedule, or a
+    # manual dispatch of the configured fleet). An ad-hoc modules_json
+    # override is a throwaway experiment and must not write committed state.
+    - name: Update status ledger
+      if: inputs.modules-json == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        python scripts/update_ledger.py
+      env:
+        STATUS_ROOT: all-artifacts
+        LEDGER_FILE: status/ledger.json
+        MODULES_FILE: config/modules.json
+        KNOWN_INCOMPATIBLE_FILE: KNOWN_INCOMPATIBLE.md
+        KNOWN_DEPRECATED_FILE: KNOWN_DEPRECATED.md
+
+    - name: Render status dashboard
+      if: inputs.modules-json == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        python scripts/render_status_dashboard.py
+      env:
+        LEDGER_FILE: status/ledger.json
+        MODULES_FILE: config/modules.json
+        STATUS_FILE: STATUS.md
+        KNOWN_COMPATIBLE_FILE: KNOWN_COMPATIBLE.md
+        KNOWN_INCOMPATIBLE_FILE: KNOWN_INCOMPATIBLE.md
+        STALE_DAYS: ${{ inputs.stale-days }}
+
+    - name: Render acceptance audit
+      if: inputs.modules-json == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        python scripts/render_acceptance_audit.py
+      env:
+        MODULES_FILE: config/modules.json
+        AUDIT_FILE: docs/available-acceptance-tests.md
+
+    - name: Commit status ledger and dashboard
+      if: inputs.modules-json == ''
+      shell: bash
+      run: |
+        set -euo pipefail
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add status/ledger.json STATUS.md KNOWN_COMPATIBLE.md docs/available-acceptance-tests.md
+        if git diff --cached --quiet; then
+          echo "No status changes to commit."
+          exit 0
+        fi
+        git commit -m "chore(status): update compatibility ledger and dashboard [skip ci]"
+        git push origin "HEAD:${GITHUB_REF_NAME}"

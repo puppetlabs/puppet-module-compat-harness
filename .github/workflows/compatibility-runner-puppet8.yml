@@ -1,20 +1,37 @@
 name: Puppet Module Compatibility Runner (Puppet 8)
 
-# TEMPORARY EXPERIMENT (see docs/puppet-core-9-dual-major-support.md §12,
-# Step C): this file normally calls _compatibility-runner-reusable.yml via
-# workflow_call. That produced a real regression - the GitHub Actions run
-# page's left sidebar collapsed every unit-test job's displayed name down to
-# just "unit", even though the job's actual name (confirmed via the Jobs and
-# Checks APIs, and the per-job detail header) was correct and unique
-# ("test / <module-id> / unit"). A byte-for-byte diff against the old
-# compatibility-runner.yml showed the job/matrix/name definitions are
-# otherwise identical - the only structural difference is the workflow_call
-# boundary itself.
+# Thin trigger workflow for the Puppet 8 major. This file defines the actual
+# jobs directly (prepare, test_unit, test_acceptance, publish) rather than
+# calling a shared reusable workflow: an earlier version of this file called
+# _compatibility-runner-reusable.yml via workflow_call, which caused a real
+# regression - GitHub's Actions run page left sidebar collapsed every
+# unit-test job's displayed name down to just "unit", even though the job's
+# actual name (per the Jobs/Checks APIs and the job detail header) was
+# correct and unique. This is a known GitHub Actions limitation: dynamic job
+# names set via strategy.matrix don't render correctly in the sidebar for
+# jobs defined inside a workflow_call-invoked reusable workflow. There is no
+# YAML-level workaround - the matrix must live in a job that isn't nested
+# behind workflow_call (see docs/puppet-core-9-dual-major-support.md §12,
+# Step C for the full investigation).
 #
-# This version inlines the full pipeline directly (no workflow_call) to test
-# that isolation: if the sidebar renders correctly here, the workflow_call
-# boundary is confirmed as the cause, and the reusable-workflow architecture
-# needs to be dropped in favor of per-major duplicated job definitions.
+# DRY is instead achieved at the *step* level via composite actions, which
+# never create a separate job/check-run and so never hit this bug:
+#   - .github/actions/prepare-test-matrix    (change detection + matrix build)
+#   - .github/actions/run-module-test        (the actual per-module test)
+#   - .github/actions/publish-compatibility-results (ledger/dashboard write)
+# The only things duplicated per major are the job-level "shape" (matrix
+# strategy, dynamic name, runs-on, timeout, needs/if gates, env passthrough)
+# that GitHub has no sharing primitive for below a full reusable workflow -
+# a small, mostly-static block that should look nearly identical to
+# compatibility-runner-puppet9.yml (once Step D adds it) except for the
+# profile name and concurrency-group suffix.
+#
+# NOTE: the `schedule:` trigger is intentionally NOT enabled yet. The old
+# compatibility-runner.yml still owns the nightly cron until this caller's
+# gate dispatch passes; enabling both on the same cron would double-fire and
+# race on the ledger (different concurrency group names, so they would not
+# serialize against each other). The cron entry moves here in the same
+# commit that retires compatibility-runner.yml.
 
 on:
   workflow_dispatch:
@@ -64,80 +81,26 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      unit_matrix: ${{ steps.matrix.outputs.unit_matrix }}
-      acceptance_matrix: ${{ steps.matrix.outputs.acceptance_matrix }}
-      has_unit: ${{ steps.matrix.outputs.has_unit }}
-      has_acceptance: ${{ steps.matrix.outputs.has_acceptance }}
+      unit_matrix: ${{ steps.prepare.outputs.unit-matrix }}
+      acceptance_matrix: ${{ steps.prepare.outputs.acceptance-matrix }}
+      has_unit: ${{ steps.prepare.outputs.has-unit }}
+      has_acceptance: ${{ steps.prepare.outputs.has-acceptance }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Prepare test matrix
+        id: prepare
+        uses: ./.github/actions/prepare-test-matrix
         with:
-          python-version: '3.11'
-
-      - name: Validate modules config schema
-        shell: bash
-        run: |
-          set -euo pipefail
-          python -m pip install --disable-pip-version-check jsonschema
-          python scripts/validate_modules_config.py --config config/modules.json --schema config/modules.schema.json
-
-      - name: Detect changes (lean matrix)
-        id: detect
-        if: github.event.inputs.modules_json == ''
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p .tmp
-          python scripts/detect_changes.py
-        env:
-          MODULES_FILE: config/modules.json
-          LEDGER_FILE: status/ledger.json
-          OUTPUT_FILE: .tmp/change-decisions.json
-          WINDOW_HOURS: ${{ vars.PUPPET_CHANGE_WINDOW_HOURS || '48' }}
-          STALE_DAYS: ${{ vars.PUPPET_STALE_DAYS || '30' }}
-          EVENT_NAME: ${{ github.event_name }}
-          LEAN: ${{ github.event.inputs.lean || 'true' }}
-          GITHUB_TOKEN: ${{ github.token }}
-          CALLER_WORKFLOW_FILE: .github/workflows/compatibility-runner-puppet8.yml
-
-      - name: Build module matrix
-        id: matrix
-        shell: bash
-        run: |
-          set -euo pipefail
-          OVERRIDE='${{ github.event.inputs.modules_json }}'
-          RUN_ALL='${{ steps.detect.outputs.run_all }}'
-          INCLUDE_IDS='${{ steps.detect.outputs.include_ids }}'
-          # No detection ran (modules_json override) -> include everything.
-          if [ -z "$RUN_ALL" ]; then RUN_ALL='true'; fi
-          RUN_ALL="$RUN_ALL" INCLUDE_IDS="$INCLUDE_IDS" ruby scripts/build_matrix.rb "$OVERRIDE" > .tmp-matrix.json
-
-          UNIT_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['unit_matrix']))")
-          ACCEPTANCE_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['acceptance_matrix']))")
-          HAS_UNIT=$(python -c "import json; print(json.load(open('.tmp-matrix.json', encoding='utf-8'))['has_unit'])")
-          HAS_ACCEPTANCE=$(python -c "import json; print(json.load(open('.tmp-matrix.json', encoding='utf-8'))['has_acceptance'])")
-          echo "unit_matrix=$UNIT_MATRIX" >> "$GITHUB_OUTPUT"
-          echo "acceptance_matrix=$ACCEPTANCE_MATRIX" >> "$GITHUB_OUTPUT"
-          echo "has_unit=$HAS_UNIT" >> "$GITHUB_OUTPUT"
-          echo "has_acceptance=$HAS_ACCEPTANCE" >> "$GITHUB_OUTPUT"
-
-          if [ "$HAS_UNIT" != 'true' ] && [ "$HAS_ACCEPTANCE" != 'true' ]; then
-            echo "::notice title=Run result::no-op: no module required testing this run"
-            echo "No modules selected for testing — test jobs will be skipped (no-op run)."
-          fi
-
-      - name: Upload change decisions
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: change-decisions
-          path: .tmp/change-decisions.json
-          if-no-files-found: ignore
+          modules-json: ${{ github.event.inputs.modules_json }}
+          event-name: ${{ github.event_name }}
+          lean: ${{ github.event.inputs.lean || 'true' }}
+          caller-workflow-file: .github/workflows/compatibility-runner-puppet8.yml
+          window-hours: ${{ vars.PUPPET_CHANGE_WINDOW_HOURS || '48' }}
+          stale-days: ${{ vars.PUPPET_STALE_DAYS || '30' }}
 
   test_unit:
     name: test / ${{ matrix.module.id }} / unit
@@ -312,6 +275,15 @@ jobs:
     if: always() && needs.prepare.result == 'success'
     permissions:
       contents: write
+    # Shared across every major's caller (see docs/puppet-core-9-dual-major-support.md
+    # §4.2) — the test-phase jobs above run under each caller's own concurrency
+    # group, so majors test in parallel; only this ledger-write-and-push step is
+    # serialized across them. Works the same whether publish's step logic lives
+    # in a reusable workflow or (as here) a composite action, since concurrency
+    # groups key off the group name, not the job's origin.
+    concurrency:
+      group: compat-ledger-${{ github.ref }}
+      cancel-in-progress: false
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -319,86 +291,10 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Publish compatibility results
+        uses: ./.github/actions/publish-compatibility-results
         with:
-          python-version: '3.11'
-
-      - name: Download module artifacts
-        if: needs.prepare.outputs.has_unit == 'true' || needs.prepare.outputs.has_acceptance == 'true'
-        uses: actions/download-artifact@v8
-        with:
-          path: all-artifacts
-          pattern: compatibility-*
-          merge-multiple: false
-
-      - name: Download change decisions
-        continue-on-error: true
-        uses: actions/download-artifact@v8
-        with:
-          name: change-decisions
-          path: .tmp-decisions
-
-      - name: Summarize results
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/summarize_module_statuses.py
-        env:
-          STATUS_ROOT: all-artifacts
-          SKIP_MANIFEST: .tmp-decisions/change-decisions.json
-
-      # Persist to the ledger/dashboard ONLY for real runs (schedule, or a
-      # manual dispatch of the configured fleet). An ad-hoc modules_json
-      # override is a throwaway experiment and must not write committed state.
-      - name: Update status ledger
-        if: github.event.inputs.modules_json == ''
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/update_ledger.py
-        env:
-          STATUS_ROOT: all-artifacts
-          LEDGER_FILE: status/ledger.json
-          MODULES_FILE: config/modules.json
-          KNOWN_INCOMPATIBLE_FILE: KNOWN_INCOMPATIBLE.md
-          KNOWN_DEPRECATED_FILE: KNOWN_DEPRECATED.md
-
-      - name: Render status dashboard
-        if: github.event.inputs.modules_json == ''
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/render_status_dashboard.py
-        env:
-          LEDGER_FILE: status/ledger.json
-          MODULES_FILE: config/modules.json
-          STATUS_FILE: STATUS.md
-          KNOWN_COMPATIBLE_FILE: KNOWN_COMPATIBLE.md
-          KNOWN_INCOMPATIBLE_FILE: KNOWN_INCOMPATIBLE.md
-          STALE_DAYS: ${{ vars.PUPPET_STALE_DAYS || '30' }}
-
-      - name: Render acceptance audit
-        if: github.event.inputs.modules_json == ''
-        shell: bash
-        run: |
-          set -euo pipefail
-          python scripts/render_acceptance_audit.py
-        env:
-          MODULES_FILE: config/modules.json
-          AUDIT_FILE: docs/available-acceptance-tests.md
-
-      - name: Commit status ledger and dashboard
-        if: github.event.inputs.modules_json == ''
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add status/ledger.json STATUS.md KNOWN_COMPATIBLE.md docs/available-acceptance-tests.md
-          if git diff --cached --quiet; then
-            echo "No status changes to commit."
-            exit 0
-          fi
-          git commit -m "chore(status): update compatibility ledger and dashboard [skip ci]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          modules-json: ${{ github.event.inputs.modules_json }}
+          has-unit: ${{ needs.prepare.outputs.has_unit }}
+          has-acceptance: ${{ needs.prepare.outputs.has_acceptance }}
+          stale-days: ${{ vars.PUPPET_STALE_DAYS || '30' }}
