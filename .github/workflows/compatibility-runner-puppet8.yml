@@ -55,7 +55,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  run:
+  # Named "test" (not "run") because GitHub always prepends the calling job's
+  # own name to every job defined in the called reusable workflow — "test" is
+  # what restores the pre-Step-C job-name strings ("test / <module> / unit")
+  # instead of adding a redundant extra nesting level (see the reusable
+  # workflow's job-name comments).
+  test:
     uses: ./.github/workflows/_compatibility-runner-reusable.yml
     permissions:
       contents: write

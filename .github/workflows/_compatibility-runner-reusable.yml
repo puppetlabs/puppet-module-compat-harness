@@ -130,7 +130,14 @@ jobs:
           if-no-files-found: ignore
 
   test_unit:
-    name: test / ${{ matrix.module.id }} / unit
+    # No literal "test /" prefix here: GitHub always prepends the calling
+    # job's own name ("test", in every current caller — see
+    # compatibility-runner-puppet8.yml) to job names defined in a called
+    # reusable workflow, with no way to suppress it. Keeping a redundant
+    # "test /" here would push these names to 4 "/"-separated segments
+    # instead of the original 3, which visibly collapsed to just the last
+    # segment ("unit") in the GitHub Checks UI's hierarchical grouping.
+    name: ${{ matrix.module.id }} / unit
     runs-on: ${{ matrix.module.os }}
     timeout-minutes: ${{ fromJSON(vars.PUPPET_JOB_TIMEOUT_MINUTES || '360') }}
     needs: prepare
@@ -182,7 +189,8 @@ jobs:
           if-no-files-found: warn
 
   test_acceptance:
-    name: test / ${{ matrix.module.id }} / acceptance / ${{ matrix.module.target_id }}
+    # See test_unit's comment above on why there's no literal "test /" prefix here.
+    name: ${{ matrix.module.id }} / acceptance / ${{ matrix.module.target_id }}
     runs-on: ${{ matrix.module.os }}
     timeout-minutes: ${{ fromJSON(vars.PUPPET_JOB_TIMEOUT_MINUTES || '360') }}
     needs: prepare
