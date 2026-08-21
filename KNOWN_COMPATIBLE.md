@@ -26,7 +26,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | ✅ 8.21.0 | ✅ 9.0.0 |
+| [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | ✅ 8.21.0 | ❌ |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-collectd](https://github.com/voxpupuli/puppet-collectd) | ✅ 8.21.0 | ❌ |
@@ -48,7 +48,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.21.0 | ❌ |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ 8.21.0 | ✅ 9.0.0 |
@@ -68,11 +68,11 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [smoeding-puppet-debconf](https://github.com/smoeding/puppet-debconf) | ✅ 8.21.0 | ✅ 9.0.0 |
+| [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ 8.21.0 | ❌ |
+| [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ 8.21.0 | ❌ |
+| [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | ✅ 8.21.0 | ❌ |
+| [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | ✅ 8.21.0 | ❌ |
+| [smoeding-puppet-debconf](https://github.com/smoeding/puppet-debconf) | ✅ 8.21.0 | ❌ |
 | [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | ✅ 8.21.0 | ❌ |
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | ✅ 8.21.0 | ❌ |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | ✅ 8.21.0 | ❌ |
