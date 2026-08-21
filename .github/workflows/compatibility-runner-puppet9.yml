@@ -1,0 +1,289 @@
+name: Puppet Core 9 Compatibility
+
+# Thin trigger workflow for the Puppet 9 major. Deliberately a near-copy of
+# compatibility-runner-puppet8.yml rather than a shared reusable workflow:
+# defining the matrix jobs behind a workflow_call boundary breaks the Actions
+# run page's left-sidebar job names (see docs/puppet-core-9-dual-major-support.md
+# §4, §12). DRY lives at the *step* level instead, via the same three composite
+# actions both callers share:
+#   - .github/actions/prepare-test-matrix    (change detection + matrix build)
+#   - .github/actions/run-module-test        (the actual per-module test)
+#   - .github/actions/publish-compatibility-results (ledger/dashboard write)
+# A diff against the Puppet 8 caller should show only the profile name, the
+# concurrency-group suffix, the caller-workflow-file path, and this comment —
+# anything more is drift to catch in review.
+#
+# STATUS: skeleton only, landed on main ahead of the rest of Step D so that
+# workflow_dispatch is discoverable (GitHub only exposes dispatch for workflow
+# files that exist on the default branch). The `9-latest-maintained` profile
+# does not exist in profiles/puppet_profiles.json yet, and the `major`
+# parameter is not yet wired through detect_changes.py / build_matrix.rb — so
+# dispatching this today will fail at profile resolution. Intentionally has NO
+# `schedule:` trigger for that reason; the nightly cron gets added when the
+# profile lands and Step D's gate dispatch passes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Compatibility profile name"
+        required: false
+        default: "9-latest-maintained"
+      metadata_mode:
+        description: "Metadata handling mode (warn|fail)"
+        required: false
+        default: "warn"
+      enable_debug:
+        description: "Enable verbose debug output (captures Docker logs, acceptance output)"
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      lean:
+        description: "Lean run: test only changed/not-green/stale modules (false = full run of all modules)"
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      modules_json:
+        description: "Optional JSON array override: [{\"repo\":\"...\",\"ref\":\"main\",\"os\":\"windows-latest\"}]"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# Serializes only this major's runs on the same ref; the Puppet 9 caller uses
+# its own group so the two majors' test phases proceed in parallel (§4.2).
+concurrency:
+  group: compat-9-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      unit_matrix: ${{ steps.prepare.outputs.unit-matrix }}
+      acceptance_matrix: ${{ steps.prepare.outputs.acceptance-matrix }}
+      has_unit: ${{ steps.prepare.outputs.has-unit }}
+      has_acceptance: ${{ steps.prepare.outputs.has-acceptance }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Prepare test matrix
+        id: prepare
+        uses: ./.github/actions/prepare-test-matrix
+        with:
+          modules-json: ${{ github.event.inputs.modules_json }}
+          event-name: ${{ github.event_name }}
+          lean: ${{ github.event.inputs.lean || 'true' }}
+          caller-workflow-file: .github/workflows/compatibility-runner-puppet9.yml
+          window-hours: ${{ vars.PUPPET_CHANGE_WINDOW_HOURS || '48' }}
+          stale-days: ${{ vars.PUPPET_STALE_DAYS || '30' }}
+
+  test_unit:
+    name: test / ${{ matrix.module.id }} / unit
+    runs-on: ${{ matrix.module.os }}
+    timeout-minutes: ${{ fromJSON(vars.PUPPET_JOB_TIMEOUT_MINUTES || '360') }}
+    needs: prepare
+    # GitHub Actions errors on an empty matrix vector instead of producing zero
+    # combinations, so gate the job rather than relying on an empty unit_matrix.
+    if: needs.prepare.outputs.has_unit == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.prepare.outputs.unit_matrix) }}
+
+    env:
+      PUPPET_CORE_API_KEY: ${{ secrets.PUPPET_CORE_API_KEY }}
+      PUPPET_CORE_SOURCE_URL: https://rubygems-puppetcore.puppet.com
+      PUPPET_COMPAT_METADATA_MODE: ${{ github.event.inputs.metadata_mode || 'warn' }}
+      PUPPET_COMPAT_BUNDLE_PATH: .b
+      PUPPET_ENFORCE_PRIVATE_SOURCE: "true"
+      PUPPET_ENFORCE_NO_OPENVOX: "false"
+      PUPPET_ENFORCE_EXACT_PUPPET_VERSION: "true"
+      PUPPET_SPLIT_SOURCES: "true"
+      PUPPET_STAGE_TIMEOUT_SECONDS: ${{ vars.PUPPET_STAGE_TIMEOUT_SECONDS || '1800' }}
+      PUPPET_ACCEPTANCE_DEBUG: ${{ github.event.inputs.enable_debug || 'false' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run module compatibility test
+        uses: ./.github/actions/run-module-test
+        with:
+          module-json: ${{ toJson(matrix.module) }}
+          module-id: ${{ matrix.module.id }}
+          profile: ${{ github.event.inputs.profile || '9-latest-maintained' }}
+          metadata-mode: ${{ github.event.inputs.metadata_mode || 'warn' }}
+          enable-debug: ${{ github.event.inputs.enable_debug || 'false' }}
+          test-mode: unit
+          output-dir: o/${{ matrix.module.id }}
+          artifact-name: compatibility-${{ matrix.module.id }}-unit
+          test-lane: unit
+          acceptance-target: unit
+          prereqs-json: ${{ toJson(matrix.module.prereqs) }}
+
+      - name: Upload module artifacts (unit)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: compatibility-${{ matrix.module.id }}-unit
+          path: o/${{ matrix.module.id }}
+          if-no-files-found: warn
+
+  test_acceptance:
+    name: test / ${{ matrix.module.id }} / acceptance / ${{ matrix.module.target_id }}
+    runs-on: ${{ matrix.module.os }}
+    timeout-minutes: ${{ fromJSON(vars.PUPPET_JOB_TIMEOUT_MINUTES || '360') }}
+    needs: prepare
+    if: needs.prepare.outputs.has_acceptance == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.prepare.outputs.acceptance_matrix) }}
+
+    env:
+      PUPPET_CORE_API_KEY: ${{ secrets.PUPPET_CORE_API_KEY }}
+      PUPPET_CORE_SOURCE_URL: https://rubygems-puppetcore.puppet.com
+      PUPPET_COMPAT_METADATA_MODE: ${{ github.event.inputs.metadata_mode || 'warn' }}
+      PUPPET_COMPAT_BUNDLE_PATH: .b
+      PUPPET_ENFORCE_PRIVATE_SOURCE: "true"
+      PUPPET_ENFORCE_NO_OPENVOX: "false"
+      PUPPET_ENFORCE_EXACT_PUPPET_VERSION: "true"
+      PUPPET_SPLIT_SOURCES: "true"
+      PUPPET_STAGE_TIMEOUT_SECONDS: ${{ vars.PUPPET_STAGE_TIMEOUT_SECONDS || '1800' }}
+      PUPPET_ACCEPTANCE_DEBUG: ${{ github.event.inputs.enable_debug || 'false' }}
+
+    steps:
+      - name: Checkout (for Beaker host seeding)
+        uses: actions/checkout@v6
+
+      - name: Seed Beaker host mappings
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp
+          setfile="config/beaker/setfiles/${{ matrix.module.setfile }}.yml"
+          echo "Reading host entries from $setfile"
+
+          ruby -ryaml -e "
+            data = YAML.safe_load(File.read(ARGV[0]), permitted_classes: [Symbol])
+            hosts = data.fetch('HOSTS', {})
+            hosts.each do |name, cfg|
+              next unless cfg.is_a?(Hash)
+              ip = cfg['ip'].to_s.strip
+              next if ip.empty?
+              puts \"#{ip} #{name}\"
+            end
+          " "$setfile" > .tmp/beaker-host-mappings.txt
+
+          if [ ! -s .tmp/beaker-host-mappings.txt ]; then
+            echo "No explicit host mappings found in setfile"
+            exit 0
+          fi
+
+          while read -r ip host; do
+            [ -n "$ip" ] || continue
+            [ -n "$host" ] || continue
+
+            if getent hosts "$host" > /dev/null; then
+              echo "Host already resolvable: $host"
+            else
+              echo "Adding host mapping: $ip $host"
+              echo "$ip $host" | sudo tee -a /etc/hosts > /dev/null
+            fi
+          done < .tmp/beaker-host-mappings.txt
+
+          echo "---- Relevant /etc/hosts entries ----"
+          while read -r _ host; do
+            [ -n "$host" ] || continue
+            getent hosts "$host" || true
+          done < .tmp/beaker-host-mappings.txt
+
+      - name: Run module compatibility test (acceptance)
+        uses: ./.github/actions/run-module-test
+        with:
+          module-json: ${{ toJson(matrix.module) }}
+          module-id: ${{ matrix.module.id }}
+          profile: ${{ github.event.inputs.profile || '9-latest-maintained' }}
+          metadata-mode: ${{ github.event.inputs.metadata_mode || 'warn' }}
+          enable-debug: ${{ github.event.inputs.enable_debug || 'false' }}
+          test-mode: acceptance
+          allow-acceptance: 'true'
+          beaker-setfile: config/beaker/setfiles/${{ matrix.module.setfile }}.yml
+          output-dir: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
+          artifact-name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}
+          test-lane: acceptance
+          acceptance-target: ${{ matrix.module.target }}
+          prereqs-json: ${{ toJson(matrix.module.prereqs) }}
+          docker-mode: ${{ matrix.module.docker_mode || 'sshd' }}
+          install-puppetserver: ${{ matrix.module.install_puppetserver || 'false' }}
+          setup-commands: ${{ toJson(matrix.module.setup_commands) }}
+          pre-acceptance-commands: ${{ toJson(matrix.module.pre_acceptance_commands) }}
+
+      - name: Upload module artifacts (acceptance)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}
+          path: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
+          if-no-files-found: warn
+
+      - name: Upload acceptance fallback diagnostics
+        if: ${{ always() && (failure() || cancelled()) }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}-diagnostics
+          path: |
+            o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
+            .tmp/beaker-host-mappings.txt
+          if-no-files-found: warn
+
+  publish:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+      - test_unit
+      - test_acceptance
+    # Runs even when both test jobs were skipped (no-op run): the ledger still
+    # needs reconciling against modules.json / KNOWN_* and the summary still
+    # needs to say why nothing ran.
+    if: always() && needs.prepare.result == 'success'
+    permissions:
+      contents: write
+    # Shared across every major's caller (see docs/puppet-core-9-dual-major-support.md
+    # §4.2) — the test-phase jobs above run under each caller's own concurrency
+    # group, so majors test in parallel; only this ledger-write-and-push step is
+    # serialized across them. Works the same whether publish's step logic lives
+    # in a reusable workflow or (as here) a composite action, since concurrency
+    # groups key off the group name, not the job's origin.
+    concurrency:
+      group: compat-ledger-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Publish compatibility results
+        uses: ./.github/actions/publish-compatibility-results
+        with:
+          modules-json: ${{ github.event.inputs.modules_json }}
+          has-unit: ${{ needs.prepare.outputs.has_unit }}
+          has-acceptance: ${{ needs.prepare.outputs.has_acceptance }}
+          stale-days: ${{ vars.PUPPET_STALE_DAYS || '30' }}
