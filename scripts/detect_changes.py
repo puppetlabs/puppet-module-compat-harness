@@ -21,20 +21,32 @@ one major is never influenced by its status on another. Only major 8 is
 tested today, so `DEFAULT_MAJOR` is hardcoded here; a `major` parameter to
 generalize this across callers lands in a later step.
 
+Material-path change detection (harness_changed) is scoped per caller (see
+docs/puppet-core-9-dual-major-support.md §5.3): SHARED_MATERIAL_PATHS covers
+code every major's pipeline actually executes (lib/, bin/, profiles/,
+scripts/, the reusable workflow, Gemfile*), plus CALLER_WORKFLOW_FILE — the
+calling thin trigger workflow's own file. This deliberately excludes the
+sibling major's thin wrapper file, so editing only
+compatibility-runner-puppet9.yml doesn't force a full run on the Puppet 8
+caller, and vice versa.
+
 Outputs:
   - OUTPUT_FILE (default .tmp/change-decisions.json): full decision record.
   - GITHUB_OUTPUT (if set): `run_all` and `include_ids` (compact JSON array).
 
 Environment:
-  MODULES_FILE       config/modules.json
-  LEDGER_FILE        status/ledger.json
-  OUTPUT_FILE        .tmp/change-decisions.json
-  WINDOW_HOURS       upstream/harness change window (default 48)
-  STALE_DAYS         staleness threshold (default 30)
-  EVENT_NAME         github.event_name (schedule | workflow_dispatch | ...)
-  LEAN               'true' | 'false' (manual dispatch lean toggle; default true)
-  GITHUB_TOKEN       for the commits API (falls back to unauthenticated)
-  GITHUB_API_URL     default https://api.github.com
+  MODULES_FILE          config/modules.json
+  LEDGER_FILE           status/ledger.json
+  OUTPUT_FILE           .tmp/change-decisions.json
+  WINDOW_HOURS          upstream/harness change window (default 48)
+  STALE_DAYS            staleness threshold (default 30)
+  EVENT_NAME            github.event_name (schedule | workflow_dispatch | ...)
+  LEAN                  'true' | 'false' (manual dispatch lean toggle; default true)
+  GITHUB_TOKEN          for the commits API (falls back to unauthenticated)
+  GITHUB_API_URL        default https://api.github.com
+  CALLER_WORKFLOW_FILE  path to the calling thin trigger workflow file (e.g.
+                        .github/workflows/compatibility-runner-puppet8.yml);
+                        added to the material-path list for this run only
 """
 
 import datetime
@@ -49,7 +61,11 @@ import urllib.request
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ledger_lib import load_modules_config  # noqa: E402
 
-MATERIAL_PATHS = ['lib', 'bin', 'profiles', 'scripts', '.github', 'Gemfile', 'Gemfile.lock']
+SHARED_MATERIAL_PATHS = [
+    'lib', 'bin', 'profiles', 'scripts', 'Gemfile', 'Gemfile.lock',
+    '.github/actions',
+    '.github/workflows/_compatibility-runner-reusable.yml',
+]
 NOT_GREEN_STATES = {'never-tested', 'unit-failing', 'acceptance-failing'}
 DEFAULT_MAJOR = '8'
 _GITHUB_URL = re.compile(r'https?://github\.com/([^/]+)/([^/]+?)(?:\.git)?/?$')
@@ -82,9 +98,10 @@ def parse_ts(value):
     return parsed
 
 
-def harness_changed(window_hours):
+def harness_changed(window_hours, caller_workflow_file):
     """True if any material harness path has a commit within the window."""
-    paths = [p for p in MATERIAL_PATHS if os.path.exists(p)]
+    material_paths = SHARED_MATERIAL_PATHS + ([caller_workflow_file] if caller_workflow_file else [])
+    paths = [p for p in material_paths if os.path.exists(p)]
     if not paths:
         return True, 'assuming harness changed (no material paths found to diff)'
     try:
@@ -143,6 +160,7 @@ def main():
     lean = os.environ.get('LEAN', 'true').strip().lower() != 'false'
     token = os.environ.get('GITHUB_TOKEN', '')
     api_base = os.environ.get('GITHUB_API_URL', 'https://api.github.com')
+    caller_workflow_file = os.environ.get('CALLER_WORKFLOW_FILE', '')
 
     now = utc_now()
     since_iso = iso_z(now - datetime.timedelta(hours=window_hours))
@@ -154,7 +172,7 @@ def main():
         with open(ledger_file, 'r', encoding='utf-8') as handle:
             ledger_modules = json.load(handle).get('modules', {})
 
-    harness_hit, harness_reason = harness_changed(window_hours)
+    harness_hit, harness_reason = harness_changed(window_hours, caller_workflow_file)
     if harness_hit:
         run_all, run_all_reason = True, harness_reason
     elif event_name == 'workflow_dispatch' and not lean:

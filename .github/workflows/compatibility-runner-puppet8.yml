@@ -1,0 +1,65 @@
+name: Puppet Module Compatibility Runner (Puppet 8)
+
+# Thin trigger workflow for the Puppet 8 major. All pipeline logic lives in
+# _compatibility-runner-reusable.yml (see docs/puppet-core-9-dual-major-support.md
+# §4) — this file exists only to get its own scheduled/manual triggers,
+# Actions-tab history, status badge, and concurrency group, independent of the
+# Puppet 9 caller.
+
+on:
+  schedule:
+    - cron: "0 2 * * *"  # Nightly at 02:00 UTC
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Compatibility profile name"
+        required: false
+        default: "8-latest-maintained"
+      metadata_mode:
+        description: "Metadata handling mode (warn|fail)"
+        required: false
+        default: "warn"
+      enable_debug:
+        description: "Enable verbose debug output (captures Docker logs, acceptance output)"
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+      lean:
+        description: "Lean run: test only changed/not-green/stale modules (false = full run of all modules)"
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      modules_json:
+        description: "Optional JSON array override: [{\"repo\":\"...\",\"ref\":\"main\",\"os\":\"windows-latest\"}]"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+# Serializes only this major's runs on the same ref; the Puppet 9 caller uses
+# its own group so the two majors' test phases proceed in parallel (§4.2).
+concurrency:
+  group: compat-8-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    uses: ./.github/workflows/_compatibility-runner-reusable.yml
+    permissions:
+      contents: write
+    secrets: inherit
+    with:
+      profile: ${{ github.event.inputs.profile || '8-latest-maintained' }}
+      metadata_mode: ${{ github.event.inputs.metadata_mode || 'warn' }}
+      enable_debug: ${{ github.event.inputs.enable_debug || 'false' }}
+      lean: ${{ github.event.inputs.lean || 'true' }}
+      modules_json: ${{ github.event.inputs.modules_json || '' }}
+      event_name: ${{ github.event_name }}
+      caller_workflow_file: .github/workflows/compatibility-runner-puppet8.yml
