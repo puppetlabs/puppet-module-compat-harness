@@ -8,9 +8,9 @@ docs/puppet-core-9-dual-major-support.md §3):
 - Reconcile every entry against modules.json + KNOWN_* files to set disposition.
 - Test outcomes (`unit`, `acceptance`, `puppet_core_version`, `metadata_status`,
   `dependency_status`, `documentation_status`, `coverage_state`) are nested per
-  Puppet major under `puppet_majors[major]`. A row without a stamped
-  `puppet_major` (no profile has been changed to stamp one yet) defaults to
-  major 8 — today's only tested major.
+  Puppet major under `puppet_majors[major]`. The major comes from each row's
+  `puppet_major`, stamped by classify_module_result.py from the run's profile.
+  A row without one (written before that field existed) defaults to major 8.
 
 Environment:
   STATUS_ROOT              artifact root to walk (default: all-artifacts)

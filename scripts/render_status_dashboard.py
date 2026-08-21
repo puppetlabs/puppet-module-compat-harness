@@ -12,9 +12,10 @@ Reads ledger schema v2: per-module test outcomes (unit/acceptance/coverage_state
 live under `puppet_majors[major]`, so every count and the `is_fully_compatible`
 verdict are computed once per tracked major (see
 docs/puppet-core-9-dual-major-support.md §3, §6) rather than once per module.
-Only major "8" is tested today, so output is equivalent to the pre-v2 dashboard
-modulo the per-major column labels; a second major's columns appear
-automatically once it starts reporting into the ledger.
+The gating major's columns are always rendered; any other major's appear as soon
+as one module reports into it, so the Puppet 9 columns fill in on that major's
+first run. For major "8" alone the output is unchanged from the pre-v2 dashboard
+modulo the per-major column labels.
 
 Environment:
   LEDGER_FILE            ledger path (default: status/ledger.json)
@@ -32,8 +33,10 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ledger_lib import load_modules_config, parse_known_ids  # noqa: E402
 
-# The one major that's tested today; always shown even if a module has no
-# puppet_majors entry yet (never-tested), so the dashboard shape is stable.
+# The major that gates the fleet's headline status; always shown even if a
+# module has no puppet_majors entry yet (never-tested), so the dashboard shape
+# is stable. Other tested majors (9, ...) are discovered from the ledger and
+# rendered alongside it — see discover_majors().
 GATING_MAJOR = '8'
 
 # Reporting is pass/fail only. Warnings are deliberate green-keepers (tolerated

@@ -24,6 +24,10 @@ inputs:
     description: 'Path to the calling thin trigger workflow file, scoped out of the sibling major material-path matching'
     required: false
     default: ''
+  puppet-major:
+    description: "Puppet major this caller tests ('8' | '9'); scopes every ledger read to that major's slice"
+    required: false
+    default: '8'
   window-hours:
     description: 'Upstream/harness change window in hours'
     required: false
@@ -80,6 +84,7 @@ runs:
         LEAN: ${{ inputs.lean }}
         GITHUB_TOKEN: ${{ github.token }}
         CALLER_WORKFLOW_FILE: ${{ inputs.caller-workflow-file }}
+        PUPPET_MAJOR: ${{ inputs.puppet-major }}
 
     - name: Build module matrix
       id: matrix

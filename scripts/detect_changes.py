@@ -17,9 +17,11 @@ Everything else is skipped and recorded with a reason. Any indeterminate signal
 Ledger reads are scoped to a single Puppet major's slice
 (`modules[id].puppet_majors[major]`, see
 docs/puppet-core-9-dual-major-support.md §3, §5.1) so a module's leanness on
-one major is never influenced by its status on another. Only major 8 is
-tested today, so `DEFAULT_MAJOR` is hardcoded here; a `major` parameter to
-generalize this across callers lands in a later step.
+one major is never influenced by its status on another. The major comes from
+the calling workflow via `PUPPET_MAJOR` (each caller tests exactly one major),
+falling back to `DEFAULT_MAJOR` for local runs. A module failing on 9 therefore
+keeps getting included on 9 without dragging the Puppet 8 matrix wider, and
+vice versa.
 
 Material-path change detection (harness_changed) is scoped per caller (see
 docs/puppet-core-9-dual-major-support.md §5.3): SHARED_MATERIAL_PATHS covers
@@ -47,6 +49,8 @@ Environment:
   CALLER_WORKFLOW_FILE  path to the calling thin trigger workflow file (e.g.
                         .github/workflows/compatibility-runner-puppet8.yml);
                         added to the material-path list for this run only
+  PUPPET_MAJOR          Puppet major whose ledger slice this run reads
+                        ('8' | '9'; default DEFAULT_MAJOR)
 """
 
 import datetime
@@ -160,6 +164,7 @@ def main():
     token = os.environ.get('GITHUB_TOKEN', '')
     api_base = os.environ.get('GITHUB_API_URL', 'https://api.github.com')
     caller_workflow_file = os.environ.get('CALLER_WORKFLOW_FILE', '')
+    major = os.environ.get('PUPPET_MAJOR', '').strip() or DEFAULT_MAJOR
 
     now = utc_now()
     since_iso = iso_z(now - datetime.timedelta(hours=window_hours))
@@ -183,7 +188,7 @@ def main():
     for module_id in sorted(config):
         cfg = config[module_id]
         entry = ledger_modules.get(module_id)
-        major_entry = major_slice(entry, DEFAULT_MAJOR)
+        major_entry = major_slice(entry, major)
         coverage = major_entry.get('coverage_state', 'never-tested')
 
         if run_all:
@@ -215,6 +220,7 @@ def main():
 
     decisions = {
         'generated_at': iso_z(now),
+        'puppet_major': major,
         'run_all': run_all,
         'run_all_reason': run_all_reason,
         'window_hours': window_hours,
@@ -237,7 +243,7 @@ def main():
             handle.write(f"run_all={'true' if run_all else 'false'}\n")
             handle.write(f'include_ids={json.dumps(include_ids)}\n')
 
-    print(f"Change detection: run_all={run_all} ({run_all_reason})")
+    print(f"Change detection (Puppet {major}): run_all={run_all} ({run_all_reason})")
     print(f"  included={len(included)} skipped={len(skipped)} of {len(config)} modules")
     return 0
 

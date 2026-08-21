@@ -63,6 +63,7 @@ STATUS.md                         # Generated fleet dashboard (do not hand-edit)
 KNOWN_COMPATIBLE.md               # Generated list of fully-validated modules (do not hand-edit)
 .github/
   workflows/compatibility-runner-puppet8.yml    # Puppet 8 CI trigger + full pipeline
+  workflows/compatibility-runner-puppet9.yml    # Puppet 9 CI trigger + full pipeline (same shape)
   actions/run-module-test/action.yml            # Composite action: run one module's test
   actions/prepare-test-matrix/action.yml        # Composite action: change detection + matrix build
   actions/publish-compatibility-results/action.yml  # Composite action: ledger update + dashboard render

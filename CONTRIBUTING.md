@@ -59,7 +59,7 @@ If invalid, the script prints path-based errors and exits non-zero.
 
 The GitHub Actions workflow validates [config/modules.json](config/modules.json) before building the module matrix.
 
-Workflow: [.github/workflows/compatibility-runner-puppet8.yml](.github/workflows/compatibility-runner-puppet8.yml)
+Workflows: [.github/workflows/compatibility-runner-puppet8.yml](.github/workflows/compatibility-runner-puppet8.yml) and [.github/workflows/compatibility-runner-puppet9.yml](.github/workflows/compatibility-runner-puppet9.yml) (one per Puppet major; both validate identically)
 
 If schema validation fails, the `prepare` job fails and module test jobs are blocked.
 
