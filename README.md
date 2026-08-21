@@ -103,7 +103,7 @@ Split-source behavior (default):
 
 Workflow file: `.github/workflows/compatibility-runner-puppet8.yml`
 
-- Trigger: **Actions → Puppet Module Compatibility Runner → Run workflow**
+- Trigger: **Actions → Puppet Core 8 Compatibility → Run workflow**
 - Inputs:
 	- `profile` (default `8-latest-maintained`)
 	- `metadata_mode` (`warn` or `fail`, default `warn`)

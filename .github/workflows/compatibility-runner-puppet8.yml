@@ -1,4 +1,4 @@
-name: Puppet Module Compatibility Runner (Puppet 8)
+name: Puppet Core 8 Compatibility
 
 # Thin trigger workflow for the Puppet 8 major. This file defines the actual
 # jobs directly (prepare, test_unit, test_acceptance, publish) rather than
