@@ -7,6 +7,31 @@ The runner is designed around a **per-module pipeline** that executes the same
 sequence of stages for every module in the configured matrix, with a branching
 point where unit and acceptance paths diverge.
 
+**Two independent Puppet majors, one pipeline shape.** Since the dual-major
+rollout (`docs/puppet-core-9-dual-major-support.md`), this same pipeline runs
+twice over — once per Puppet major — as two self-contained trigger workflows,
+[`compatibility-runner-puppet8.yml`](../.github/workflows/compatibility-runner-puppet8.yml)
+and
+[`compatibility-runner-puppet9.yml`](../.github/workflows/compatibility-runner-puppet9.yml).
+Neither calls the other; each defines its own `prepare` → `test_unit`/
+`test_acceptance` → `publish` job graph, with its own trigger, concurrency
+group, and `puppet-major` input (`'8'` / `'9'`), and delegates the shared
+prepare/publish logic to two composite actions —
+[`.github/actions/prepare-test-matrix`](../.github/actions/prepare-test-matrix/action.yml)
+and
+[`.github/actions/publish-compatibility-results`](../.github/actions/publish-compatibility-results/action.yml)
+— rather than a shared reusable workflow (a `workflow_call` reusable workflow
+was tried and reverted: GitHub's Actions run page cannot correctly render a
+matrix job's dynamic name in the left sidebar when the job is defined behind
+a `workflow_call` boundary — composite actions never create a separate
+job/check-run, so they don't hit that limitation). The diagram and stage
+notes below describe **one caller's** pipeline; everything in them applies
+identically to both majors except the profile(s) selected and the
+`puppet-major` value threaded through `detect_changes.py` and
+`classify_module_result.py` so each major reads and writes only its own
+slice of `status/ledger.json` (`puppet_majors["8"]` / `["9"]`) — the two
+majors' leanness and compatibility state never interact.
+
 ---
 
 ## End-to-End Flow
@@ -121,7 +146,7 @@ flowchart TD
 | Trigger | Fires on a nightly schedule or manual `workflow_dispatch` (with optional profile, `lean` toggle, and module override). |
 | JavaScript action runtime | Workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` so JavaScript-based actions run on Node 24 ahead of runner defaults. |
 | Validate schema | `validate_modules_config.py` checks `config/modules.json` against the JSON schema before anything fans out. |
-| Detect changes (lean matrix) | `detect_changes.py` decides which modules need testing this run. It sets `run_all` if a **material harness path** (`lib/`, `bin/`, `profiles/`, `scripts/`, `.github/`, `Gemfile*`) changed within the window, or on a manual dispatch with `lean=false`. Otherwise it includes a module only if its ledger status is **not green** (never-tested / unit-failing / acceptance-failing), it is **stale** (`> STALE_DAYS`, default 30), or it had an **upstream commit** on its ref within the window (GitHub commits API). Any indeterminate signal (git failure, API error, non-GitHub host) **fails safe by including** the module. Writes `.tmp/change-decisions.json` (uploaded as the `change-decisions` artifact) and exposes `run_all` + `include_ids` as step outputs. Skipped when a `modules_json` override is supplied — the override runs verbatim. |
+| Detect changes (lean matrix) | `detect_changes.py` decides which modules need testing this run, scoped to the calling workflow's own `PUPPET_MAJOR` (`'8'` or `'9'`) — every ledger read (`coverage_state`, staleness `tested_at`) comes from that major's own `puppet_majors[major]` slice, never the sibling major's. It sets `run_all` if a **material harness path** changed within the window, or on a manual dispatch with `lean=false`. Material paths are split into a shared list (`.github/actions/`, `lib/`, `bin/`, `scripts/`, `Gemfile*`, `profiles/`) plus the caller's **own** workflow file only (`compatibility-runner-puppet8.yml` for the 8 caller, the `puppet9` file for the 9 caller) — editing one major's caller file does not trip `run_all` on the other major's run. Otherwise it includes a module only if its (major-scoped) ledger status is **not green** (never-tested / unit-failing / acceptance-failing), it is **stale** (`> STALE_DAYS`, default 30), or it had an **upstream commit** on its ref within the window (GitHub commits API, shared across majors — a module's own upstream activity legitimately warrants retesting on every major). Any indeterminate signal (git failure, API error, non-GitHub host) **fails safe by including** the module. Writes `.tmp/change-decisions.json` (uploaded as the `change-decisions` artifact) and exposes `run_all` + `include_ids` as step outputs. Skipped when a `modules_json` override is supplied — the override runs verbatim. |
 | Build matrix | `build_matrix.rb` expands the module list into two matrices (unit + acceptance, one row per module × target OS), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance entry carries `docker_mode`, `install_puppetserver`, `setup_commands`, and `pre_acceptance_commands` from `modules.json`. It also emits `has_unit` / `has_acceptance` flags. |
 | Empty-matrix gating | GitHub Actions treats an **empty matrix vector as a hard workflow error** (`Matrix vector 'module' does not contain any values`) rather than as zero combinations, so `test_unit` and `test_acceptance` are each gated on the matching `has_*` flag from the matrix step. When the filter selects nothing, both test jobs are skipped, `publish` reports a **NO-OP** run, and the workflow **succeeds**. |
 
@@ -131,7 +156,7 @@ After the runner writes its outputs, each matrix job runs three additional steps
 
 | Step | Script | What it produces |
 |------|--------|------------------|
-| Record module status | `classify_module_result.py` | `module-status.json` — a compact status record (id, lane, class, compatibility state, metadata/dependency/documentation fields, plus `profile`, `puppet_core_version`, and `tested_at`) written into the job's output directory. |
+| Record module status | `classify_module_result.py` | `module-status.json` — a compact status record (id, lane, class, compatibility state, metadata/dependency/documentation fields, plus `profile`, `puppet_core_version`, `puppet_major` — resolved from the profile, e.g. `8`/`9` — and `tested_at`) written into the job's output directory. |
 | Write per-job summary | `render_module_job_summary.py` | A per-module section appended to `GITHUB_STEP_SUMMARY`, visible on the individual job page in GitHub Actions. |
 | Upload artifact | `actions/upload-artifact@v5` | Uploads the entire output directory as `compatibility-<id>-<lane>` so the summarize job can collect it. |
 
@@ -147,10 +172,10 @@ The `publish` job runs after **all** unit and acceptance jobs finish (`if: alway
    - An **Acceptance Compatibility** table (if any acceptance jobs ran).
    - Counters for clean / warning / failure across both lanes.
    - A metadata mismatch table for modules whose `metadata.json` does not declare support for the tested Puppet version.
-3. Runs `update_ledger.py`, which **merges** this run's `module-status.json` records into the persistent `status/ledger.json` — upserting only the modules that ran (absence never downgrades an entry), seeding `never-tested` entries for any `modules.json` module not yet tracked, and reconciling every entry's `disposition` against `config/modules.json` + `KNOWN_INCOMPATIBLE.md` / `KNOWN_DEPRECATED.md`.
-4. Runs `render_status_dashboard.py`, which renders from the ledger:
-   - `STATUS.md` — the complete fleet dashboard (headline coverage counts, per-module table, retired/anomaly accounting, staleness flags at `STALE_DAYS`, default 30). Because it reads the accumulated ledger rather than one run's artifacts, the dashboard stays complete even when only a subset of modules is tested (see the lean-testing design).
-   - `KNOWN_COMPATIBLE.md` — the curated fully-validated list, derived from the same `is_fully_compatible` predicate so it can't drift from the ledger. Modules whose acceptance is `blocked`/`pending` are excluded (their acceptance was never exercised); `none` (no upstream acceptance) counts as full coverage on unit alone.
+3. Runs `update_ledger.py`, which **merges** this run's `module-status.json` records into the persistent `status/ledger.json` — grouped by `(module id, puppet_major)`, so each record lands in that module's `puppet_majors["8"]` or `["9"]` slice rather than colliding at the module level. It upserts only the modules that ran (absence never downgrades an entry), seeds `never-tested` per-major entries for any `modules.json` module not yet tracked on that major, and reconciles every entry's `disposition` against `config/modules.json` + `KNOWN_INCOMPATIBLE.md` / `KNOWN_DEPRECATED.md` — `disposition`/`deprecated` stay module-level (they describe whether/how a module is tested at all, not a per-major outcome). Both majors' `publish` jobs share one concurrency group (`compat-ledger-<ref>`) so their ledger commits never race, even though the two majors' matrix jobs run in parallel under separate concurrency groups.
+4. Runs `render_status_dashboard.py`, which renders from the ledger, with `is_fully_compatible`/`coverage_state` evaluated **once per major** off each module's `puppet_majors[major]` entry — there is no combined pass/fail verdict across majors:
+   - `STATUS.md` — the complete fleet dashboard: headline coverage counts and a per-major Unit + Acceptance column pair per module, retired/anomaly accounting, staleness flags at `STALE_DAYS` (default 30). Because it reads the accumulated ledger rather than one run's artifacts, the dashboard stays complete even when only a subset of modules is tested (see the lean-testing design), and even when only one major's caller has run recently.
+   - `KNOWN_COMPATIBLE.md` — one file, one row per module, with a compatibility column per tested major (e.g. ✅ on 8, ❌ on 9 in the same row) — a module never has to fully "graduate" on every major at once to be listed. Modules whose acceptance is `blocked`/`pending` are excluded (their acceptance was never exercised) for whichever major that applies to; `none` (no upstream acceptance) counts as full coverage on unit alone.
 5. Commits `status/ledger.json`, `STATUS.md`, `KNOWN_COMPATIBLE.md`, and the generated `docs/available-acceptance-tests.md`, then pushes to the current ref using the default `GITHUB_TOKEN` (no PAT). Pushes made with `GITHUB_TOKEN` do not re-trigger the workflow.
 
 > **Shared helper:** `ledger_lib.py` provides the module-id derivation (identical to `build_matrix.rb`) and the `modules.json` / KNOWN_* parsing used by both `update_ledger.py` and `render_status_dashboard.py`.

@@ -13,7 +13,7 @@ the same and are handled differently.
 
 - **Incompatible** — the module cannot produce a reliable *usable* pass on Puppet Core
   (genuinely OpenVox-only, dead legacy toolchain, unresolvable deps). → Document + **remove**
-  from the matrix.
+  from the matrix — but see "Which major(s)?" below first if the evidence is version-specific.
 - **Partial** — core functionality works but a specific class/feature fails on Puppet Core
   (e.g. an mcollective/choria integration class). → Document as **Partial** and **keep** the
   module in `config/modules.json`; the harness tolerates the documented failure.
@@ -21,6 +21,24 @@ the same and are handled differently.
   **NOT** an incompatibility. Do not use this skill — set `"deprecated": true` on the module
   entry in `modules.json` instead (it stays in the matrix). Deprecation is orthogonal to
   compatibility.
+
+### Which major(s) is this incompatible on?
+
+The harness now tests every module against multiple Puppet majors independently (Puppet 8 +
+Puppet 9 — see `docs/puppet-core-9-dual-major-support.md` §7). Removal from the matrix is scoped
+to which major(s) the incompatibility actually applies to. Puppet 8 is the **gating/primary**
+major:
+
+- **Categorical rulings** (genuinely OpenVox-only, dead legacy toolchain) apply identically on
+  every major — always a full removal, no per-major check needed.
+- **Version-specific test evidence** (a real failure from one major's run) needs a check before
+  removing: is this incompatible on **Puppet 8**, or on **every** actively tested major? If so,
+  it's a removal (Step 1–2 below). If it's incompatible on a **non-gating major only** (e.g.
+  Puppet 9, with Puppet 8 unaffected), it is **not** a `KNOWN_INCOMPATIBLE.md` event — do not use
+  this skill's removal steps. Leave the module in `config/modules.json` exactly as-is; it keeps
+  running on every major so a future upstream fix is caught automatically, and its failure is
+  simply a red cell in that major's `STATUS.md` / `KNOWN_COMPATIBLE.md` column. No action needed
+  beyond letting the next run's ledger update reflect it.
 
 ### "OpenVox-only" is narrow — do not over-apply it
 
@@ -54,7 +72,9 @@ Add a row to the "Incompatibility Summary" table in
 
 - **Module** — linked to the upstream repo.
 - **Puppet Core Tested** — the version/profile you tested against (e.g. `8.19.0`), or `N/A`
-  for a categorical rule like OpenVox-only.
+  for a categorical rule like OpenVox-only. If evidence came from more than one major (e.g.
+  incompatible on both 8 and 9), list both versions — this free-text column is the record of
+  which major(s) were involved; no separate schema field for it.
 - **Status** — `Incompatible` or `Partial`.
 - **Reason** — concise root cause.
 - **Recommended Replacement** — a migration target if one exists, else `N/A`.
