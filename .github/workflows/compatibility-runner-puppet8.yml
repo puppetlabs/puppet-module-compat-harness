@@ -5,10 +5,15 @@ name: Puppet Module Compatibility Runner (Puppet 8)
 # §4) — this file exists only to get its own scheduled/manual triggers,
 # Actions-tab history, status badge, and concurrency group, independent of the
 # Puppet 9 caller.
+#
+# NOTE: the `schedule:` trigger is intentionally NOT enabled yet. The old
+# compatibility-runner.yml still owns the nightly cron until this caller's
+# gate dispatch passes; enabling both on the same cron would double-fire and
+# race on the ledger (different concurrency group names, so they would not
+# serialize against each other). The cron entry moves here in the same
+# commit that retires compatibility-runner.yml.
 
 on:
-  schedule:
-    - cron: "0 2 * * *"  # Nightly at 02:00 UTC
   workflow_dispatch:
     inputs:
       profile:
