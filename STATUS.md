@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-08-21 13:39 UTC  
+**Generated:** 2026-08-21 16:06 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
