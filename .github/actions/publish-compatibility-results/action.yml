@@ -11,6 +11,18 @@ description: >
   carry the shared ledger-write concurrency group and contents write
   permission itself, since composite actions cannot declare either.
 
+  The four state-writing steps below are all gated on `always() && ...` —
+  scripts/summarize_module_statuses.py deliberately exits 1 when any module
+  lands in the failure class (so the job goes visibly red), and a plain
+  `if:` implicitly ANDs in success(), which would skip ledger/dashboard/
+  commit for every run that contains a real failure. That went unnoticed
+  through Step C because Puppet 8 has never carried a failure-class module
+  in a full run (incompatible ones are pruned from config/modules.json
+  per AGENTS.md) — Puppet 9's Step D gate was the first real run to hit
+  it, silently dropping its results (discovered 2026-08-21: the ledger
+  and STATUS.md had no Puppet 9 data at all despite a completed, partly-red
+  dispatch).
+
 inputs:
   modules-json:
     description: >
@@ -69,7 +81,7 @@ runs:
     # manual dispatch of the configured fleet). An ad-hoc modules_json
     # override is a throwaway experiment and must not write committed state.
     - name: Update status ledger
-      if: inputs.modules-json == ''
+      if: always() && inputs.modules-json == ''
       shell: bash
       run: |
         set -euo pipefail
@@ -82,7 +94,7 @@ runs:
         KNOWN_DEPRECATED_FILE: KNOWN_DEPRECATED.md
 
     - name: Render status dashboard
-      if: inputs.modules-json == ''
+      if: always() && inputs.modules-json == ''
       shell: bash
       run: |
         set -euo pipefail
@@ -96,7 +108,7 @@ runs:
         STALE_DAYS: ${{ inputs.stale-days }}
 
     - name: Render acceptance audit
-      if: inputs.modules-json == ''
+      if: always() && inputs.modules-json == ''
       shell: bash
       run: |
         set -euo pipefail
@@ -106,7 +118,7 @@ runs:
         AUDIT_FILE: docs/available-acceptance-tests.md
 
     - name: Commit status ledger and dashboard
-      if: inputs.modules-json == ''
+      if: always() && inputs.modules-json == ''
       shell: bash
       run: |
         set -euo pipefail
