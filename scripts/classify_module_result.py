@@ -8,19 +8,41 @@ def utc_now() -> str:
     return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
-def resolve_puppet_version(profile_name: str) -> str:
+def resolve_profile(profile_name: str) -> dict:
+    """Look up a profile entry by name; empty dict if unknown or unreadable."""
     if not profile_name:
-        return 'unknown'
+        return {}
     profiles_file = os.environ.get('PROFILES_FILE', 'profiles/puppet_profiles.json')
     try:
         with open(profiles_file, 'r', encoding='utf-8') as handle:
             data = json.load(handle)
-        for profile in data.get('profiles', []):
-            if profile.get('name') == profile_name:
-                return profile.get('puppet_core_version', 'unknown')
     except (OSError, ValueError):
-        pass
-    return 'unknown'
+        return {}
+    for profile in data.get('profiles', []):
+        if profile.get('name') == profile_name:
+            return profile
+    return {}
+
+
+def resolve_puppet_version(profile_name: str) -> str:
+    return str(resolve_profile(profile_name).get('puppet_core_version', 'unknown'))
+
+
+def resolve_puppet_major(profile_name: str) -> str:
+    """The ledger's per-major key (docs/puppet-core-9-dual-major-support.md §3).
+
+    Prefers the profile's explicit `puppet_major`, falling back to the leading
+    component of `puppet_core_version` so an under-specified profile still lands
+    in the right slice. Returns '' when neither is resolvable; update_ledger.py
+    treats an unstamped row as major 8 for backward compatibility with rows
+    written before this field existed.
+    """
+    profile = resolve_profile(profile_name)
+    major = profile.get('puppet_major')
+    if major:
+        return str(major)
+    head = str(profile.get('puppet_core_version', '')).split('.')[0]
+    return head if head.isdigit() else ''
 
 
 def main() -> int:
@@ -45,6 +67,7 @@ def main() -> int:
         'documentation_message': '',
         'profile': profile_env,
         'puppet_core_version': resolve_puppet_version(profile_env),
+        'puppet_major': resolve_puppet_major(profile_env),
         'tested_at': utc_now(),
         'message': 'compatibility-report.json not found',
     }
@@ -91,6 +114,7 @@ def main() -> int:
             'documentation_message': documentation_message,
             'profile': profile_name,
             'puppet_core_version': resolve_puppet_version(profile_name),
+            'puppet_major': resolve_puppet_major(profile_name),
             'tested_at': tested_at,
             'message': message,
         }
@@ -99,7 +123,8 @@ def main() -> int:
         json.dump(payload, handle, indent=2)
 
     print(
-        f"[{payload['id']}] lane={payload.get('lane', 'unit')} class={payload['class']} "
+        f"[{payload['id']}] lane={payload.get('lane', 'unit')} "
+        f"major={payload['puppet_major'] or '?'} class={payload['class']} "
         f"state={payload['compatibility_state']} "
         f"metadata={payload['metadata_status']} dependency={payload['dependency_status']} documentation={payload['documentation_status']}"
     )

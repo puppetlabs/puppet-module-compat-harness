@@ -10,19 +10,22 @@ name: Puppet Core 9 Compatibility
 #   - .github/actions/run-module-test        (the actual per-module test)
 #   - .github/actions/publish-compatibility-results (ledger/dashboard write)
 # A diff against the Puppet 8 caller should show only the profile name, the
-# concurrency-group suffix, the caller-workflow-file path, and this comment —
-# anything more is drift to catch in review.
+# concurrency-group suffix, the caller-workflow-file path, the puppet-major
+# input, the cron hour, and this comment — anything more is drift to catch in
+# review.
 #
-# STATUS: skeleton only, landed on main ahead of the rest of Step D so that
-# workflow_dispatch is discoverable (GitHub only exposes dispatch for workflow
-# files that exist on the default branch). The `9-latest-maintained` profile
-# does not exist in profiles/puppet_profiles.json yet, and the `major`
-# parameter is not yet wired through detect_changes.py / build_matrix.rb — so
-# dispatching this today will fail at profile resolution. Intentionally has NO
-# `schedule:` trigger for that reason; the nightly cron gets added when the
-# profile lands and Step D's gate dispatch passes.
+# The file itself landed on main ahead of the rest of Step D, because GitHub
+# only exposes workflow_dispatch for workflow files present on the default
+# branch (the constraint hit in Step C).
+#
+# The cron is offset an hour after the Puppet 8 caller's so the two nightly
+# runs don't contend for runners; correctness doesn't depend on the offset —
+# the shared compat-ledger-* concurrency group on `publish` already serializes
+# the one step that would otherwise race (§4.2).
 
 on:
+  schedule:
+    - cron: "0 3 * * *"  # Nightly at 03:00 UTC (an hour after the Puppet 8 caller)
   workflow_dispatch:
     inputs:
       profile:
@@ -88,6 +91,7 @@ jobs:
           event-name: ${{ github.event_name }}
           lean: ${{ github.event.inputs.lean || 'true' }}
           caller-workflow-file: .github/workflows/compatibility-runner-puppet9.yml
+          puppet-major: '9'
           window-hours: ${{ vars.PUPPET_CHANGE_WINDOW_HOURS || '48' }}
           stale-days: ${{ vars.PUPPET_STALE_DAYS || '30' }}
 

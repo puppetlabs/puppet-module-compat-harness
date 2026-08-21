@@ -16,6 +16,14 @@
 # hard workflow error ("Matrix vector 'module' does not contain any values"), not
 # as zero combinations. Every matrix job must be gated on the matching flag so a
 # legitimate "nothing to test" run stays a successful no-op.
+#
+# Deliberately major-agnostic (docs/puppet-core-9-dual-major-support.md §5.1):
+# each caller workflow tests exactly one Puppet major, and it selects that major
+# by the `profile` it passes to .github/actions/run-module-test — not by anything
+# in the matrix rows. Per-major leanness arrives already resolved, via the
+# INCLUDE_IDS list that detect_changes.py computed against that major's ledger
+# slice. So there is no cross-major fan-out to build here, and a module's row is
+# identical whichever major is being tested.
 
 require 'json'
 require 'set'

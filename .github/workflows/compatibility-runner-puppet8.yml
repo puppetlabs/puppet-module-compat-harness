@@ -23,10 +23,10 @@ name: Puppet Core 8 Compatibility
 # strategy, dynamic name, runs-on, timeout, needs/if gates, env passthrough)
 # that GitHub has no sharing primitive for below a full reusable workflow -
 # a small, mostly-static block that should look nearly identical to
-# compatibility-runner-puppet9.yml (once Step D adds it) except for the
-# profile name and concurrency-group suffix.
+# compatibility-runner-puppet9.yml except for the profile name, the
+# concurrency-group suffix, the puppet-major input, and the cron hour.
 #
-# This is now the sole owner of the nightly cron: the old
+# This is now the sole owner of the Puppet 8 nightly cron: the old
 # compatibility-runner.yml (retired in this same commit, per its gate
 # passing — see docs/puppet-core-9-dual-major-support.md §12) previously
 # owned it. Both never ran on the same cron at once — that would have
@@ -101,6 +101,7 @@ jobs:
           event-name: ${{ github.event_name }}
           lean: ${{ github.event.inputs.lean || 'true' }}
           caller-workflow-file: .github/workflows/compatibility-runner-puppet8.yml
+          puppet-major: '8'
           window-hours: ${{ vars.PUPPET_CHANGE_WINDOW_HOURS || '48' }}
           stale-days: ${{ vars.PUPPET_STALE_DAYS || '30' }}
 

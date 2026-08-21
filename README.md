@@ -31,7 +31,7 @@ Some modules are no longer maintained or are incompatible with Puppet Core:
 	- Markdown summary: `results/.../compatibility-summary.md`
 	- Stage logs per module: `results/.../artifacts/<module>/.stage-*.log`
 	- Per-module dependency status/message (`dependency_status`, `dependency_message`) in JSON report
-- GitHub Actions workflow with module matrix: `.github/workflows/compatibility-runner-puppet8.yml`
+- GitHub Actions workflow with module matrix, one per Puppet major: `.github/workflows/compatibility-runner-puppet8.yml`, `.github/workflows/compatibility-runner-puppet9.yml`
 
 ## Quick start (local)
 
@@ -101,11 +101,14 @@ Split-source behavior (default):
 
 ## GitHub Actions usage
 
-Workflow file: `.github/workflows/compatibility-runner-puppet8.yml`
+Workflow files, one self-contained caller per Puppet major:
+`.github/workflows/compatibility-runner-puppet8.yml` and
+`.github/workflows/compatibility-runner-puppet9.yml`. They take the same inputs
+and run the same pipeline; only the default profile differs.
 
-- Trigger: **Actions → Puppet Core 8 Compatibility → Run workflow**
+- Trigger: **Actions → Puppet Core 8 Compatibility** (or **Puppet Core 9 Compatibility**) **→ Run workflow**
 - Inputs:
-	- `profile` (default `8-latest-maintained`)
+	- `profile` (default `8-latest-maintained` / `9-latest-maintained`)
 	- `metadata_mode` (`warn` or `fail`, default `warn`)
 	- `modules_json` (optional JSON array override)
 
