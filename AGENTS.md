@@ -38,7 +38,7 @@ must **not** be pre-emptively marked incompatible.
 - `config/modules.schema.json`: schema for module config validation.
 - `config/beaker/setfiles/`: Beaker host definition files (one per acceptance target, e.g. `el9.yml`).
 - `scripts/validate_modules_config.py`: local schema validation helper.
-- `.github/workflows/compatibility-runner.yml`: CI pipeline and matrix execution.
+- `.github/workflows/compatibility-runner-puppet8.yml`: CI pipeline and matrix execution for Puppet 8 (a `compatibility-runner-puppet9.yml` sibling is added in Step D of `docs/puppet-core-9-dual-major-support.md`). Shared prepare/publish logic lives in `.github/actions/prepare-test-matrix` and `.github/actions/publish-compatibility-results` — see that doc's §12 for why these are composite actions, not a reusable workflow.
 - `profiles/puppet_profiles.json`: profile constraints used by the runner.
 - `docs/architecture-flow.md`: end-to-end architecture diagram and stage reference. Must be kept in sync with runner logic, classification rules, and CI workflow changes.
 
@@ -198,7 +198,7 @@ When you need a narrow CI run, use workflow input `modules_json` with only new o
 | Downgrade override rules (`lib/module_tester/adapters.rb`) | Downgrade overrides table — add, remove, or update trigger conditions and reclassification outcome |
 | Guardrails checks (`lib/module_tester/guardrails.rb`) | Guardrails row in stage table |
 | Acceptance adapter or Docker isolation model (`lib/module_tester/adapters.rb`, `lib/module_tester/docker.rb`) | Two-Stage Docker Isolation Model section; Docker Container Modes table; S1/S2S/S2D node labels in diagram; FOSS fallback description |
-| CI workflow (`github/workflows/compatibility-runner.yml`) | CI: Prepare section; diagram CI subgraph |
+| CI workflow (`.github/workflows/compatibility-runner-puppet8.yml`, `.github/actions/prepare-test-matrix/action.yml`, `.github/actions/publish-compatibility-results/action.yml`) | CI: Prepare section; diagram CI subgraph |
 | Reporting outputs (`lib/module_tester/reporting.rb`) | Reporting section |
 
 ### Rules for diagram edits

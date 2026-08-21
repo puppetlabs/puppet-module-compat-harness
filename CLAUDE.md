@@ -62,8 +62,10 @@ status/ledger.json                # Persistent per-module status ledger (committ
 STATUS.md                         # Generated fleet dashboard (do not hand-edit)
 KNOWN_COMPATIBLE.md               # Generated list of fully-validated modules (do not hand-edit)
 .github/
-  workflows/compatibility-runner.yml   # Main CI pipeline
-  actions/run-module-test/action.yml   # Composite action used per matrix job
+  workflows/compatibility-runner-puppet8.yml    # Puppet 8 CI trigger + full pipeline
+  actions/run-module-test/action.yml            # Composite action: run one module's test
+  actions/prepare-test-matrix/action.yml        # Composite action: change detection + matrix build
+  actions/publish-compatibility-results/action.yml  # Composite action: ledger update + dashboard render
 docs/
   architecture-flow.md            # Mermaid diagram + stage reference (keep in sync with code)
   available-acceptance-tests.md   # Generated acceptance-test audit (from modules.json; do not hand-edit)
