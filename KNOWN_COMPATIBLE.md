@@ -48,7 +48,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.21.0 | ✅ 9.0.0 |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.21.0 | ❌ |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ 8.21.0 | ✅ 9.0.0 |

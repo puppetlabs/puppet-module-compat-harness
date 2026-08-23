@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-08-23 03:53 UTC  
+**Generated:** 2026-08-23 04:08 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -47,12 +47,12 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | &nbsp;&nbsp;• unit fail | 12 |
 | Acceptance-enabled (running) | 43 |
 | &nbsp;&nbsp;• acceptance run | 43 |
-| &nbsp;&nbsp;• acceptance pass | 36 |
-| &nbsp;&nbsp;• acceptance fail | 7 |
+| &nbsp;&nbsp;• acceptance pass | 35 |
+| &nbsp;&nbsp;• acceptance fail | 8 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 11 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 4 |
 | No acceptance tests (N/A) | 17 |
-| **Fully compatible** (unit pass + acceptance pass or N/A) | **46** |
+| **Fully compatible** (unit pass + acceptance pass or N/A) | **45** |
 | Never tested | 0 |
 | Stale | 0 |
 
@@ -99,7 +99,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ | N/A | ✅ | N/A | 2026-08-23 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:❌ | 2026-08-23 |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-08-23 |
