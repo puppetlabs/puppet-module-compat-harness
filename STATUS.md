@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-08-26 03:33 UTC  
+**Generated:** 2026-08-27 03:58 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -96,7 +96,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:❌ | 2026-08-26 |
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-08-23 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
-| [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
+| [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-27 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ | N/A | ✅ | N/A | 2026-08-23 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-23 |
 | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-08-24 |
@@ -125,7 +125,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ | ubuntu24:✅ | ✅ | ubuntu24:✅ | 2026-08-23 |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-08-23 |
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-08-23 |
-| [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) | ✅ | 🚧 pending | ❌ | 🚧 pending | 2026-08-26 |
+| [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) | ✅ | 🚧 pending | ❌ | 🚧 pending | 2026-08-27 |
 | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-08-23 |
 | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-08-23 |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-08-23 |
