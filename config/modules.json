@@ -882,15 +882,6 @@
       }
     },
     {
-      "repo": "https://github.com/voxpupuli/puppet-windows_env",
-      "ref": "main",
-      "acceptance": {
-        "enabled": false,
-        "status": "pending",
-        "reason": "Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support."
-      }
-    },
-    {
       "repo": "https://github.com/voxpupuli/puppet-windows_firewall",
       "ref": "master",
       "acceptance": {

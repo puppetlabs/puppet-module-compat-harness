@@ -5,7 +5,7 @@
 
 Audit of the acceptance-test disposition of every module in `config/modules.json`.
 
-## Modules With Acceptance Tests (58)
+## Modules With Acceptance Tests (57)
 
 Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ blocked (cannot run in this harness); 🚧 pending (not yet wired up).
 
@@ -60,7 +60,6 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) |
 | ⛔ | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) |
 | ⛔ | [puppet-wget](https://github.com/voxpupuli/puppet-wget) |
-| 🚧 | [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) |
 | 🚧 | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) |
 | 🚧 | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) |
 | ✅ | [puppet-yum](https://github.com/voxpupuli/puppet-yum) |
@@ -94,7 +93,7 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
-## Modules With Acceptance Tests but Not Run in CI (15)
+## Modules With Acceptance Tests but Not Run in CI (14)
 
 These modules have acceptance tests upstream, but the harness does not run them — so their compatibility is confirmed by unit tests only, not fully. They are intentionally excluded from `KNOWN_COMPATIBLE.md`.
 
@@ -111,7 +110,6 @@ These modules have acceptance tests upstream, but the harness does not run them 
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ⛔ blocked | Attempts to manage /etc/resolv.conf via symlink replacement to /run/systemd/resolve/resolv.conf. The Docker container runtime owns /etc/resolv.conf, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ⛔ blocked | Tests are purpose-built for Docker and self-contained, but use a three-container topology (certs.local, vault.local, puppetserver.local) that the single-SUT harness cannot orchestrate. The VaultDockerfile and PuppetserverDockerfile use multi-stage COPY --from=certs:latest builds the harness image-build pipeline does not support, and require a live Puppet Server (not puppet apply) with mTLS cert auth via a shared PKI. Requires harness-level support for multi-container nodesets and cross-image build dependencies. |
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ⛔ blocked | Acceptance tests target only legacy OSes (Debian 8-9, Ubuntu 16.04-18.04, RHEL 6-7) — none of which match any available setfile — and hardcode `su - vagrant` to run puppet apply as a Vagrant user not present in Docker-based SUT containers. Requires new legacy setfiles or upstream test modernization. |
-| [puppet-windows_env](https://github.com/voxpupuli/puppet-windows_env) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
 | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
 | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
 | [treydock-puppet-kdump](https://github.com/treydock/puppet-kdump) | ⛔ blocked | Acceptance tests reboot the SUT and assert crashkernel appears in /proc/cmdline, set via the grub2 kernel_parameter provider (augeasproviders_grub). Docker SUTs share the host kernel cmdline (unchangeable from inside the container) and cannot reboot into a crashkernel-reserved kernel; kdump.service also requires boot-time crash-memory reservation. Same host-kernel/reboot blocker as its own augeasproviders_grub dependency. Requires a VM-based SUT. |

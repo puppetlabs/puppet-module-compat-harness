@@ -2886,45 +2886,6 @@
       "ref": "master",
       "repo": "https://github.com/voxpupuli/puppet-wget"
     },
-    "puppet-windows_env": {
-      "acceptance_configured": false,
-      "acceptance_reason": "Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support.",
-      "acceptance_status": "pending",
-      "deprecated": false,
-      "disposition": "active",
-      "puppet_majors": {
-        "8": {
-          "coverage_state": "unit-pass/acceptance-pending",
-          "dependency_status": "none",
-          "documentation_status": "none",
-          "metadata_status": "supported",
-          "puppet_core_version": "8.21.0",
-          "unit": {
-            "class": "clean",
-            "compatibility_state": "compatible",
-            "last_harness_sha": "d122736",
-            "last_run_id": "33142894556",
-            "tested_at": "2026-08-28T04:49:33Z"
-          }
-        },
-        "9": {
-          "coverage_state": "unit-failing",
-          "dependency_status": "none",
-          "documentation_status": "none",
-          "metadata_status": "supported",
-          "puppet_core_version": "9.0.0",
-          "unit": {
-            "class": "failure",
-            "compatibility_state": "harness_error",
-            "last_harness_sha": "cd505af",
-            "last_run_id": "33832442876",
-            "tested_at": "2026-09-04T03:14:38Z"
-          }
-        }
-      },
-      "ref": "main",
-      "repo": "https://github.com/voxpupuli/puppet-windows_env"
-    },
     "puppet-windows_firewall": {
       "acceptance_configured": false,
       "acceptance_reason": "Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support.",
