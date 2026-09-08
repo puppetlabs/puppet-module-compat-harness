@@ -533,9 +533,9 @@ Run these before writing runner code. Spike 3 is gating.
 | # | Question | Why it matters |
 |---|---|---|
 | 1 | Puppet Core repo behaviour on a GCP RHEL/Rocky image | The Dockerfile logic assumes a clean `dnf`; GCP images ship a modified `google-cloud.repo` (the bootstrap scripts already set `gpgcheck=0` and `skip_if_unavailable=1` on it) |
-| 2 | Do Beaker's `validate` / `configure` prebuilt steps behave against a `hypervisor: none` host? | They may attempt package installs or key syncing against a host we have already prepared. `BEAKER_validate=false` / `BEAKER_configure=false` are the escape hatches |
+| 2 | Do Beaker's `validate` / `configure` prebuilt steps behave against a `hypervisor: none` host? | ✅ **Validated 2026-09-08.** See below |
 | 3 | **End-to-end provision → teardown against the live facade from a CI run on this repo** | ✅ **Validated 2026-09-08.** See below |
-| 4 | Teardown reliability across failure modes | See §9's expanded breakdown. In short: a cancelled workflow reaches a terminal GitHub run status quickly, so the reaper catches it soon; a GitHub-side outage defeats the reaper's GitHub-status check specifically, leaving the age-based 3h sweep (which needs no GitHub API call at all) as the only guarantee; **a GCP-side failure partway through provisioning itself is an open question with no verified answer** — ask DevX directly rather than assume |
+| 4 | Teardown reliability across failure modes | See §9's expanded breakdown. In short: a cancelled workflow reaches a terminal GitHub run status quickly, so the reaper catches it soon; a GitHub-side outage defeats the reaper's GitHub-status check specifically, leaving the age-based 3h sweep (which needs no GitHub API call at all) as the only guarantee. **A GCP-side failure partway through provisioning was previously an open question with no verified answer — it has now been observed once (below), and it remains unresolved**: whether the timed-out request left an orphaned VM is still unknown to the harness and can only be answered by DevX |
 | 5 | Wall-clock cost of provision + agent install | Provisioning alone measured at ~35s (spike 3, below). Agent install is not yet measured — that requires the actual install script from §2.5/§3.1, which doesn't exist until implementation starts |
 | 6 | Agree a concurrency ceiling with DevX | VMs land in the shared `ia-content` project with no service-side quota. Pick `max-parallel` with their input rather than discovering the ceiling by exhausting it |
 | 7 | Ask DevX the reaper's actual polling interval | `SCHEDULER_TIME` is configured server-side and isn't visible from the public source reviewed here. The 3h TTL is a hard upper bound regardless, but knowing the typical reaper latency matters for judging how much orphaned-VM exposure a cancelled run actually has in practice |
@@ -559,6 +559,55 @@ PR-triggered job in `puppetlabs/puppet-module-compat-harness` was accepted.
 This closes the single assumption the rest of the design depended on. The
 throwaway workflow and its branch/PR (#21) have been deleted; nothing from the
 spike is retained beyond this result and the run link.
+
+#### Spike 2 result
+
+Prototyped the full chain end to end: provision a VM, escalate to root via an
+ephemeral SSH key (prototyping §2.4/§3.1's `prepare_vm` stage), scaffold a
+minimal throwaway fixture module, run a real `bundle exec rake beaker` against
+the VM with `BEAKER_PUPPET_COLLECTION=puppet8` (public, no credential), tear
+down. Two attempts on the same branch/PR (#22, deleted after capturing
+results):
+
+**First attempt — [run 34239242919](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34239242919) — failed at the provisioning step itself:**
+
+```
+14:35:35 → request sent
+14:40:35 → HTTP 504, body: "upstream request timeout"
+```
+
+Exactly 300 seconds — a Cloud Run gateway timeout, not a rejection. No `uuid`
+was returned, so the harness had nothing to reference and could not attempt a
+`DELETE`. **This is the first observed occurrence of spike 4's previously-
+hypothetical "GCP-side failure partway through provisioning" scenario.**
+Whether the backend's Terraform apply completed anyway after the facade gave
+up on us is unknown and unknowable from the harness side — this is exactly
+the gap §9 already describes, now with a concrete timestamp and run URL
+attached rather than being purely theoretical.
+
+**Second attempt (a plain re-run of the same job) — [run 34239242919, rerun](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34239242919/job/102125038365) — provisioning succeeded cleanly** (so the 504 was transient, at least in the sense that identical retried input worked shortly after), confirming:
+
+| Check | Result |
+|---|---|
+| `Hypervisor for gcp-spike is none` / `found some none boxes to create` | Beaker correctly treats the pre-provisioned host as a no-op hypervisor — confirms §2.3 |
+| SSH via the ephemeral key (`auth_methods=>["publickey"]`) | Root escalation from §2.4 works |
+| Beaker's own prebuilt checks (`rpm -q iputils`, `rpm -q rootfiles`) and config edits (`PermitUserEnvironment`, sshd restart) | Ran cleanly; touched a *different* sshd directive than our own `PermitRootLogin` edit, and root SSH survived Beaker's own sshd restart — **no collision between Beaker's host-prep and the harness's own prep** |
+| Public agent install (`puppet8-release` → `puppet-agent-8.10.0`) | Succeeded via plain `dnf` against the GCP Rocky 9 image — no repo/GPG friction |
+| Module install + first `apply_manifest` (`catch_failures: true`) | Passed |
+| Second `apply_manifest` (`catch_changes: true`, "is idempotent") | **Failed** — but see below, this is a spike-authoring bug, not a finding |
+
+The idempotency failure was self-inflicted: the throwaway fixture used
+`notify { 'hello from spike 2': }`, and `notify` resources report as changed
+on *every* apply by design — the spec was doomed regardless of environment.
+Fixed the fixture to use a genuinely idempotent `file` resource and re-ran
+once more — [run 34251734058](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34251734058) —
+**fully green**: provision (55s) → root escalation (40s) → scaffold → Ruby
+setup → both acceptance specs passing → teardown (`HTTP 200`, ~2m13s).
+
+**Net result:** spike 2's actual question — does Beaker's own validate/configure
+fight a host the harness has already prepared — is answered **no**, with a
+fully passing real Beaker run as evidence. The 504 from the first attempt is
+retained above as evidence for spike 4/6, not as a spike-2 finding.
 
 ### 7.3 Phase 1 — pilot: `puppet-swap_file` on `el-9`
 
@@ -778,7 +827,7 @@ from this evidence next time rather than from scratch.
 
 | Phase | Status |
 |---|---|
-| Phase 0 — spikes (§7.2) | In progress — spike 3 (gating) validated 2026-09-08 |
+| Phase 0 — spikes (§7.2) | In progress — spikes 2 and 3 (gating) validated 2026-09-08; a live 504/timeout observed during spike 2 testing, retained as evidence for spikes 4/6 |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | Not started |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | Not started |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
