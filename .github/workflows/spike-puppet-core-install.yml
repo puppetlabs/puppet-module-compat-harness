@@ -1,0 +1,248 @@
+name: "[SPIKE] Puppet Core agent install on a GCP image"
+
+# THROWAWAY VALIDATION WORKFLOW — not part of the production pipeline.
+#
+# Validates Phase 0, spike 1 (and, incidentally, spike 5) of
+# docs/vm-based-acceptance-testing.md: adapts the exact EL-family install
+# logic from lib/module_tester/docker.rb's puppet_core_dockerfile (private
+# yum-puppetcore.puppet.com repo + forge-key credential injection + scrub) to
+# run over SSH against a real GCP Rocky 9 image, instead of as a Dockerfile
+# RUN layer. Confirms:
+#   1. The private repo/RPM install works cleanly against a GCP image (the
+#      concern being GCP's own modified google-cloud.repo).
+#   2. The inject-then-scrub credential pattern works identically when done
+#      as an SSH script instead of a Docker BuildKit secret mount.
+#   3. Real wall-clock cost of the agent install itself (spike 5).
+#
+# Uses the real PUPPET_CORE_API_KEY secret. The key is only ever embedded in
+# the *outgoing* SSH stdin stream (interpolated locally into an unquoted
+# heredoc, matching how docker.rb's Dockerfile RUN line receives it from a
+# mounted secret file) — never written to a local file, never a literal CLI
+# argument, never printed. GitHub Actions redacts the literal secret value
+# from all logs automatically since it is referenced via `secrets.` in `env:`.
+#
+# Delete this file (and this branch, and its PR) once the spike is validated;
+# it exists to be thrown away, not merged into main.
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - ".github/workflows/spike-puppet-core-install.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  spike:
+    name: "Provision, root-escalate, install Puppet Core, verify, teardown"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Provision a VM via the DevX provision service
+        id: provision
+        env:
+          RUN_URL: "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        run: |
+          set -euo pipefail
+          body=$(python3 -c "
+          import json, os
+          print(json.dumps({
+              'url': os.environ['RUN_URL'],
+              'VMs': [{'cloud': None, 'region': None, 'zone': None, 'images': ['rocky-linux-cloud/rocky-linux-9']}],
+          }))
+          ")
+
+          http_code=$(curl -sS -o response.yaml -w '%{http_code}' \
+            -X POST 'https://facade-release-6f3kfepqcq-ew.a.run.app/v1/provision' \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d "$body")
+
+          echo "HTTP status: $http_code"
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Provisioning request failed with HTTP $http_code"
+            cat response.yaml || true
+            exit 1
+          fi
+
+          python3 - <<'PYEOF'
+          import sys
+          import yaml
+
+          with open('response.yaml') as f:
+              data = yaml.safe_load(f)
+
+          target = None
+          for group in (data or {}).get('groups', []):
+              for t in group.get('targets', []):
+                  target = t
+                  break
+              if target:
+                  break
+
+          if not target:
+              print('::error::No target found in returned inventory')
+              sys.exit(1)
+
+          ssh_cfg = target.get('config', {}).get('ssh', {})
+          with open('provision_uuid.txt', 'w') as f:
+              f.write(target.get('facts', {}).get('uuid', ''))
+          with open('provision_ip.txt', 'w') as f:
+              f.write(target['uri'])
+          with open('provision_user.txt', 'w') as f:
+              f.write(ssh_cfg.get('user', ''))
+          with open('provision_pass.txt', 'w') as f:
+              f.write(ssh_cfg.get('password', ''))
+
+          print(f"::notice::Provisioned {target['uri']} user={ssh_cfg.get('user')}")
+          PYEOF
+
+          {
+            echo "uuid=$(cat provision_uuid.txt)"
+            echo "ip=$(cat provision_ip.txt)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Escalate to root via an ephemeral SSH key
+        id: prepare
+        if: always() && steps.provision.outputs.ip != ''
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+
+          IP="${{ steps.provision.outputs.ip }}"
+          LITMUS_USER=$(cat provision_user.txt)
+          LITMUS_PASS=$(cat provision_pass.txt)
+
+          ssh-keygen -t ed25519 -N '' -f ./spike_key -q
+          chmod 600 ./spike_key
+
+          SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10"
+
+          echo "Waiting for SSH auth to become available as $LITMUS_USER..."
+          ready=0
+          for i in $(seq 1 20); do
+            if sshpass -p "$LITMUS_PASS" ssh $SSH_OPTS "$LITMUS_USER@$IP" 'echo ok' 2>/dev/null | grep -q ok; then
+              ready=1
+              echo "SSH auth succeeded after $((i * 5))s"
+              break
+            fi
+            sleep 5
+          done
+          if [ "$ready" != "1" ]; then
+            echo "::error::Could not authenticate as $LITMUS_USER within 100s"
+            exit 1
+          fi
+
+          PUBKEY=$(cat ./spike_key.pub)
+          sshpass -p "$LITMUS_PASS" ssh $SSH_OPTS "$LITMUS_USER@$IP" "
+            sudo mkdir -p /root/.ssh &&
+            echo '$PUBKEY' | sudo tee -a /root/.ssh/authorized_keys > /dev/null &&
+            sudo chmod 700 /root/.ssh &&
+            sudo chmod 600 /root/.ssh/authorized_keys &&
+            sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config &&
+            sudo systemctl restart sshd
+          "
+
+          echo "Verifying root SSH via the ephemeral key..."
+          if ! ssh $SSH_OPTS -i ./spike_key "root@$IP" 'whoami' | grep -q root; then
+            echo "::error::Root SSH via ephemeral key failed after escalation"
+            exit 1
+          fi
+          echo "::notice::Root SSH via ephemeral key confirmed"
+
+      - name: Install Puppet Core agent (private repo, real key)
+        id: install
+        if: always() && steps.prepare.outcome == 'success'
+        env:
+          PUPPET_CORE_API_KEY: ${{ secrets.PUPPET_CORE_API_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${PUPPET_CORE_API_KEY:-}" ]; then
+            echo "::error::PUPPET_CORE_API_KEY secret is not set"
+            exit 1
+          fi
+
+          IP="${{ steps.provision.outputs.ip }}"
+          SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10"
+
+          echo "install_start=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+          # This mirrors lib/module_tester/docker.rb's puppet_core_dockerfile
+          # EL-family branch exactly (release RPM -> inject forge-key
+          # credential via sed -> dnf install -> scrub the repo file), adapted
+          # to run as a single SSH-piped script instead of a Dockerfile RUN
+          # layer. The unquoted heredoc delimiter below is deliberate: it lets
+          # the LOCAL shell interpolate $PUPPET_CORE_API_KEY into the outgoing
+          # script text before it is sent, so the key is never a local CLI
+          # argument and never touches local disk. GitHub Actions redacts the
+          # literal value from all logs regardless.
+          ssh $SSH_OPTS -i ./spike_key "root@$IP" bash -s <<REMOTESCRIPT
+          set -euo pipefail
+          RELEASE_RPM="https://yum-puppetcore.puppet.com/public/puppet8-release-el-9.noarch.rpm"
+          REPO_FILE="/etc/yum.repos.d/puppet8-release.repo"
+
+          echo "--- installing release RPM ---"
+          rpm -Uvh "\$RELEASE_RPM"
+
+          echo "--- injecting forge-key credential into repo file ---"
+          sed -i '/^\[puppet8\]/a username=forge-key\npassword=$PUPPET_CORE_API_KEY' "\$REPO_FILE"
+
+          echo "--- installing puppet-agent from the private repo ---"
+          dnf install -y puppet-agent
+
+          echo "--- scrubbing credential file ---"
+          rm -f "\$REPO_FILE"
+
+          echo "--- verifying repo file is gone ---"
+          if [ -f "\$REPO_FILE" ]; then
+            echo "SCRUB_FAILED"
+            exit 1
+          fi
+          echo "SCRUB_OK"
+
+          echo "--- installed version ---"
+          /opt/puppetlabs/bin/puppet --version
+          REMOTESCRIPT
+
+          echo "install_end=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+          echo "Re-fetching installed version for the summary (no secret involved)..."
+          VERSION=$(ssh $SSH_OPTS -i ./spike_key "root@$IP" '/opt/puppetlabs/bin/puppet --version')
+          echo "puppet_version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "::notice::Installed puppet version: $VERSION"
+
+      - name: Tear down the VM
+        if: always() && steps.provision.outputs.uuid != ''
+        env:
+          UUID: ${{ steps.provision.outputs.uuid }}
+        run: |
+          set -euo pipefail
+          body=$(python3 -c "import json, os; print(json.dumps({'uuid': os.environ['UUID']}))")
+
+          http_code=$(curl -sS -o teardown_response.txt -w '%{http_code}' \
+            -X DELETE 'https://facade-release-6f3kfepqcq-ew.a.run.app/v1/provision' \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d "$body")
+
+          echo "Teardown HTTP status: $http_code"
+          cat teardown_response.txt || true
+
+          if [ "$http_code" != "200" ]; then
+            echo "::warning::Teardown request returned non-200 — relying on the service's run-status reaper / 3h TTL as backstop"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Spike 1 result" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Root escalation: ${{ steps.prepare.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Puppet Core install: ${{ steps.install.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "${{ steps.install.outputs.puppet_version }}" ]; then
+            echo "- Installed version: ${{ steps.install.outputs.puppet_version }}" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -n "${{ steps.install.outputs.install_start }}" ] && [ -n "${{ steps.install.outputs.install_end }}" ]; then
+            echo "- Install duration: $(( ${{ steps.install.outputs.install_end }} - ${{ steps.install.outputs.install_start }} ))s" >> "$GITHUB_STEP_SUMMARY"
+          fi
