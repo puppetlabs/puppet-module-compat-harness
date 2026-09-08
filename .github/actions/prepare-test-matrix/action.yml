@@ -42,14 +42,20 @@ outputs:
     description: 'JSON array for the unit-test matrix'
     value: ${{ steps.matrix.outputs.unit_matrix }}
   acceptance-matrix:
-    description: 'JSON array for the acceptance-test matrix'
+    description: 'JSON array for the Docker-provisioner acceptance-test matrix'
     value: ${{ steps.matrix.outputs.acceptance_matrix }}
+  vm-acceptance-matrix:
+    description: 'JSON array for the GCP-provisioner (VM) acceptance-test matrix — see docs/vm-based-acceptance-testing.md §4'
+    value: ${{ steps.matrix.outputs.vm_acceptance_matrix }}
   has-unit:
     description: "'true' if the unit matrix is non-empty"
     value: ${{ steps.matrix.outputs.has_unit }}
   has-acceptance:
-    description: "'true' if the acceptance matrix is non-empty"
+    description: "'true' if the Docker-provisioner acceptance matrix is non-empty"
     value: ${{ steps.matrix.outputs.has_acceptance }}
+  has-vm-acceptance:
+    description: "'true' if the GCP-provisioner (VM) acceptance matrix is non-empty"
+    value: ${{ steps.matrix.outputs.has_vm_acceptance }}
 
 runs:
   using: composite
@@ -100,14 +106,18 @@ runs:
 
         UNIT_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['unit_matrix']))")
         ACCEPTANCE_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['acceptance_matrix']))")
+        VM_ACCEPTANCE_MATRIX=$(python -c "import json; print(json.dumps(json.load(open('.tmp-matrix.json', encoding='utf-8'))['vm_acceptance_matrix']))")
         HAS_UNIT=$(python -c "import json; print(json.load(open('.tmp-matrix.json', encoding='utf-8'))['has_unit'])")
         HAS_ACCEPTANCE=$(python -c "import json; print(json.load(open('.tmp-matrix.json', encoding='utf-8'))['has_acceptance'])")
+        HAS_VM_ACCEPTANCE=$(python -c "import json; print(json.load(open('.tmp-matrix.json', encoding='utf-8'))['has_vm_acceptance'])")
         echo "unit_matrix=$UNIT_MATRIX" >> "$GITHUB_OUTPUT"
         echo "acceptance_matrix=$ACCEPTANCE_MATRIX" >> "$GITHUB_OUTPUT"
+        echo "vm_acceptance_matrix=$VM_ACCEPTANCE_MATRIX" >> "$GITHUB_OUTPUT"
         echo "has_unit=$HAS_UNIT" >> "$GITHUB_OUTPUT"
         echo "has_acceptance=$HAS_ACCEPTANCE" >> "$GITHUB_OUTPUT"
+        echo "has_vm_acceptance=$HAS_VM_ACCEPTANCE" >> "$GITHUB_OUTPUT"
 
-        if [ "$HAS_UNIT" != 'true' ] && [ "$HAS_ACCEPTANCE" != 'true' ]; then
+        if [ "$HAS_UNIT" != 'true' ] && [ "$HAS_ACCEPTANCE" != 'true' ] && [ "$HAS_VM_ACCEPTANCE" != 'true' ]; then
           echo "::notice title=Run result::no-op: no module required testing this run"
           echo "No modules selected for testing — test jobs will be skipped (no-op run)."
         fi

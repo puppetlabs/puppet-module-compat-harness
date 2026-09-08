@@ -6,12 +6,23 @@ require 'shellwords'
 
 module ModuleTester
   class StageRunner
-    def run_stage(name, command, cwd, env, timeout_seconds = nil)
+    # `extra_secrets`: ad-hoc runtime values to redact from this stage's
+    # command echo, streamed output, and log file, beyond what Redactor
+    # already knows about via ENV — e.g. the VM provision service's
+    # per-request litmus password (see vm.rb).
+    #
+    # `stdin`: optional content to write to the subprocess's stdin before
+    # closing it — e.g. the VM path pipes its Puppet Core install script
+    # (with the API key already interpolated) into `ssh ... bash -s` this
+    # way, so the credential is never a literal argv element on either host
+    # (see vm.rb). `stdin` content is never echoed to the console, log file,
+    # or command-line record — only the command's own output is.
+    def run_stage(name, command, cwd, env, timeout_seconds = nil, extra_secrets: [], stdin: nil)
       timeout_seconds = resolve_timeout(timeout_seconds)
       started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
       output_buffer = String.new
       status = nil
-      safe_command = Redactor.redact_sensitive(command.shelljoin)
+      safe_command = Redactor.redact_sensitive(command.shelljoin, extra_secrets)
       log_file = File.join(cwd, ".stage-#{name}.log")
 
       puts "\n[#{Time.now.strftime('%H:%M:%S')}] => #{name}"
@@ -22,13 +33,16 @@ module ModuleTester
       begin
         Timeout.timeout(timeout_seconds) do
           File.open(log_file, 'w') do |log|
-            Open3.popen2e(env, *command, chdir: cwd) do |stdin, combined, wait_thr|
-              stdin.close
+            Open3.popen2e(env, *command, chdir: cwd) do |stdin_pipe, combined, wait_thr|
+              if stdin
+                stdin_pipe.write(stdin)
+              end
+              stdin_pipe.close
 
               loop do
                 chunk = combined.readpartial(2048)
                 output_buffer << chunk
-                redacted_chunk = Redactor.redact_sensitive(chunk)
+                redacted_chunk = Redactor.redact_sensitive(chunk, extra_secrets)
                 print redacted_chunk
                 log.write(redacted_chunk)
                 log.flush
@@ -50,7 +64,7 @@ module ModuleTester
           command: safe_command,
           exit_code: status.exitstatus,
           duration_seconds: elapsed.round(2),
-          output: Redactor.redact_sensitive(trimmed_output)
+          output: Redactor.redact_sensitive(trimmed_output, extra_secrets)
         )
       rescue Timeout::Error
         elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
@@ -66,7 +80,7 @@ module ModuleTester
           command: safe_command,
           exit_code: -1,
           duration_seconds: elapsed.round(2),
-          output: Redactor.redact_sensitive("Timeout after #{timeout_seconds}s\n#{trimmed_output}")
+          output: Redactor.redact_sensitive("Timeout after #{timeout_seconds}s\n#{trimmed_output}", extra_secrets)
         )
       end
     end

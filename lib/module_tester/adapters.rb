@@ -2,9 +2,11 @@
 
 module ModuleTester
   class Adapters
-    def initialize(stage_runner, docker, options)
+    def initialize(stage_runner, docker, vm, provision_service, options)
       @stage = stage_runner
       @docker = docker
+      @vm = vm
+      @provision_service = provision_service
       @options = options
     end
 
@@ -105,6 +107,7 @@ module ModuleTester
     end
 
     def run_acceptance(module_dir, env, result, profile)
+      teardown_uuid = nil
       return unless @options[:allow_acceptance]
       return unless File.exist?(File.join(module_dir, 'Rakefile')) && @stage.command_available?('bundle')
 
@@ -113,13 +116,51 @@ module ModuleTester
       return unless result[:capability]['has_acceptance']
       return unless tasks.include?('beaker')
 
+      if @options.fetch(:provisioner, 'docker') == 'gcp'
+        acceptance_env, teardown_uuid = prepare_gcp_acceptance_env(module_dir, env, result, profile)
+      else
+        acceptance_env = prepare_docker_acceptance_env(env, result, profile)
+      end
+      return if acceptance_env.nil?
+
+      # Module-specific Beaker env overrides (config/modules.schema.json's
+      # acceptanceTarget.beaker_env) — applies to either provisioner, e.g.
+      # BEAKER_FACTER_memory.system.total for a module that would otherwise
+      # size an operation off a full-size VM's real memory.
+      acceptance_env.merge!(@options.fetch(:beaker_env, {}))
+
+      # Strip all secrets from the env before running untrusted test code.
+      Docker.strip_secrets_from_env!(acceptance_env)
+      record_acceptance_env_diagnostic(result, acceptance_env)
+
+      pre_cmds = @options.fetch(:pre_acceptance_commands, [])
+      pre_cmds.each_with_index do |cmd, idx|
+        stage = @stage.run_stage("pre_acceptance_setup_#{idx}", ['bash', '-c', cmd], module_dir, acceptance_env)
+        result[:stages] << stage
+        return if stage.status != 'passed'
+      end
+
+      result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
+      result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
+    ensure
+      # Best-effort — a failed teardown is not a compatibility concern (see
+      # ProvisionService#teardown and docs/vm-based-acceptance-testing.md §9);
+      # the service's own run-status reaper and 3h VM TTL are the real
+      # guarantee. Runs on every return path above, including exceptions.
+      if teardown_uuid
+        teardown_stage = @provision_service.teardown(teardown_uuid)
+        result[:stages] << teardown_stage if teardown_stage
+      end
+    end
+
+    # Docker path (default provisioner). Returns the prepared acceptance_env,
+    # or nil if a stage failed and the caller should stop.
+    def prepare_docker_acceptance_env(env, result, profile)
       puppet_core_api_key = ENV.fetch('PUPPET_CORE_API_KEY', '').strip
       docker_mode = @options.fetch(:docker_mode, 'sshd')
 
       acceptance_env = env.dup
       acceptance_env['BEAKER_HYPERVISOR'] = 'docker'
-      effective_setfile = nil
-      effective_collection = nil
 
       if @options[:beaker_setfile] && !puppet_core_api_key.empty?
         # Stage 1: Build a Docker image with Puppet Core pre-installed.
@@ -135,35 +176,86 @@ module ModuleTester
           setup_commands: @options.fetch(:setup_commands, [])
         )
         result[:stages] << build_stage
-        return if build_stage.status != 'passed'
+        return nil if build_stage.status != 'passed'
 
         # Stage 2: Write a clean setfile that references the pre-built
         # image — no secrets embedded anywhere.
-        effective_setfile = @docker.write_clean_setfile(@options[:beaker_setfile], image_tag, docker_mode: docker_mode)
-        acceptance_env['BEAKER_SETFILE'] = effective_setfile
+        acceptance_env['BEAKER_SETFILE'] = @docker.write_clean_setfile(@options[:beaker_setfile], image_tag, docker_mode: docker_mode)
         acceptance_env['BEAKER_PUPPET_COLLECTION'] = 'preinstalled'
-        effective_collection = 'preinstalled'
       elsif @options[:beaker_setfile]
         # No API key — fall back to FOSS puppet from public yum.puppet.com
-        effective_setfile = File.expand_path(@options[:beaker_setfile])
-        effective_collection = "puppet#{profile.fetch('puppet_major')}"
-        acceptance_env['BEAKER_SETFILE'] = effective_setfile
-        acceptance_env['BEAKER_PUPPET_COLLECTION'] = effective_collection
+        acceptance_env['BEAKER_SETFILE'] = File.expand_path(@options[:beaker_setfile])
+        acceptance_env['BEAKER_PUPPET_COLLECTION'] = "puppet#{profile.fetch('puppet_major')}"
       else
-        effective_collection = "puppet#{profile.fetch('puppet_major')}"
-        acceptance_env['BEAKER_PUPPET_COLLECTION'] = effective_collection
+        acceptance_env['BEAKER_PUPPET_COLLECTION'] = "puppet#{profile.fetch('puppet_major')}"
       end
 
-      # Strip all secrets from the env before running untrusted test code.
-      Docker.strip_secrets_from_env!(acceptance_env)
+      acceptance_env
+    end
 
+    # GCP VM path (docs/vm-based-acceptance-testing.md §3.1). Returns
+    # [acceptance_env_or_nil, uuid_or_nil] — the uuid is returned (for
+    # teardown) as soon as a VM exists, even if a later stage in this method
+    # fails, so a partially-set-up VM is still torn down.
+    def prepare_gcp_acceptance_env(module_dir, env, result, profile)
+      puppet_core_api_key = ENV.fetch('PUPPET_CORE_API_KEY', '').strip
+      if puppet_core_api_key.empty?
+        # No FOSS fallback for the VM path — unlike Docker, the VM path
+        # exists specifically to exercise Puppet Core, so provisioning a
+        # real (cost-bearing) VM without a key to install it would be pure
+        # waste. Fail before provisioning anything.
+        result[:stages] << Result.failed_stage('provision_vm', 'PUPPET_CORE_API_KEY is required for provisioner=gcp (no FOSS fallback for the VM path)')
+        return [nil, nil]
+      end
+
+      image = @options[:vm_image]
+      if image.to_s.strip.empty?
+        result[:stages] << Result.failed_stage('provision_vm', 'No --vm-image specified for provisioner=gcp')
+        return [nil, nil]
+      end
+
+      run_url = github_run_url
+      if run_url.nil?
+        result[:stages] << Result.failed_stage('provision_vm', 'GITHUB_REPOSITORY/GITHUB_RUN_ID are not set — required to construct the run URL the provision service authorizes against')
+        return [nil, nil]
+      end
+
+      host, provision_stage = @provision_service.provision(image, run_url: run_url)
+      result[:stages] << provision_stage
+      return [nil, nil] if host.nil?
+
+      uuid = host.uuid
+      platform = Vm.platform_for_image(image)
+
+      key_path, prepare_stage = @vm.prepare_vm(host, module_dir)
+      result[:stages] << prepare_stage
+      return [nil, uuid] if key_path.nil?
+
+      install_stage = @vm.install_puppet_core_vm(
+        host, key_path, platform, profile.fetch('puppet_major'), puppet_core_api_key, module_dir,
+        install_puppetserver: @options[:install_puppetserver]
+      )
+      result[:stages] << install_stage
+      return [nil, uuid] if install_stage.status != 'passed'
+
+      acceptance_env = env.dup
+      acceptance_env['BEAKER_HYPERVISOR'] = 'none'
+      acceptance_env['BEAKER_SETFILE'] = @vm.write_vm_setfile(host, key_path, platform)
+      acceptance_env['BEAKER_PUPPET_COLLECTION'] = 'preinstalled'
+
+      [acceptance_env, uuid]
+    end
+
+    def record_acceptance_env_diagnostic(result, acceptance_env)
       diag_lines = []
-      diag_lines << "BEAKER_SETFILE=#{effective_setfile}" if effective_setfile
-      diag_lines << "BEAKER_PUPPET_COLLECTION=#{effective_collection}" if effective_collection
+      diag_lines << "BEAKER_SETFILE=#{acceptance_env['BEAKER_SETFILE']}" if acceptance_env['BEAKER_SETFILE']
+      diag_lines << "BEAKER_PUPPET_COLLECTION=#{acceptance_env['BEAKER_PUPPET_COLLECTION']}" if acceptance_env['BEAKER_PUPPET_COLLECTION']
       diag_lines << "BEAKER_HYPERVISOR=#{acceptance_env['BEAKER_HYPERVISOR']}"
-      if effective_setfile && File.exist?(effective_setfile)
+      @options.fetch(:beaker_env, {}).each_key { |k| diag_lines << "#{k}=#{acceptance_env[k]} (from acceptanceTarget.beaker_env)" }
+      setfile_path = acceptance_env['BEAKER_SETFILE']
+      if setfile_path && File.exist?(setfile_path)
         diag_lines << "--- Effective setfile content ---"
-        diag_lines << File.read(effective_setfile)
+        diag_lines << File.read(setfile_path)
       end
       result[:stages] << StageResult.new(
         name: 'acceptance_env',
@@ -173,16 +265,14 @@ module ModuleTester
         duration_seconds: 0,
         output: diag_lines.join("\n")
       )
+    end
 
-      pre_cmds = @options.fetch(:pre_acceptance_commands, [])
-      pre_cmds.each_with_index do |cmd, idx|
-        stage = @stage.run_stage("pre_acceptance_setup_#{idx}", ['bash', '-c', cmd], module_dir, acceptance_env)
-        result[:stages] << stage
-        return if stage.status != 'passed'
-      end
+    def github_run_url
+      repo = ENV.fetch('GITHUB_REPOSITORY', '').strip
+      run_id = ENV.fetch('GITHUB_RUN_ID', '').strip
+      return nil if repo.empty? || run_id.empty?
 
-      result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
-      result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
+      "https://api.github.com/repos/#{repo}/actions/runs/#{run_id}"
     end
 
     def probe_runtime_versions(module_dir, env, stage_name)

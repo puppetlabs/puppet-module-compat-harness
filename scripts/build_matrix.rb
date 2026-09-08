@@ -7,10 +7,15 @@
 #   ruby scripts/build_matrix.rb '[ {"repo":"..."} ]'    # uses inline override
 #
 # Outputs a single JSON object to stdout with keys:
-#   unit_matrix       — array of unit test matrix entries
-#   acceptance_matrix — array of acceptance test matrix entries
-#   has_unit          — "true" or "false"
-#   has_acceptance    — "true" or "false"
+#   unit_matrix          — array of unit test matrix entries
+#   acceptance_matrix    — array of Docker-provisioner acceptance matrix entries
+#   vm_acceptance_matrix — array of GCP-provisioner acceptance matrix entries
+#                          (docs/vm-based-acceptance-testing.md §4 — run as a
+#                          separate CI job, permanently, not folded into
+#                          acceptance_matrix; see that doc for why)
+#   has_unit             — "true" or "false"
+#   has_acceptance       — "true" or "false"
+#   has_vm_acceptance    — "true" or "false"
 #
 # The has_* flags exist because GitHub Actions treats an empty matrix vector as a
 # hard workflow error ("Matrix vector 'module' does not contain any values"), not
@@ -48,6 +53,7 @@ end
 
 unit = []
 acceptance = []
+vm_acceptance = []
 
 modules.each do |m|
   repo = m.fetch('repo')
@@ -80,7 +86,9 @@ modules.each do |m|
 
     target_name = target.fetch('name')
     target_id = target_name.gsub(/[^a-zA-Z0-9_.-]+/, '-')
-    acceptance << {
+    provisioner = target.fetch('provisioner', 'docker')
+
+    common = {
       'repo' => repo,
       'ref' => ref,
       'id' => id,
@@ -89,18 +97,29 @@ modules.each do |m|
       'lane' => 'acceptance',
       'target' => target_name,
       'target_id' => target_id,
-      'setfile' => target.fetch('setfile'),
-      'docker_mode' => target.fetch('docker_mode', 'sshd'),
+      'provisioner' => provisioner,
       'install_puppetserver' => target.fetch('install_puppetserver', false),
-      'setup_commands' => target.fetch('setup_commands', []),
-      'pre_acceptance_commands' => target.fetch('pre_acceptance_commands', [])
+      'pre_acceptance_commands' => target.fetch('pre_acceptance_commands', []),
+      'beaker_env' => target.fetch('beaker_env', {})
     }
+
+    if provisioner == 'gcp'
+      vm_acceptance << common.merge('image' => target.fetch('image'))
+    else
+      acceptance << common.merge(
+        'setfile' => target.fetch('setfile'),
+        'docker_mode' => target.fetch('docker_mode', 'sshd'),
+        'setup_commands' => target.fetch('setup_commands', [])
+      )
+    end
   end
 end
 
 puts JSON.generate({
   'unit_matrix' => unit,
   'acceptance_matrix' => acceptance,
+  'vm_acceptance_matrix' => vm_acceptance,
   'has_unit' => (!unit.empty?).to_s,
-  'has_acceptance' => (!acceptance.empty?).to_s
+  'has_acceptance' => (!acceptance.empty?).to_s,
+  'has_vm_acceptance' => (!vm_acceptance.empty?).to_s
 })
