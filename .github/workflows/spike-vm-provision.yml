@@ -8,10 +8,17 @@ name: "[SPIKE] VM provisioning smoke test"
 # round-trip succeeds, before any runner code is written.
 #
 # No secrets, no credentials, no new permissions are required — see docs/
-# vm-based-acceptance-testing.md §2.1. Manual dispatch only.
+# vm-based-acceptance-testing.md §2.1.
 #
-# Delete this file (and this branch) once the spike is validated; it exists
-# to be thrown away, not merged into main.
+# Triggers: workflow_dispatch (for manual re-runs once this is registered on
+# main) AND pull_request (so opening a same-repo PR from this branch fires it
+# immediately, without needing the workflow registered on the default branch
+# first — GitHub Actions' dispatch API only resolves workflow_dispatch
+# definitions from the default branch, but pull_request is a native event
+# that uses the head branch's own workflow file for same-repo PRs).
+#
+# Delete this file (and this branch, and its PR) once the spike is validated;
+# it exists to be thrown away, not merged into main.
 
 on:
   workflow_dispatch:
@@ -20,6 +27,9 @@ on:
         description: "GCP image to provision"
         required: false
         default: "rocky-linux-cloud/rocky-linux-9"
+  pull_request:
+    paths:
+      - ".github/workflows/spike-vm-provision.yml"
 
 permissions:
   contents: read
@@ -33,7 +43,7 @@ jobs:
       - name: Provision a VM via the DevX provision service
         id: provision
         env:
-          IMAGE: ${{ github.event.inputs.image }}
+          IMAGE: ${{ github.event.inputs.image || 'rocky-linux-cloud/rocky-linux-9' }}
           RUN_URL: "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         run: |
           set -euo pipefail
