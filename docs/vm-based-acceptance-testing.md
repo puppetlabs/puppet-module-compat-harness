@@ -534,11 +534,31 @@ Run these before writing runner code. Spike 3 is gating.
 |---|---|---|
 | 1 | Puppet Core repo behaviour on a GCP RHEL/Rocky image | The Dockerfile logic assumes a clean `dnf`; GCP images ship a modified `google-cloud.repo` (the bootstrap scripts already set `gpgcheck=0` and `skip_if_unavailable=1` on it) |
 | 2 | Do Beaker's `validate` / `configure` prebuilt steps behave against a `hypervisor: none` host? | They may attempt package installs or key syncing against a host we have already prepared. `BEAKER_validate=false` / `BEAKER_configure=false` are the escape hatches |
-| 3 | **End-to-end provision → teardown against the live facade from a CI run on this repo** | Validates the single assumption everything rests on — that the owner clause admits this repo for `schedule` / `workflow_dispatch`. Cheap: one workflow-dispatch run |
+| 3 | **End-to-end provision → teardown against the live facade from a CI run on this repo** | ✅ **Validated 2026-09-08.** See below |
 | 4 | Teardown reliability across failure modes | See §9's expanded breakdown. In short: a cancelled workflow reaches a terminal GitHub run status quickly, so the reaper catches it soon; a GitHub-side outage defeats the reaper's GitHub-status check specifically, leaving the age-based 3h sweep (which needs no GitHub API call at all) as the only guarantee; **a GCP-side failure partway through provisioning itself is an open question with no verified answer** — ask DevX directly rather than assume |
-| 5 | Wall-clock cost of provision + agent install | Determines whether VM targets can ride the normal nightly cadence |
+| 5 | Wall-clock cost of provision + agent install | Provisioning alone measured at ~35s (spike 3, below). Agent install is not yet measured — that requires the actual install script from §2.5/§3.1, which doesn't exist until implementation starts |
 | 6 | Agree a concurrency ceiling with DevX | VMs land in the shared `ia-content` project with no service-side quota. Pick `max-parallel` with their input rather than discovering the ceiling by exhausting it |
 | 7 | Ask DevX the reaper's actual polling interval | `SCHEDULER_TIME` is configured server-side and isn't visible from the public source reviewed here. The 3h TTL is a hard upper bound regardless, but knowing the typical reaper latency matters for judging how much orphaned-VM exposure a cancelled run actually has in practice |
+
+#### Spike 3 result
+
+Run against the live facade from a `pull_request`-triggered job on this repo
+(no `workflow_dispatch` registration needed — see the throwaway workflow's own
+comments for why): [run 34230684096](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34230684096).
+
+| Step | Result |
+|---|---|
+| Provision | `HTTP 200` in ~35s. Returned `ssh_nodes` target `34.187.171.44`, `platform: rocky-linux-cloud/rocky-linux-9`, `uuid: d46c5a4e-2af7-43b4-9f8c-a327345c6ba9` — inventory shape matches §2.2 exactly |
+| SSH port check (15s probe, non-fatal by design) | Did not answer within the window — expected for a VM ~35s post-boot, not a signal of a problem |
+| Explicit teardown | `DELETE /v1/provision {"uuid": ...}` → `HTTP 200` in ~43s |
+| Total wall-clock | ~95 seconds, provision request to confirmed teardown |
+
+**The owner-clause authorization works exactly as the source review predicted**
+— no credentials, no `id-token`, no special permissions; a plain `POST` from a
+PR-triggered job in `puppetlabs/puppet-module-compat-harness` was accepted.
+This closes the single assumption the rest of the design depended on. The
+throwaway workflow and its branch/PR (#21) have been deleted; nothing from the
+spike is retained beyond this result and the run link.
 
 ### 7.3 Phase 1 — pilot: `puppet-swap_file` on `el-9`
 
@@ -758,7 +778,7 @@ from this evidence next time rather than from scratch.
 
 | Phase | Status |
 |---|---|
-| Phase 0 — spikes (§7.2) | Not started |
+| Phase 0 — spikes (§7.2) | In progress — spike 3 (gating) validated 2026-09-08 |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | Not started |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | Not started |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
