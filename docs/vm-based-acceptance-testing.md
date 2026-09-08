@@ -365,6 +365,15 @@ Two structural reasons, plus two conveniences:
    burst, trading a longer wall-clock for that one CI run against not being the
    noisy neighbor on infrastructure the harness doesn't own. The actual cap is
    spike 6 (§7.2) — a number to set with DevX, not to guess here.
+
+   **Update, spike 6 closed 2026-09-08:** DevX confirmed the harness's
+   expected load is well within existing capacity. That does not relax this
+   section — their explicit guidance alongside that confirmation was to keep
+   load as minimal as possible regardless (VMs cost the company money) and to
+   prefer Docker over GCP VMs wherever both can do the job. `max-parallel`
+   stays; pick a concrete value as part of Phase 1 implementation rather than
+   deferring it further, since "capacity isn't the constraint" removes the
+   only reason that number was still open.
 3. *(convenience)* The "Seed Beaker host mappings" step is skipped cleanly
    rather than conditionally. It parses `HOSTS.*.ip` expecting `127.0.0.1` and
    appends to `/etc/hosts`; Beaker reaches a VM by `ip` directly, so it is
@@ -498,6 +507,18 @@ The rationale is capacity and clarity: the VM path exists to close a coverage
 gap, and re-running already-green modules on VMs would multiply load on a shared
 project for a marginal signal.
 
+**This is now DevX's stated preference too, not just an internal one.**
+Confirmed directly by Lukas (2026-09-08, closing spike 6 — §7.2): the
+service's capacity is well within what the harness needs, but the explicit
+guidance was still to keep the harness's load on it as minimal as possible
+and to prefer Docker over GCP VMs wherever both can do the job, since VMs cost
+the company money regardless of spare capacity. That is exactly what this
+section already enforces, plus the lean-matrix behavior in §4 (change
+detection only re-runs what needs it) and the phasing in §7 (VM-viable
+modules are triaged in, not swept in wholesale). No design change follows
+from this — it is confirmation that the constraint was the right one to build
+in from the start, not something bolted on after the fact.
+
 ---
 
 ## 7. Target set and phasing
@@ -535,10 +556,10 @@ Run these before writing runner code. Spike 3 is gating.
 | 1 | Puppet Core repo behaviour on a GCP RHEL/Rocky image | ✅ **Validated 2026-09-08.** See below |
 | 2 | Do Beaker's `validate` / `configure` prebuilt steps behave against a `hypervisor: none` host? | ✅ **Validated 2026-09-08.** See below |
 | 3 | **End-to-end provision → teardown against the live facade from a CI run on this repo** | ✅ **Validated 2026-09-08.** See below |
-| 4 | Teardown reliability across failure modes | See §9's expanded breakdown. In short: a cancelled workflow reaches a terminal GitHub run status quickly, so the reaper catches it soon; a GitHub-side outage defeats the reaper's GitHub-status check specifically, leaving the age-based 3h sweep (which needs no GitHub API call at all) as the only guarantee. **A GCP-side failure partway through provisioning was previously an open question with no verified answer — it has now been observed once (below), and it remains unresolved**: whether the timed-out request left an orphaned VM is still unknown to the harness and can only be answered by DevX |
+| 4 | Teardown reliability across failure modes | ✅ **Closed 2026-09-08 — DevX confirmed reaping is fine for this usage.** The technical breakdown in §9 (reaper vs. 3h TTL, which covers which failure mode) stands as documented; DevX's confirmation addresses the residual "did the 504 orphan a VM" concern operationally rather than by giving us a technical guarantee we could verify ourselves — reasonable to close on that basis given the 3h TTL is the true backstop regardless |
 | 5 | Wall-clock cost of provision + agent install | ✅ **Measured 2026-09-08.** See spike 1 below — full provision-to-Puppet-Core-installed is ~90s–2min |
-| 6 | Agree a concurrency ceiling with DevX | VMs land in the shared `ia-content` project with no service-side quota. Pick `max-parallel` with their input rather than discovering the ceiling by exhausting it |
-| 7 | Ask DevX the reaper's actual polling interval | `SCHEDULER_TIME` is configured server-side and isn't visible from the public source reviewed here. The 3h TTL is a hard upper bound regardless, but knowing the typical reaper latency matters for judging how much orphaned-VM exposure a cancelled run actually has in practice |
+| 6 | Agree a concurrency ceiling with DevX | ✅ **Closed 2026-09-08.** DevX (Lukas) confirmed they handle substantially more load than the harness will add, and expect no capacity issue. **This is not a license to be unbounded** — DevX's own framing was to keep harness load as minimal as possible regardless, since VMs cost the company money, and to prefer Docker over GCP VMs wherever both can do the job. See the resulting design update below and in §6.1/§4 |
+| 7 | Ask DevX the reaper's actual polling interval | ✅ **Closed 2026-09-08** — folded into spike 4's resolution above; DevX confirmed reaping behavior is fine for this usage. The exact interval remains unknown but is no longer being treated as a blocking question |
 
 #### Spike 3 result
 
@@ -640,6 +661,19 @@ The inject-then-scrub credential pattern survives the move from a Docker
 BuildKit secret mount to an SSH-piped script without modification — the
 security property (`docker.rb`'s "never persists in a layer") maps directly
 onto "never persists in a file after the script exits" for the VM case.
+
+#### Phase 0 is complete
+
+All seven spikes are closed as of 2026-09-08. Five were resolved by direct
+testing against the live service (1, 2, 3, 5, and the technical half of 4);
+the remaining two required DevX's own operational visibility rather than more
+harness-side testing, and are now closed by direct confirmation from Lukas
+(DevX): the harness's expected load is well within what the service already
+handles day to day, and reaping/cleanup behavior is not a concern for this
+usage pattern. Nothing here overturns the architecture in §2–§6 — it confirms
+it. One explicit piece of guidance did come out of that conversation, though,
+which sharpens (rather than changes) an existing decision — see the update to
+§6.1 below, and the note added to §4.
 
 ### 7.3 Phase 1 — pilot: `puppet-swap_file` on `el-9`
 
@@ -859,7 +893,7 @@ from this evidence next time rather than from scratch.
 
 | Phase | Status |
 |---|---|
-| Phase 0 — spikes (§7.2) | In progress — spikes 1, 2, 3 (gating), and 5 validated/measured 2026-09-08. Remaining: 4 (partially — one real 504 observed, orphan risk unresolved), 6, 7 — all need DevX's input, not further harness-side testing |
+| Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | Not started |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | Not started |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
