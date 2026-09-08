@@ -23,6 +23,7 @@ module ModuleTester
           pdk_version
           provision_vm
           prepare_vm_keygen
+          prepare_vm_wait_ssh
           prepare_vm_escalate
           prepare_vm_verify_root
           install_puppet_core_vm

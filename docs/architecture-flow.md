@@ -320,11 +320,13 @@ followed by best-effort teardown:
    credentials of any kind; authorization is server-side, keyed off the
    calling GitHub run URL. Returns a VM reachable only as a non-root `litmus`
    user with a service-issued, per-request password.
-2. **`prepare_vm`** (three sub-stages: `prepare_vm_keygen`,
-   `prepare_vm_escalate`, `prepare_vm_verify_root`): generates an ephemeral
-   SSH keypair for this run only, uses the litmus password once to install
-   the public half as a root-authorized key, then discards the password —
-   it never reaches the `acceptance` stage or any env hash.
+2. **`prepare_vm`** (four sub-stages: `prepare_vm_keygen`,
+   `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`):
+   generates an ephemeral SSH keypair for this run only; retries for up to
+   100s since a freshly-provisioned VM is not immediately reachable; uses
+   the litmus password once to install the public half as a root-authorized
+   key, then discards the password — it never reaches the `acceptance`
+   stage or any env hash.
 3. **`install_puppet_core_vm`**: runs the *same* install-and-scrub commands
    `Docker.puppet_core_agent_install_lines` defines for the Dockerfile path
    (shared, not duplicated), piped over SSH stdin with the API key
@@ -369,7 +371,7 @@ After all stages complete, the `Classifier` assigns one of these states:
 The classifier evaluates conditions in this order, stopping at the first match:
 
 1. Auth status is not `ok` → **`harness_error`**
-2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`) → **`harness_error`**
+2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`) → **`harness_error`**
 3. Any non-bootstrap stage failed → **`not_compatible`** _(subject to downgrade overrides — see below)_
 4. Metadata reports the Puppet version as unsupported **and** `metadata_mode=fail` → **`not_compatible`**
 5. Metadata reports unsupported version (warn mode) → **`conditionally_compatible`**

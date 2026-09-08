@@ -63,6 +63,34 @@ module ModuleTester
       File.chmod(0o600, key_path)
       pubkey = File.read("#{key_path}.pub").strip
 
+      # A freshly-provisioned VM is not immediately reachable — its startup
+      # script (creating the litmus user, enabling password auth) needs a
+      # few seconds to a couple of minutes to finish. Retry up to 100s before
+      # attempting the real escalation, matching the wait loop validated in
+      # docs/vm-based-acceptance-testing.md's spike 1/2 workflows (an earlier
+      # omission of this loop here caused a real "connection timed out"
+      # failure on the first Phase 1 live-verification run).
+      wait_script = <<~WAITSCRIPT
+        set -uo pipefail
+        for i in $(seq 1 20); do
+          if sshpass -e ssh #{SSH_OPTS.join(' ')} #{Shellwords.escape("#{host.user}@#{host.ip}")} 'echo ok' 2>/dev/null | grep -q ok; then
+            echo "SSH auth succeeded after $((i * 5))s"
+            exit 0
+          fi
+          sleep 5
+        done
+        echo "Could not authenticate as #{host.user} within 100s" >&2
+        exit 1
+      WAITSCRIPT
+
+      wait_stage = @stage.run_stage(
+        'prepare_vm_wait_ssh',
+        ['bash', '-c', wait_script],
+        module_dir, { 'SSHPASS' => host.password },
+        extra_secrets: [host.password]
+      )
+      return [nil, wait_stage] unless wait_stage.status == 'passed'
+
       script = <<~REMOTESCRIPT
         set -euo pipefail
         sudo mkdir -p /root/.ssh
