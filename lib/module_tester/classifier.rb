@@ -27,6 +27,8 @@ module ModuleTester
           prepare_vm_escalate
           prepare_vm_verify_root
           install_puppet_core_vm
+          read_fact_overrides
+          write_fact_overrides
         ].include?(stage.name)
       end
       return 'harness_error' if harness_stage_failures

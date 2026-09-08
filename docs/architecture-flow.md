@@ -87,6 +87,7 @@ flowchart TD
                 PV["provision_vm<br/>POST provision service<br/>no credentials required — authorized by<br/>the calling GitHub run URL"]
                 PVM["prepare_vm<br/>escalate litmus user → root via an<br/>ephemeral SSH key; litmus password<br/>discarded once this returns"]
                 IPC["install_puppet_core_vm<br/>same install+scrub logic as Stage 1,<br/>piped over SSH — key never a<br/>subprocess argv element"]
+                WFO["write_fact_overrides (optional)<br/>rewrites dotted BEAKER_FACTER_ overrides<br/>as a correctly-nested facts.d file —<br/>voxpupuli-acceptance's own writer can't<br/>nest a dotted fact path"]
                 WSF["write_vm_setfile<br/>hypervisor: none · no secrets embedded"]
             end
             PACG["Pre-acceptance setup (optional)<br/>same mechanism as the Docker path"]
@@ -138,7 +139,7 @@ flowchart TD
     AK -- "no — FOSS fallback" --> FOSS --> CL
 
     PR -- "gcp" --> PV
-    PV --> PVM --> IPC --> WSF --> PACG --> ACCVM --> CL
+    PV --> PVM --> IPC --> WFO --> WSF --> PACG --> ACCVM --> CL
     PV -.->|"always, ensure-wrapped"| TD
 
     CL --> RP --> RS --> WS --> UA
@@ -332,7 +333,26 @@ followed by best-effort teardown:
    (shared, not duplicated), piped over SSH stdin with the API key
    interpolated directly into the script text — never a subprocess argv
    element on either host, so it cannot leak via `ps`.
-4. **`write_vm_setfile`**: emits a Beaker setfile with `hypervisor: none`,
+4. **`write_fact_overrides`** (optional, two sub-stages: `read_fact_overrides`,
+   `write_fact_overrides`): fixes a real gap in `acceptanceTarget.beaker_env`'s
+   `BEAKER_FACTER_<fact.path>` mechanism. `voxpupuli-acceptance`'s own
+   `Facts.write_beaker_facts_on` writes these as a **flat**, dotted-key
+   external fact file (`{"memory.system.total": "..."}`) — Facter's external
+   fact loader takes a JSON top-level key as a literal fact name and does not
+   split on `.`, so a dotted override never reaches a module reading the
+   nested `$facts['memory']['system']['total']`. Confirmed as a real,
+   silent no-op against a live run (`puppet-swap_file`, Sept 2026): the
+   module fell back to the VM's real memory and tried to build a swapfile
+   larger than the VM's disk. When `beaker_env` contains a dotted
+   `BEAKER_FACTER_*` key, `Vm#write_fact_overrides` reads the affected
+   fact's real structure (`facter -j <name>`), deep-merges the override in
+   (so untouched sibling values like `memory.swap.*` survive), and writes
+   the merged result to a distinctly-named facts.d file — leaving
+   `voxpupuli-acceptance`'s own (flat, functionally inert) file alone rather
+   than trying to race or suppress it. A module with only flat
+   `BEAKER_FACTER_*` overrides never triggers this — those already work via
+   the existing mechanism.
+5. **`write_vm_setfile`**: emits a Beaker setfile with `hypervisor: none`,
    the VM's IP, and a reference to the ephemeral key's *path* (never its
    contents) — no secrets embedded.
 
@@ -342,10 +362,10 @@ Finally **`teardown_vm`** issues `DELETE` against the provision service from
 an `ensure` block, so it fires on every exit path — including a VM that only
 got partway through setup. A failed teardown is not a harness or
 compatibility concern; it falls back to the service's own run-status reaper
-and hard 3-hour VM TTL. `provision_vm`, the three `prepare_vm_*` stages, and
-`install_puppet_core_vm` are all classified as harness-error stages (see
-Result Classification below) — an infrastructure flake must never read as a
-module incompatibility.
+and hard 3-hour VM TTL. `provision_vm`, the three `prepare_vm_*` stages,
+`install_puppet_core_vm`, and `read_fact_overrides`/`write_fact_overrides`
+are all classified as harness-error stages (see Result Classification
+below) — an infrastructure flake must never read as a module incompatibility.
 
 #### FOSS Fallback
 
@@ -371,7 +391,7 @@ After all stages complete, the `Classifier` assigns one of these states:
 The classifier evaluates conditions in this order, stopping at the first match:
 
 1. Auth status is not `ok` → **`harness_error`**
-2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`) → **`harness_error`**
+2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`, `read_fact_overrides`, `write_fact_overrides`) → **`harness_error`**
 3. Any non-bootstrap stage failed → **`not_compatible`** _(subject to downgrade overrides — see below)_
 4. Metadata reports the Puppet version as unsupported **and** `metadata_mode=fail` → **`not_compatible`**
 5. Metadata reports unsupported version (warn mode) → **`conditionally_compatible`**

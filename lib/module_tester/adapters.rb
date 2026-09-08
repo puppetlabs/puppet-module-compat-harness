@@ -238,6 +238,17 @@ module ModuleTester
       result[:stages] << install_stage
       return [nil, uuid] if install_stage.status != 'passed'
 
+      # A dotted BEAKER_FACTER_<fact.path> override (acceptanceTarget.beaker_env)
+      # needs a correctly-nested facts.d file written directly — see
+      # Vm::FACT_OVERRIDE_FILE for why voxpupuli-acceptance's own env-var
+      # mechanism can't do this on its own. No-op (nil) when beaker_env has
+      # no dotted fact overrides.
+      fact_override_stages = @vm.write_fact_overrides(host, key_path, @options.fetch(:beaker_env, {}))
+      if fact_override_stages
+        result[:stages].concat(fact_override_stages)
+        return [nil, uuid] if fact_override_stages.any? { |stage| stage.status != 'passed' }
+      end
+
       acceptance_env = env.dup
       acceptance_env['BEAKER_HYPERVISOR'] = 'none'
       acceptance_env['BEAKER_SETFILE'] = @vm.write_vm_setfile(host, key_path, platform)

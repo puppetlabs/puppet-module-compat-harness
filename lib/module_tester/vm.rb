@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'yaml'
+require 'json'
 require 'shellwords'
 
 module ModuleTester
@@ -15,6 +16,26 @@ module ModuleTester
   # the Beaker setfile that points at the result.
   class Vm
     SSH_OPTS = %w[-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10].freeze
+
+    # Full path, not a bare command — the EL install path (unlike Debian/Ubuntu,
+    # see Docker.puppet_core_agent_install_lines) does not symlink facter onto
+    # a default PATH, and a non-interactive SSH command does not source
+    # /etc/profile.d. Beaker itself always calls out with full paths for the
+    # same reason.
+    FACTER_BIN = '/opt/puppetlabs/bin/facter'
+
+    # A BEAKER_FACTER_<fact> override (config/modules.schema.json's
+    # acceptanceTarget.beaker_env) is consumed by voxpupuli-acceptance's
+    # Facts.write_beaker_facts_on, which writes a FLAT, dotted-key external
+    # fact file (e.g. {"memory.system.total": "300 MiB"}). Facter's external
+    # fact loader takes JSON top-level keys as literal fact names — it does
+    # not split on "." — so a dotted key like "memory.system.total" never
+    # reaches the nested $facts['memory']['system']['total'] a module
+    # actually reads. Confirmed against a live run (puppet-swap_file, Sept
+    # 2026): the override was silently a no-op and the module fell back to
+    # the VM's real memory. For a genuinely nested fact, the harness has to
+    # write the correctly-nested structure itself.
+    FACT_OVERRIDE_FILE = '/etc/facter/facts.d/harness-fact-overrides.json'
 
     # GCP image family -> Beaker platform string (design doc §3.1). Small and
     # mechanical by design — see the doc for why this doesn't need YAML
@@ -147,6 +168,59 @@ module ModuleTester
       )
     end
 
+    # Fixes the BEAKER_FACTER_<dotted.fact.path> nesting gap described above
+    # for FACT_OVERRIDE_FILE. Only dotted (structured) overrides need this —
+    # a flat override (e.g. BEAKER_FACTER_role=foo) already works correctly
+    # through voxpupuli-acceptance's own mechanism and is left alone, so this
+    # returns nil (no stage) when beaker_env has no dotted-fact keys.
+    #
+    # Reads the real value of each affected top-level fact first and merges
+    # the override into it, rather than replacing the fact outright — an
+    # external fact's weight (10,000) beats every core resolver for the whole
+    # fact, so writing only the overridden leaf would silently blank out
+    # every sibling (e.g. memory.swap.*, memory.system.available) a module
+    # might also read. Returns an Array of StageResult (1 or 2 entries) so
+    # the caller can log/append all of them, or nil if there was nothing to do.
+    def write_fact_overrides(host, key_path, beaker_env)
+      overrides = parse_nested_fact_overrides(beaker_env)
+      return nil if overrides.empty?
+
+      top_names = overrides.keys
+      read_stage = @stage.run_stage(
+        'read_fact_overrides',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", FACTER_BIN, '-j', *top_names],
+        @workspace_dir, {}
+      )
+      return [read_stage] if read_stage.status != 'passed'
+
+      current = begin
+        JSON.parse(read_stage.output.to_s)
+      rescue JSON::ParserError
+        {}
+      end
+
+      merged = overrides.each_with_object({}) do |(name, override), acc|
+        base = current[name].is_a?(Hash) ? current[name] : {}
+        acc[name] = deep_merge_facts(base, override)
+      end
+
+      script = <<~REMOTESCRIPT
+        set -euo pipefail
+        mkdir -p #{File.dirname(FACT_OVERRIDE_FILE)}
+        cat > #{FACT_OVERRIDE_FILE} <<'HARNESS_FACT_OVERRIDE_JSON'
+        #{JSON.generate(merged)}
+        HARNESS_FACT_OVERRIDE_JSON
+      REMOTESCRIPT
+
+      write_stage = @stage.run_stage(
+        'write_fact_overrides',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'bash', '-s'],
+        @workspace_dir, {},
+        stdin: script
+      )
+      [read_stage, write_stage]
+    end
+
     # Writes a Beaker setfile pointing at the prepared VM. Unlike the Docker
     # path's write_clean_setfile, there is no base setfile to start from —
     # everything Beaker needs (platform, ip, key path) is derived directly
@@ -177,6 +251,43 @@ module ModuleTester
       out_path = File.join(out_dir, "gcp-#{host.uuid}.yml")
       File.write(out_path, YAML.dump(setfile))
       File.expand_path(out_path)
+    end
+
+    private
+
+    # {"BEAKER_FACTER_memory.system.total" => "300 MiB"} ->
+    # {"memory" => {"system" => {"total" => "300 MiB"}}}
+    def parse_nested_fact_overrides(beaker_env)
+      overrides = {}
+      beaker_env.each do |key, value|
+        match = key.match(/\ABEAKER_FACTER_(.+)\z/)
+        next unless match
+
+        segments = match[1].split('.')
+        next if segments.length < 2
+
+        top = segments.first
+        overrides[top] ||= {}
+        deep_set_fact_path!(overrides[top], segments[1..], value)
+      end
+      overrides
+    end
+
+    def deep_set_fact_path!(hash, segments, value)
+      if segments.length == 1
+        hash[segments.first] = value
+      else
+        hash[segments.first] ||= {}
+        deep_set_fact_path!(hash[segments.first], segments[1..], value)
+      end
+    end
+
+    def deep_merge_facts(base, override)
+      merged = base.is_a?(Hash) ? base.dup : {}
+      override.each do |key, value|
+        merged[key] = value.is_a?(Hash) ? deep_merge_facts(merged[key], value) : value
+      end
+      merged
     end
   end
 end
