@@ -1,0 +1,277 @@
+name: "[SPIKE] Beaker validate/configure vs hypervisor: none"
+
+# THROWAWAY VALIDATION WORKFLOW — not part of the production pipeline.
+#
+# Validates Phase 0, spike 2 of docs/vm-based-acceptance-testing.md: confirms
+# Beaker's own prebuilt validate/configure steps behave sanely against a
+# `hypervisor: none` host we have already prepared ourselves, using the
+# service's litmus credentials to escalate to root via an ephemeral SSH key
+# (prototyping §2.4/§3.1's prepare_vm stage), then running a real
+# `bundle exec rake beaker` against it with a PUBLIC Puppet collection.
+#
+# Deliberately uses BEAKER_PUPPET_COLLECTION=puppet8 (public, no credential)
+# rather than the private Puppet Core collection — this spike is about
+# Beaker/host-prep interaction, not the Puppet Core install logic (that's
+# spike 1, a separate exercise once this one is settled).
+#
+# No PUPPET_CORE_API_KEY or any other secret is used anywhere in this file.
+#
+# Delete this file (and this branch, and its PR) once the spike is validated;
+# it exists to be thrown away, not merged into main.
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - ".github/workflows/spike-beaker-validate.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  spike:
+    name: "Provision, root-escalate, run Beaker, teardown"
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Provision a VM via the DevX provision service
+        id: provision
+        env:
+          RUN_URL: "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        run: |
+          set -euo pipefail
+          body=$(python3 -c "
+          import json, os
+          print(json.dumps({
+              'url': os.environ['RUN_URL'],
+              'VMs': [{'cloud': None, 'region': None, 'zone': None, 'images': ['rocky-linux-cloud/rocky-linux-9']}],
+          }))
+          ")
+
+          http_code=$(curl -sS -o response.yaml -w '%{http_code}' \
+            -X POST 'https://facade-release-6f3kfepqcq-ew.a.run.app/v1/provision' \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d "$body")
+
+          echo "HTTP status: $http_code"
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Provisioning request failed with HTTP $http_code"
+            cat response.yaml || true
+            exit 1
+          fi
+
+          python3 - <<'PYEOF'
+          import sys
+          import yaml
+
+          with open('response.yaml') as f:
+              data = yaml.safe_load(f)
+
+          target = None
+          for group in (data or {}).get('groups', []):
+              for t in group.get('targets', []):
+                  target = t
+                  break
+              if target:
+                  break
+
+          if not target:
+              print('::error::No target found in returned inventory')
+              sys.exit(1)
+
+          ssh_cfg = target.get('config', {}).get('ssh', {})
+          with open('provision_uuid.txt', 'w') as f:
+              f.write(target.get('facts', {}).get('uuid', ''))
+          with open('provision_ip.txt', 'w') as f:
+              f.write(target['uri'])
+          with open('provision_user.txt', 'w') as f:
+              f.write(ssh_cfg.get('user', ''))
+          with open('provision_pass.txt', 'w') as f:
+              f.write(ssh_cfg.get('password', ''))
+
+          print(f"::notice::Provisioned {target['uri']} user={ssh_cfg.get('user')}")
+          PYEOF
+
+          {
+            echo "uuid=$(cat provision_uuid.txt)"
+            echo "ip=$(cat provision_ip.txt)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Escalate to root via an ephemeral SSH key
+        id: prepare
+        if: always() && steps.provision.outputs.ip != ''
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq && sudo apt-get install -y -qq sshpass
+
+          IP="${{ steps.provision.outputs.ip }}"
+          LITMUS_USER=$(cat provision_user.txt)
+          LITMUS_PASS=$(cat provision_pass.txt)
+
+          ssh-keygen -t ed25519 -N '' -f ./spike_key -q
+          chmod 600 ./spike_key
+
+          SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10"
+
+          echo "Waiting for SSH auth to become available as $LITMUS_USER..."
+          ready=0
+          for i in $(seq 1 20); do
+            if sshpass -p "$LITMUS_PASS" ssh $SSH_OPTS "$LITMUS_USER@$IP" 'echo ok' 2>/dev/null | grep -q ok; then
+              ready=1
+              echo "SSH auth succeeded after $((i * 5))s"
+              break
+            fi
+            sleep 5
+          done
+          if [ "$ready" != "1" ]; then
+            echo "::error::Could not authenticate as $LITMUS_USER within 100s"
+            exit 1
+          fi
+
+          PUBKEY=$(cat ./spike_key.pub)
+          sshpass -p "$LITMUS_PASS" ssh $SSH_OPTS "$LITMUS_USER@$IP" "
+            sudo mkdir -p /root/.ssh &&
+            echo '$PUBKEY' | sudo tee -a /root/.ssh/authorized_keys > /dev/null &&
+            sudo chmod 700 /root/.ssh &&
+            sudo chmod 600 /root/.ssh/authorized_keys &&
+            sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config &&
+            sudo systemctl restart sshd
+          "
+
+          echo "Verifying root SSH via the ephemeral key..."
+          if ! ssh $SSH_OPTS -i ./spike_key "root@$IP" 'whoami' | grep -q root; then
+            echo "::error::Root SSH via ephemeral key failed after escalation"
+            exit 1
+          fi
+          echo "::notice::Root SSH via ephemeral key confirmed"
+
+      - name: Scaffold a minimal throwaway fixture module
+        if: always() && steps.prepare.outcome == 'success'
+        run: |
+          set -euo pipefail
+          mkdir -p fixture/manifests fixture/spec/acceptance
+          cd fixture
+
+          cat > metadata.json <<'EOF'
+          {
+            "name": "spike-fixture",
+            "version": "0.1.0",
+            "author": "spike",
+            "summary": "throwaway fixture for spike 2",
+            "license": "Apache-2.0",
+            "source": "n/a",
+            "dependencies": [],
+            "operatingsystem_support": [
+              { "operatingsystem": "RedHat", "operatingsystemrelease": ["9"] }
+            ],
+            "requirements": [{ "name": "puppet", "version_requirement": ">= 7.0.0 < 9.0.0" }]
+          }
+          EOF
+
+          cat > manifests/init.pp <<'EOF'
+          class fixture {
+            notify { 'hello from spike 2': }
+          }
+          EOF
+
+          cat > Gemfile <<'EOF'
+          source 'https://rubygems.org'
+          gem 'voxpupuli-acceptance', '~> 4.4'
+          gem 'rake'
+          EOF
+
+          cat > Rakefile <<'EOF'
+          require 'voxpupuli/acceptance/rake'
+          EOF
+
+          cat > spec/spec_helper_acceptance.rb <<'EOF'
+          require 'voxpupuli/acceptance/spec_helper_acceptance'
+          configure_beaker(modules: :metadata)
+          EOF
+
+          cat > spec/acceptance/basic_spec.rb <<'EOF'
+          require 'spec_helper_acceptance'
+
+          describe 'fixture' do
+            it 'applies without error' do
+              apply_manifest('include fixture', catch_failures: true)
+            end
+
+            it 'is idempotent' do
+              apply_manifest('include fixture', catch_changes: true)
+            end
+          end
+          EOF
+
+          cat > ../spike.setfile.yml <<EOF
+          HOSTS:
+            gcp-spike:
+              platform: el-9-x86_64
+              hypervisor: none
+              ip: ${{ steps.provision.outputs.ip }}
+              user: root
+              ssh:
+                keys:
+                  - $(realpath ../spike_key)
+                paranoid: false
+          CONFIG:
+            log_level: verbose
+            type: foss
+          EOF
+
+          echo "--- setfile ---"
+          cat ../spike.setfile.yml
+
+      - name: Set up Ruby
+        if: always() && steps.prepare.outcome == 'success'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+
+      - name: Run bundle exec rake beaker (public collection, no secret)
+        id: beaker
+        if: always() && steps.prepare.outcome == 'success'
+        working-directory: fixture
+        env:
+          BEAKER_SETFILE: "../spike.setfile.yml"
+          BEAKER_PUPPET_COLLECTION: "puppet8"
+          BEAKER_HYPERVISOR: "none"
+          BEAKER_DESTROY: "no"
+        run: |
+          set -euo pipefail
+          bundle install --quiet
+          set +e
+          bundle exec rake beaker
+          code=$?
+          set -e
+          echo "beaker_exit=$code" >> "$GITHUB_OUTPUT"
+          exit "$code"
+
+      - name: Tear down the VM
+        if: always() && steps.provision.outputs.uuid != ''
+        env:
+          UUID: ${{ steps.provision.outputs.uuid }}
+        run: |
+          set -euo pipefail
+          body=$(python3 -c "import json, os; print(json.dumps({'uuid': os.environ['UUID']}))")
+
+          http_code=$(curl -sS -o teardown_response.txt -w '%{http_code}' \
+            -X DELETE 'https://facade-release-6f3kfepqcq-ew.a.run.app/v1/provision' \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d "$body")
+
+          echo "Teardown HTTP status: $http_code"
+          cat teardown_response.txt || true
+
+          if [ "$http_code" != "200" ]; then
+            echo "::warning::Teardown request returned non-200 — relying on the service's run-status reaper / 3h TTL as backstop"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Spike 2 result" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Root escalation: ${{ steps.prepare.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Beaker run: ${{ steps.beaker.outcome }}" >> "$GITHUB_STEP_SUMMARY"
