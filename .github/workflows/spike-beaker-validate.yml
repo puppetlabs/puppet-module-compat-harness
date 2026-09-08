@@ -171,7 +171,10 @@ jobs:
 
           cat > manifests/init.pp <<'EOF'
           class fixture {
-            notify { 'hello from spike 2': }
+            file { '/tmp/spike-fixture-marker':
+              ensure  => file,
+              content => "hello from spike 2\n",
+            }
           }
           EOF
 
