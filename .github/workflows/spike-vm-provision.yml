@@ -1,0 +1,145 @@
+name: "[SPIKE] VM provisioning smoke test"
+
+# THROWAWAY VALIDATION WORKFLOW — not part of the production pipeline.
+#
+# Validates Phase 0, spike 3 of docs/vm-based-acceptance-testing.md: confirms
+# the DevX GCP provision service accepts requests originating from THIS repo
+# (the owner-clause authorization check) and that a full provision -> teardown
+# round-trip succeeds, before any runner code is written.
+#
+# No secrets, no credentials, no new permissions are required — see docs/
+# vm-based-acceptance-testing.md §2.1. Manual dispatch only.
+#
+# Delete this file (and this branch) once the spike is validated; it exists
+# to be thrown away, not merged into main.
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "GCP image to provision"
+        required: false
+        default: "rocky-linux-cloud/rocky-linux-9"
+
+permissions:
+  contents: read
+
+jobs:
+  spike:
+    name: "Provision + teardown one VM"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Provision a VM via the DevX provision service
+        id: provision
+        env:
+          IMAGE: ${{ github.event.inputs.image }}
+          RUN_URL: "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        run: |
+          set -euo pipefail
+          echo "Requesting image: $IMAGE"
+          echo "Run URL sent to the service: $RUN_URL"
+
+          body=$(python3 -c "
+          import json, os
+          print(json.dumps({
+              'url': os.environ['RUN_URL'],
+              'VMs': [{'cloud': None, 'region': None, 'zone': None, 'images': [os.environ['IMAGE']]}],
+          }))
+          ")
+
+          http_code=$(curl -sS -o response.yaml -w '%{http_code}' \
+            -X POST 'https://facade-release-6f3kfepqcq-ew.a.run.app/v1/provision' \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d "$body")
+
+          echo "HTTP status: $http_code"
+          echo "--- raw response (password redacted) ---"
+          sed -e 's/password: .*/password: "[redacted]"/' response.yaml || true
+
+          if [ "$http_code" != "200" ]; then
+            echo "::error::Provisioning request failed with HTTP $http_code"
+            exit 1
+          fi
+
+          python3 - <<'PYEOF'
+          import sys
+          import yaml
+
+          with open('response.yaml') as f:
+              data = yaml.safe_load(f)
+
+          if not data or not data.get('groups'):
+              print('::error::Empty or malformed inventory returned')
+              sys.exit(1)
+
+          target = None
+          uuid = None
+          for group in data['groups']:
+              for t in group.get('targets', []):
+                  target = t
+                  uuid = t.get('facts', {}).get('uuid')
+                  break
+              if target:
+                  break
+
+          if not target or not uuid:
+              print('::error::No target/uuid found in returned inventory')
+              sys.exit(1)
+
+          print(f"::notice::Provisioned {target['uri']} platform={target.get('facts', {}).get('platform')} uuid={uuid}")
+
+          with open('provision_uuid.txt', 'w') as f:
+              f.write(uuid)
+          with open('provision_ip.txt', 'w') as f:
+              f.write(target['uri'])
+          PYEOF
+
+          {
+            echo "uuid=$(cat provision_uuid.txt)"
+            echo "ip=$(cat provision_ip.txt)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Confirm SSH port reachability (best-effort, non-fatal)
+        if: always() && steps.provision.outputs.ip != ''
+        run: |
+          set +e
+          echo "Provisioned IP: ${{ steps.provision.outputs.ip }}"
+          timeout 15 bash -c "cat < /dev/tcp/${{ steps.provision.outputs.ip }}/22" 2>/dev/null
+          if [ $? -eq 0 ]; then
+            echo "Port 22 is open — SSH transport is reachable"
+          else
+            echo "::warning::Could not confirm port 22 reachability within 15s (non-fatal for this spike; VM may still be booting)"
+          fi
+
+      - name: Tear down the VM
+        if: always() && steps.provision.outputs.uuid != ''
+        env:
+          UUID: ${{ steps.provision.outputs.uuid }}
+        run: |
+          set -euo pipefail
+          body=$(python3 -c "import json, os; print(json.dumps({'uuid': os.environ['UUID']}))")
+
+          http_code=$(curl -sS -o teardown_response.txt -w '%{http_code}' \
+            -X DELETE 'https://facade-release-6f3kfepqcq-ew.a.run.app/v1/provision' \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -d "$body")
+
+          echo "Teardown HTTP status: $http_code"
+          cat teardown_response.txt || true
+
+          if [ "$http_code" != "200" ]; then
+            echo "::warning::Teardown request returned non-200 — relying on the service's run-status reaper / 3h TTL as backstop (see docs/vm-based-acceptance-testing.md §9)"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Spike 3 result" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "${{ steps.provision.outputs.uuid }}" ]; then
+            echo "- Provisioning: **succeeded** (owner-clause authorization confirmed)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- Provisioning: **failed** — see the provision step's log" >> "$GITHUB_STEP_SUMMARY"
+          fi
