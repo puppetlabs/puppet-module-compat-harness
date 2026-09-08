@@ -532,11 +532,11 @@ Run these before writing runner code. Spike 3 is gating.
 
 | # | Question | Why it matters |
 |---|---|---|
-| 1 | Puppet Core repo behaviour on a GCP RHEL/Rocky image | The Dockerfile logic assumes a clean `dnf`; GCP images ship a modified `google-cloud.repo` (the bootstrap scripts already set `gpgcheck=0` and `skip_if_unavailable=1` on it) |
+| 1 | Puppet Core repo behaviour on a GCP RHEL/Rocky image | ✅ **Validated 2026-09-08.** See below |
 | 2 | Do Beaker's `validate` / `configure` prebuilt steps behave against a `hypervisor: none` host? | ✅ **Validated 2026-09-08.** See below |
 | 3 | **End-to-end provision → teardown against the live facade from a CI run on this repo** | ✅ **Validated 2026-09-08.** See below |
 | 4 | Teardown reliability across failure modes | See §9's expanded breakdown. In short: a cancelled workflow reaches a terminal GitHub run status quickly, so the reaper catches it soon; a GitHub-side outage defeats the reaper's GitHub-status check specifically, leaving the age-based 3h sweep (which needs no GitHub API call at all) as the only guarantee. **A GCP-side failure partway through provisioning was previously an open question with no verified answer — it has now been observed once (below), and it remains unresolved**: whether the timed-out request left an orphaned VM is still unknown to the harness and can only be answered by DevX |
-| 5 | Wall-clock cost of provision + agent install | Provisioning alone measured at ~35s (spike 3, below). Agent install is not yet measured — that requires the actual install script from §2.5/§3.1, which doesn't exist until implementation starts |
+| 5 | Wall-clock cost of provision + agent install | ✅ **Measured 2026-09-08.** See spike 1 below — full provision-to-Puppet-Core-installed is ~90s–2min |
 | 6 | Agree a concurrency ceiling with DevX | VMs land in the shared `ia-content` project with no service-side quota. Pick `max-parallel` with their input rather than discovering the ceiling by exhausting it |
 | 7 | Ask DevX the reaper's actual polling interval | `SCHEDULER_TIME` is configured server-side and isn't visible from the public source reviewed here. The 3h TTL is a hard upper bound regardless, but knowing the typical reaper latency matters for judging how much orphaned-VM exposure a cancelled run actually has in practice |
 
@@ -608,6 +608,38 @@ setup → both acceptance specs passing → teardown (`HTTP 200`, ~2m13s).
 fight a host the harness has already prepared — is answered **no**, with a
 fully passing real Beaker run as evidence. The 504 from the first attempt is
 retained above as evidence for spike 4/6, not as a spike-2 finding.
+
+#### Spike 1 result
+
+Adapted [`Docker#puppet_core_dockerfile`](../lib/module_tester/docker.rb#L113-L173)'s
+exact EL-family install logic — private release RPM, `sed`-inject a
+`forge-key` credential into the repo file, `dnf install`, scrub the repo
+file — to run as a single SSH-piped script instead of a Dockerfile `RUN`
+layer, using the real `PUPPET_CORE_API_KEY` secret. Fully green on the first
+attempt — [run 34262921647](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34262921647/job/102185093864):
+
+| Step | Result |
+|---|---|
+| Provision | `HTTP 200`, 37s |
+| Root escalation | ~36s |
+| Release RPM | `puppet8-release-10.5.0-3.el9` installed cleanly — **no `google-cloud.repo` friction**, the original concern behind this spike |
+| Credential handling | `PUPPET_CORE_API_KEY: ***` — GitHub's log redaction confirmed working; the key was interpolated locally into the outgoing SSH stdin stream and never appeared as a literal CLI argument on either host (verified byte-for-byte with a fake key before running for real — see the workflow's own commit message) |
+| Agent install | **`puppet-agent-8.21.0-1.el9.x86_64`** from the `puppet8` repo — an exact match to `profiles/puppet_profiles.json`'s `8-latest-maintained` pin, and materially different from spike 2's public-collection `8.10.0`. This is decisive: the private-repo path is genuinely being exercised, not silently falling back to public |
+| Scrub verification | `SCRUB_OK` — the repo file with the embedded credential was confirmed deleted before the script exited |
+| `puppet --version` | `8.21.0`, confirmed twice: once inside the credentialed SSH session, once more in a fresh follow-up session with no secret in scope |
+| **Install step wall-clock** | **41 seconds** — release RPM + credential inject + full `puppet-agent` package pull/install + scrub |
+| Teardown | `HTTP 200`, ~2m20s |
+
+**Spike 5 falls out of this for free:** combined with provisioning (~35–55s
+across all spikes so far) and root escalation (~35–40s), a VM goes from
+nonexistent to Puppet-Core-installed-and-verified in roughly **90 seconds to
+2 minutes**. Comfortably within a nightly cadence; no separate timing exercise
+needed.
+
+The inject-then-scrub credential pattern survives the move from a Docker
+BuildKit secret mount to an SSH-piped script without modification — the
+security property (`docker.rb`'s "never persists in a layer") maps directly
+onto "never persists in a file after the script exits" for the VM case.
 
 ### 7.3 Phase 1 — pilot: `puppet-swap_file` on `el-9`
 
@@ -827,7 +859,7 @@ from this evidence next time rather than from scratch.
 
 | Phase | Status |
 |---|---|
-| Phase 0 — spikes (§7.2) | In progress — spikes 2 and 3 (gating) validated 2026-09-08; a live 504/timeout observed during spike 2 testing, retained as evidence for spikes 4/6 |
+| Phase 0 — spikes (§7.2) | In progress — spikes 1, 2, 3 (gating), and 5 validated/measured 2026-09-08. Remaining: 4 (partially — one real 504 observed, orphan risk unresolved), 6, 7 — all need DevX's input, not further harness-side testing |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | Not started |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | Not started |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
