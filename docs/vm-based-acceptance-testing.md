@@ -790,10 +790,28 @@ handling, no time-budget concerns. Land them together right after the pilot.
 
 | Module | Verdict | GCP image | Note |
 |---|---|---|---|
-| `puppet-rsyslog` | **VM-FIXES** | Rocky 9 / AlmaLinux 9 | The recorded reason (RPM DB corruption from the harness's persistent pre-baked-image model) is a self-diagnosed Docker artifact. A fresh VM has a coherent package database. Upstream is green on 11 podman platforms. Needs outbound network to `rpms.adiscon.com`; avoid Ubuntu initially (the upstream-repo assertion shells out through `python3-apt`) |
-| `puppet-elastic_stack` | **VM-FIXES — recorded reason is wrong** | Rocky 9 | Its actual acceptance suite is a single `elastic_stack::repo` idempotency test — it manages a yum/apt repo definition and nothing else. It has no Elasticsearch service and no `vm.max_map_count` dependency, despite the recorded reason claiming it shares elasticsearch's blockers. Re-test this one in Docker before spending a VM slot on it — it may already pass there, independent of this initiative entirely |
+| `puppet-rsyslog` | **VM-FIXES — landed 2026-09-08** | Rocky 9 | The recorded reason (RPM DB corruption from the harness's persistent pre-baked-image model) is a self-diagnosed Docker artifact. A fresh VM has a coherent package database. Upstream is green on 11 podman platforms. Needs outbound network to `rpms.adiscon.com`; avoid Ubuntu initially (the upstream-repo assertion shells out through `python3-apt`) |
+| `puppet-elastic_stack` | **VM-FIXES — landed 2026-09-08 — recorded reason was wrong** | Rocky 9 | Its actual acceptance suite is a single `elastic_stack::repo` idempotency test — it manages a yum/apt repo definition and nothing else. It has no Elasticsearch service and no `vm.max_map_count` dependency, despite the recorded reason claiming it shares elasticsearch's blockers. Enabled directly on a `gcp` target rather than re-testing in Docker first |
 | `puppet-swap_file` (Phase 1) | see §7.3 | — | — |
-| `puppet-openldap` | **VM-FIXES-WITH-CAVEAT — recorded reason is wrong** | Rocky 9 / AlmaLinux 9, **SELinux set permissive** | The recorded reason says the tests assume a shared controller/SUT filesystem via `Dir.mktmpdir`. They do not — the tmpdir only supplies a unique path string interpolated into the manifest; the directory is created on the SUT by the module's own `file` resource (`manifests/server/database.pp`), and the harness's Docker `"invalid path: Permission denied"` is better explained by an LSM confining `slapd` (SELinux `slapd_db_t` on EL, AppArmor's `usr.sbin.slapd` profile on Debian). Upstream is green on 11 podman platforms, which likewise share no filesystem with the controller. A GCP EL image actually raises this risk rather than lowering it — GCP's RHEL/Rocky images boot SELinux enforcing by default — so provisioning must explicitly `setenforce 0` |
+| `puppet-openldap` | **VM-FIXES-WITH-CAVEAT — deferred, see below** | Rocky 9 / AlmaLinux 9, **SELinux set permissive** | The recorded reason says the tests assume a shared controller/SUT filesystem via `Dir.mktmpdir`. They do not — the tmpdir only supplies a unique path string interpolated into the manifest; the directory is created on the SUT by the module's own `file` resource (`manifests/server/database.pp`), and the harness's Docker `"invalid path: Permission denied"` is better explained by an LSM confining `slapd` (SELinux `slapd_db_t` on EL, AppArmor's `usr.sbin.slapd` profile on Debian). Upstream is green on 11 podman platforms, which likewise share no filesystem with the controller. A GCP EL image actually raises this risk rather than lowering it — GCP's RHEL/Rocky images boot SELinux enforcing by default — so provisioning must explicitly `setenforce 0` |
+
+`rsyslog` and `elastic_stack` landed together as a first slice of Phase 2 —
+truly zero new harness capability, a straight `gcp` target flip in
+`config/modules.json`. The `reason` text above for `elastic_stack` was also
+rewritten in its config entry per the note below, preserving the corrected
+diagnosis even though the module is now enabled.
+
+**`openldap` is deferred out of that slice.** Its `setenforce 0` requirement
+does not fit either existing mechanism: `setup_commands` only runs during
+the Docker image build (the schema forbids it for `provisioner: gcp`), and
+`pre_acceptance_commands` runs on the GitHub Actions runner itself, not over
+SSH on the VM. Landing it needs a small new capability — something in the
+shape of a `vm_setup_commands` list, run over SSH as root right after
+`install_puppet_core_vm` and before the fact-override/setfile stages, reusing
+`Vm`'s existing SSH stage pattern and classified as a harness stage (like
+`provision_vm`) in `classifier.rb`. That capability is not yet designed;
+treat `openldap` as its own follow-up rather than assuming it rides along
+with the next batch.
 
 Rewrite the `reason` text for `elastic_stack` and `openldap` when their config
 entries are edited (§3.1) — even though both are being enabled, the corrected
@@ -956,7 +974,7 @@ from this evidence next time rather than from scratch.
 |---|---|
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
-| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | Not started |
+| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `rsyslog` + `elastic_stack` landed 2026-09-08 as a config-only `gcp` target flip (branch `phase2/rsyslog-elastic_stack-vm-pilot`); live CI verification pending. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
 | Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |
 | Phase 5 — deferred: augeasproviders_grub (§7.7) | Not started |
