@@ -790,16 +790,36 @@ handling, no time-budget concerns. Land them together right after the pilot.
 
 | Module | Verdict | GCP image | Note |
 |---|---|---|---|
-| `puppet-rsyslog` | **VM-FIXES — landed 2026-09-08** | Rocky 9 | The recorded reason (RPM DB corruption from the harness's persistent pre-baked-image model) is a self-diagnosed Docker artifact. A fresh VM has a coherent package database. Upstream is green on 11 podman platforms. Needs outbound network to `rpms.adiscon.com`; avoid Ubuntu initially (the upstream-repo assertion shells out through `python3-apt`) |
-| `puppet-elastic_stack` | **VM-FIXES — landed 2026-09-08 — recorded reason was wrong** | Rocky 9 | Its actual acceptance suite is a single `elastic_stack::repo` idempotency test — it manages a yum/apt repo definition and nothing else. It has no Elasticsearch service and no `vm.max_map_count` dependency, despite the recorded reason claiming it shares elasticsearch's blockers. Enabled directly on a `gcp` target rather than re-testing in Docker first |
+| `puppet-rsyslog` | **VM-FIXES verdict was wrong — reverted to blocked, see below** | Rocky 9 | The recorded reason (RPM DB corruption from the harness's persistent pre-baked-image model) is a self-diagnosed Docker artifact and *is* fixed by a fresh VM — but live verification surfaced a different, real blocker on this specific image (see below). Upstream is green on 11 podman platforms. Needs outbound network to `rpms.adiscon.com`; avoid Ubuntu initially (the upstream-repo assertion shells out through `python3-apt`) |
+| `puppet-elastic_stack` | **VM-FIXES — landed and live-verified 2026-09-09 — recorded reason was wrong** | Rocky 9 | Its actual acceptance suite is a single `elastic_stack::repo` idempotency test — it manages a yum/apt repo definition and nothing else. It has no Elasticsearch service and no `vm.max_map_count` dependency, despite the recorded reason claiming it shares elasticsearch's blockers. Enabled directly on a `gcp` target rather than re-testing in Docker first |
 | `puppet-swap_file` (Phase 1) | see §7.3 | — | — |
 | `puppet-openldap` | **VM-FIXES-WITH-CAVEAT — deferred, see below** | Rocky 9 / AlmaLinux 9, **SELinux set permissive** | The recorded reason says the tests assume a shared controller/SUT filesystem via `Dir.mktmpdir`. They do not — the tmpdir only supplies a unique path string interpolated into the manifest; the directory is created on the SUT by the module's own `file` resource (`manifests/server/database.pp`), and the harness's Docker `"invalid path: Permission denied"` is better explained by an LSM confining `slapd` (SELinux `slapd_db_t` on EL, AppArmor's `usr.sbin.slapd` profile on Debian). Upstream is green on 11 podman platforms, which likewise share no filesystem with the controller. A GCP EL image actually raises this risk rather than lowering it — GCP's RHEL/Rocky images boot SELinux enforcing by default — so provisioning must explicitly `setenforce 0` |
 
-`rsyslog` and `elastic_stack` landed together as a first slice of Phase 2 —
-truly zero new harness capability, a straight `gcp` target flip in
-`config/modules.json`. The `reason` text above for `elastic_stack` was also
-rewritten in its config entry per the note below, preserving the corrected
-diagnosis even though the module is now enabled.
+`elastic_stack` landed as the first slice of Phase 2 — truly zero new
+harness capability, a straight `gcp` target flip in `config/modules.json`
+— and is live-verified: [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)
+passed both `unit` and `acceptance/el9-gcp` cleanly. Its `reason` text above
+was also rewritten in its config entry per the note below, preserving the
+corrected diagnosis even though the module is now enabled.
+
+**`rsyslog` was enabled alongside it in the same slice, then reverted.** The
+Docker-artifact diagnosis was correct as far as it went, but the same live
+run's `acceptance/el9-gcp` job failed for an unrelated, real reason: the
+module's `before(:suite)` cleanup step runs `puppet apply` to uninstall
+`rsyslog` for a clean baseline, and on `rocky-linux-cloud/rocky-linux-9`
+that fails —
+```
+Error: Execution of '/usr/bin/rpm -e rsyslog' returned 1: error: Failed dependencies:
+	rsyslog is needed by (installed) google-compute-engine-1:20260223.00-g1.el9.noarch
+```
+GCP's own preinstalled guest-environment package hard-depends on `rsyslog`
+on this image family, so the module's cleanup step can't remove it —
+an image-specific package conflict, not a Puppet Core compatibility
+question, and not something the original "VM-FIXES" triage anticipated.
+Reverted to `blocked` with a `reason` recording this finding; re-enabling
+needs either a different GCP image (a Debian/Ubuntu family plausibly
+doesn't carry this dependency) or another approach, as its own follow-up
+rather than blocking `elastic_stack` on it.
 
 **`openldap` is deferred out of that slice.** Its `setenforce 0` requirement
 does not fit either existing mechanism: `setup_commands` only runs during
@@ -974,7 +994,7 @@ from this evidence next time rather than from scratch.
 |---|---|
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
-| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `rsyslog` + `elastic_stack` landed 2026-09-08 as a config-only `gcp` target flip (branch `phase2/rsyslog-elastic_stack-vm-pilot`); live CI verification pending. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
+| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `elastic_stack` landed and live-verified 2026-09-09 (branch `phase2/rsyslog-elastic_stack-vm-pilot`, [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)). `rsyslog` was enabled in the same slice but reverted to `blocked` after live verification found a real, different GCP-image-specific blocker (`google-compute-engine`'s `rsyslog` dependency on Rocky 9) — see §7.4. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
 | Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |
 | Phase 5 — deferred: augeasproviders_grub (§7.7) | Not started |

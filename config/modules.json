@@ -760,15 +760,9 @@
       "repo": "https://github.com/voxpupuli/puppet-rsyslog",
       "ref": "master",
       "acceptance": {
-        "enabled": true,
-        "status": "running",
-        "targets": [
-          {
-            "name": "el9-gcp",
-            "provisioner": "gcp",
-            "image": "rocky-linux-cloud/rocky-linux-9"
-          }
-        ]
+        "enabled": false,
+        "status": "blocked",
+        "reason": "Live-verified against a real GCP VM (rocky-linux-cloud/rocky-linux-9, run 34300665485) — the harness's Docker-specific RPM DB corruption theory was wrong, but a real, different blocker exists on that image: the module's before(:suite) cleanup step runs `rpm -e rsyslog`, which fails because GCP's own preinstalled google-compute-engine package hard-depends on rsyslog (\"Failed dependencies: rsyslog is needed by (installed) google-compute-engine\"). This is an image-specific package conflict, not a Puppet Core compatibility question. Needs a different GCP image (e.g. a Debian/Ubuntu family without that dependency) or another approach before re-enabling."
       }
     },
     {
