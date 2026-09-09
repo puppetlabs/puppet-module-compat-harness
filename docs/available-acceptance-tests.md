@@ -24,7 +24,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) |
 | ✅ | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) |
 | ✅ | [puppet-cron](https://github.com/voxpupuli/puppet-cron) |
-| ⛔ | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) |
+| ✅ | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) |
 | ⛔ | [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) |
 | ✅ | [puppet-epel](https://github.com/voxpupuli/puppet-epel) |
 | ✅ | [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) |
@@ -54,7 +54,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ⛔ | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) |
 | ✅ | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) |
 | ✅ | [puppet-squid](https://github.com/voxpupuli/puppet-squid) |
-| ⛔ | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) |
+| ✅ | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) |
 | ⛔ | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) |
 | ✅ | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) |
 | ✅ | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) |
@@ -93,20 +93,18 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
-## Modules With Acceptance Tests but Not Run in CI (14)
+## Modules With Acceptance Tests but Not Run in CI (12)
 
 These modules have acceptance tests upstream, but the harness does not run them — so their compatibility is confirmed by unit tests only, not fully. They are intentionally excluded from `KNOWN_COMPATIBLE.md`.
 
 | Module | Status | Reason |
 |--------|--------|--------|
 | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | ⛔ blocked | GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing. |
-| [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ⛔ blocked | Same fundamental blockers as puppet-elasticsearch — orchestrates the Elasticsearch stack and its acceptance tests share the same vm.max_map_count kernel requirement, systemd dependency, and artifacts.elastic.co download pattern. Requires a real VM or privileged container. |
 | [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ⛔ blocked | Production-mode bootstrap enforces vm.max_map_count >= 262144 (a host kernel parameter) which cannot be set from inside an unprivileged Docker container; all acceptance specs hit a live Elasticsearch HTTP API and fail. Tests also require systemd (unavailable in standard containers), download from artifacts.elastic.co, and need the simp-beaker-helpers gem. Requires a real VM or privileged container with host kernel tuning. |
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | 🚧 pending | Acceptance tests exist upstream but are not yet wired into a harness setfile/target. |
 | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ⛔ blocked | Acceptance tests use Dir.mktmpdir on the Beaker controller to create temporary directories for LDAP database paths (olcDbDirectory), then reference those host-local paths inside the Docker SUT where they do not exist; slapd rejects them with "invalid path: Permission denied". The tests assume a shared controller/SUT filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT. |
-| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ⛔ blocked | The module's cleanup_helper removes the rsyslog package between tests. In the harness's persistent Docker container model (PuppetCore pre-installed in the image), RPM database entries from the image build become corrupt, so rpm -e rsyslog fails with "package not installed" even though Puppet detects it as installed. This is a Docker copy-on-write filesystem artifact unique to the persistent container model. |
+| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ⛔ blocked | Live-verified against a real GCP VM (rocky-linux-cloud/rocky-linux-9, run 34300665485) — the harness's Docker-specific RPM DB corruption theory was wrong, but a real, different blocker exists on that image: the module's before(:suite) cleanup step runs `rpm -e rsyslog`, which fails because GCP's own preinstalled google-compute-engine package hard-depends on rsyslog ("Failed dependencies: rsyslog is needed by (installed) google-compute-engine"). This is an image-specific package conflict, not a Puppet Core compatibility question. Needs a different GCP image (e.g. a Debian/Ubuntu family without that dependency) or another approach before re-enabling. |
 | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ⛔ blocked | SELinux acceptance tests require kernel-level SELinux LSM support. Docker containers share the host kernel, and GitHub Actions ubuntu-latest runners use AppArmor, so the SELinux LSM is never loaded. Tests fail at setup because /etc/selinux/config does not exist and getenforce/semodule/setenforce require active kernel SELinux enforcement. Requires a self-hosted runner on a SELinux-enforcing host or a VM-based approach. |
-| [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ⛔ blocked | Manages kernel-level swap file operations via swapon/swapoff. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires a full VM or bare-metal environment for acceptance testing. |
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ⛔ blocked | Attempts to manage /etc/resolv.conf via symlink replacement to /run/systemd/resolve/resolv.conf. The Docker container runtime owns /etc/resolv.conf, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ⛔ blocked | Tests are purpose-built for Docker and self-contained, but use a three-container topology (certs.local, vault.local, puppetserver.local) that the single-SUT harness cannot orchestrate. The VaultDockerfile and PuppetserverDockerfile use multi-stage COPY --from=certs:latest builds the harness image-build pipeline does not support, and require a live Puppet Server (not puppet apply) with mTLS cert auth via a shared PKI. Requires harness-level support for multi-container nodesets and cross-image build dependencies. |
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ⛔ blocked | Acceptance tests target only legacy OSes (Debian 8-9, Ubuntu 16.04-18.04, RHEL 6-7) — none of which match any available setfile — and hardcode `su - vagrant` to run puppet apply as a Vagrant user not present in Docker-based SUT containers. Requires new legacy setfiles or upstream test modernization. |
