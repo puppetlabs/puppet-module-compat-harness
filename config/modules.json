@@ -284,9 +284,16 @@
       "repo": "https://github.com/voxpupuli/puppet-elastic_stack",
       "ref": "master",
       "acceptance": {
-        "enabled": false,
-        "status": "blocked",
-        "reason": "Same fundamental blockers as puppet-elasticsearch — orchestrates the Elasticsearch stack and its acceptance tests share the same vm.max_map_count kernel requirement, systemd dependency, and artifacts.elastic.co download pattern. Requires a real VM or privileged container."
+        "enabled": true,
+        "status": "running",
+        "reason": "Previously recorded as blocked on the assumption it shared puppet-elasticsearch's vm.max_map_count/systemd/artifact-download blockers. It does not — its only acceptance suite is a single elastic_stack::repo idempotency test that manages a yum/apt repo definition, with no Elasticsearch service dependency. Enabled via GCP VM acceptance (docs/vm-based-acceptance-testing.md §7.4).",
+        "targets": [
+          {
+            "name": "el9-gcp",
+            "provisioner": "gcp",
+            "image": "rocky-linux-cloud/rocky-linux-9"
+          }
+        ]
       }
     },
     {
@@ -755,7 +762,7 @@
       "acceptance": {
         "enabled": false,
         "status": "blocked",
-        "reason": "The module's cleanup_helper removes the rsyslog package between tests. In the harness's persistent Docker container model (PuppetCore pre-installed in the image), RPM database entries from the image build become corrupt, so rpm -e rsyslog fails with \"package not installed\" even though Puppet detects it as installed. This is a Docker copy-on-write filesystem artifact unique to the persistent container model."
+        "reason": "Live-verified against a real GCP VM (rocky-linux-cloud/rocky-linux-9, run 34300665485) — the harness's Docker-specific RPM DB corruption theory was wrong, but a real, different blocker exists on that image: the module's before(:suite) cleanup step runs `rpm -e rsyslog`, which fails because GCP's own preinstalled google-compute-engine package hard-depends on rsyslog (\"Failed dependencies: rsyslog is needed by (installed) google-compute-engine\"). This is an image-specific package conflict, not a Puppet Core compatibility question. Needs a different GCP image (e.g. a Debian/Ubuntu family without that dependency) or another approach before re-enabling."
       }
     },
     {
