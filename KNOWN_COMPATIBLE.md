@@ -34,7 +34,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) | ✅ 8.21.0 | ❌ |
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ 8.21.0 | ❌ |
+| [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ 8.21.0 | ❌ |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ 8.21.0 | ✅ 9.0.0 |
@@ -65,7 +65,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ 8.21.0 | ❌ |
+| [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.21.0 | ✅ 9.0.0 |
