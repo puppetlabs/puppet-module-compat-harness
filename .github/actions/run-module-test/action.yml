@@ -69,6 +69,18 @@ inputs:
     description: 'JSON array of shell commands to run on the host before Beaker starts (e.g. start supporting services like GitLab or Squid)'
     required: false
     default: '[]'
+  provisioner:
+    description: "Acceptance SUT provisioner: 'docker' (default) or 'gcp' (a real VM via the DevX provision service — see docs/vm-based-acceptance-testing.md)"
+    required: false
+    default: 'docker'
+  vm-image:
+    description: "GCP image family (provisioner=gcp only), e.g. 'rocky-linux-cloud/rocky-linux-9'"
+    required: false
+    default: ''
+  beaker-env-json:
+    description: 'JSON object of extra environment variables merged into the acceptance test environment before Beaker runs (acceptanceTarget.beaker_env)'
+    required: false
+    default: '{}'
 
 runs:
   using: composite
@@ -115,6 +127,14 @@ runs:
           brew update
           brew install $brew_pkgs
         fi
+
+    - name: Install sshpass (VM provisioner only)
+      if: inputs.provisioner == 'gcp' && runner.os == 'Linux'
+      shell: bash
+      run: |
+        set -euo pipefail
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq sshpass
 
     - name: Resolve Ruby version from profile
       id: resolve_ruby
@@ -188,6 +208,16 @@ runs:
         pre_accept_cmds='${{ inputs.pre-acceptance-commands }}'
         if [ "$pre_accept_cmds" != "[]" ] && [ "$pre_accept_cmds" != "" ]; then
           runner_args+=(--pre-acceptance-commands "$pre_accept_cmds")
+        fi
+        if [ "${{ inputs.provisioner }}" = "gcp" ]; then
+          runner_args+=(--provisioner gcp)
+        fi
+        if [ -n "${{ inputs.vm-image }}" ]; then
+          runner_args+=(--vm-image "${{ inputs.vm-image }}")
+        fi
+        beaker_env='${{ inputs.beaker-env-json }}'
+        if [ "$beaker_env" != "{}" ] && [ "$beaker_env" != "" ]; then
+          runner_args+=(--beaker-env "$beaker_env")
         fi
         ruby bin/puppet-module-tester "${runner_args[@]}"
 

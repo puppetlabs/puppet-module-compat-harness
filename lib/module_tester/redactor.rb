@@ -6,7 +6,12 @@ module ModuleTester
   module Redactor
     module_function
 
-    def redact_sensitive(text)
+    # `extra_secrets` lets a caller redact ad-hoc runtime values that aren't
+    # available via ENV — e.g. the VM provision service's per-request litmus
+    # password (lib/module_tester/vm.rb), which is deliberately kept out of
+    # any env hash entirely (see vm.rb) but is passed here too as
+    # defense-in-depth against it appearing in command error output.
+    def redact_sensitive(text, extra_secrets = [])
       value = text.to_s
       secrets = []
 
@@ -18,6 +23,8 @@ module ModuleTester
 
       env_credential = ENV.fetch('BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM', '').to_s.strip
       secrets << env_credential unless env_credential.empty?
+
+      Array(extra_secrets).each { |s| secrets << s.to_s.strip unless s.to_s.strip.empty? }
 
       secrets.uniq.each do |secret|
         value = value.gsub(secret, '[REDACTED]')

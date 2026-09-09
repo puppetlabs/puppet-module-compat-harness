@@ -75,8 +75,10 @@ jobs:
     outputs:
       unit_matrix: ${{ steps.prepare.outputs.unit-matrix }}
       acceptance_matrix: ${{ steps.prepare.outputs.acceptance-matrix }}
+      vm_acceptance_matrix: ${{ steps.prepare.outputs.vm-acceptance-matrix }}
       has_unit: ${{ steps.prepare.outputs.has-unit }}
       has_acceptance: ${{ steps.prepare.outputs.has-acceptance }}
+      has_vm_acceptance: ${{ steps.prepare.outputs.has-vm-acceptance }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -256,12 +258,89 @@ jobs:
             .tmp/beaker-host-mappings.txt
           if-no-files-found: warn
 
+  # VM (GCP provisioner) acceptance targets — a separate, permanent job from
+  # test_acceptance, not a temporary split. Two structural reasons (docs/
+  # vm-based-acceptance-testing.md §4): (1) timeout-minutes is per-job, and a
+  # VM job must stay well inside the provision service's 3h hard VM TTL,
+  # which would needlessly cap the Docker matrix's safe 360-minute budget if
+  # they shared one job; (2) strategy.max-parallel only applies per-job, so
+  # capping concurrent VM provisioning (a shared, unmetered GCP project —
+  # DevX confirmed capacity is fine but asked for minimal load regardless)
+  # without also throttling the unrelated, cheap Docker matrix requires its
+  # own job. Runs in parallel with test_acceptance (siblings under `needs:
+  # prepare`), not gated behind it — see §4 for the sequencing trade-off.
+  test_acceptance_vm:
+    name: test / ${{ matrix.module.id }} / acceptance / ${{ matrix.module.target_id }}
+    runs-on: ${{ matrix.module.os }}
+    timeout-minutes: 170
+    needs: prepare
+    if: needs.prepare.outputs.has_vm_acceptance == 'true'
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        module: ${{ fromJson(needs.prepare.outputs.vm_acceptance_matrix) }}
+
+    env:
+      PUPPET_CORE_API_KEY: ${{ secrets.PUPPET_CORE_API_KEY }}
+      PUPPET_CORE_SOURCE_URL: https://rubygems-puppetcore.puppet.com
+      PUPPET_COMPAT_METADATA_MODE: ${{ github.event.inputs.metadata_mode || 'warn' }}
+      PUPPET_COMPAT_BUNDLE_PATH: .b
+      PUPPET_ENFORCE_PRIVATE_SOURCE: "true"
+      PUPPET_ENFORCE_NO_OPENVOX: "false"
+      PUPPET_ENFORCE_EXACT_PUPPET_VERSION: "true"
+      PUPPET_SPLIT_SOURCES: "true"
+      PUPPET_STAGE_TIMEOUT_SECONDS: ${{ vars.PUPPET_STAGE_TIMEOUT_SECONDS || '1800' }}
+      PUPPET_ACCEPTANCE_DEBUG: ${{ github.event.inputs.enable_debug || 'false' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run module compatibility test (VM acceptance)
+        uses: ./.github/actions/run-module-test
+        with:
+          module-json: ${{ toJson(matrix.module) }}
+          module-id: ${{ matrix.module.id }}
+          profile: ${{ github.event.inputs.profile || '9-latest-maintained' }}
+          metadata-mode: ${{ github.event.inputs.metadata_mode || 'warn' }}
+          enable-debug: ${{ github.event.inputs.enable_debug || 'false' }}
+          test-mode: acceptance
+          allow-acceptance: 'true'
+          provisioner: gcp
+          vm-image: ${{ matrix.module.image }}
+          output-dir: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
+          artifact-name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}
+          test-lane: acceptance
+          acceptance-target: ${{ matrix.module.target }}
+          prereqs-json: ${{ toJson(matrix.module.prereqs) }}
+          install-puppetserver: ${{ matrix.module.install_puppetserver || 'false' }}
+          pre-acceptance-commands: ${{ toJson(matrix.module.pre_acceptance_commands) }}
+          beaker-env-json: ${{ toJson(matrix.module.beaker_env) }}
+
+      - name: Upload module artifacts (VM acceptance)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}
+          path: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
+          if-no-files-found: warn
+
+      - name: Upload acceptance fallback diagnostics
+        if: ${{ always() && (failure() || cancelled()) }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}-diagnostics
+          path: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
+          if-no-files-found: warn
+
   publish:
     runs-on: ubuntu-latest
     needs:
       - prepare
       - test_unit
       - test_acceptance
+      - test_acceptance_vm
     # Runs even when both test jobs were skipped (no-op run): the ledger still
     # needs reconciling against modules.json / KNOWN_* and the summary still
     # needs to say why nothing ran.
@@ -290,4 +369,5 @@ jobs:
           modules-json: ${{ github.event.inputs.modules_json }}
           has-unit: ${{ needs.prepare.outputs.has_unit }}
           has-acceptance: ${{ needs.prepare.outputs.has_acceptance }}
+          has-vm-acceptance: ${{ needs.prepare.outputs.has_vm_acceptance }}
           stale-days: ${{ vars.PUPPET_STALE_DAYS || '30' }}

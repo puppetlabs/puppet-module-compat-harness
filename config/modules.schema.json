@@ -184,17 +184,31 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "name",
-        "setfile"
+        "name"
       ],
       "properties": {
         "name": {
           "type": "string",
           "minLength": 1
         },
+        "provisioner": {
+          "type": "string",
+          "enum": [
+            "docker",
+            "gcp"
+          ],
+          "default": "docker",
+          "description": "SUT provisioner. 'docker' (default): the existing Docker-container SUT. 'gcp': a real VM via the DevX GCP provision service (see docs/vm-based-acceptance-testing.md) — used only for modules a container cannot satisfy (kernel params, real init, reboot, SELinux LSM, etc). A target uses exactly one provisioner, never both."
+        },
         "setfile": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Required when provisioner is 'docker' (or omitted). Beaker setfile stem under config/beaker/setfiles/. Not used for provisioner 'gcp' — see 'image' instead."
+        },
+        "image": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required when provisioner is 'gcp'. GCP image family understood by the provision service (e.g. 'rocky-linux-cloud/rocky-linux-9'). Mapped to a Beaker platform string by Vm::PLATFORM_BY_IMAGE (lib/module_tester/vm.rb)."
         },
         "docker_mode": {
           "type": "string",
@@ -202,7 +216,8 @@
             "sshd",
             "systemd"
           ],
-          "default": "sshd"
+          "default": "sshd",
+          "description": "Docker-only. A GCP VM is a real machine with a real init and needs no PID-1 mode selection."
         },
         "install_puppetserver": {
           "type": "boolean",
@@ -210,7 +225,7 @@
         },
         "setup_commands": {
           "type": "array",
-          "description": "Additional shell commands appended to docker_image_commands during SUT image build. Use for module-specific SUT preparation (e.g. disabling AppArmor for modules that require it).",
+          "description": "Docker-only. Additional shell commands appended to docker_image_commands during SUT image build. Use for module-specific SUT preparation (e.g. disabling AppArmor for modules that require it).",
           "minItems": 1,
           "items": {
             "type": "string",
@@ -225,8 +240,48 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "beaker_env": {
+          "type": "object",
+          "description": "Extra environment variables merged into the acceptance test environment before Beaker runs, in addition to the harness's own BEAKER_* variables. Use for module-specific Beaker behaviour, e.g. BEAKER_FACTER_memory.system.total for a module that sizes an operation off the SUT's real memory (would otherwise be unreasonably slow/large on a full-size VM). Not a substitute for pre_acceptance_commands, whose changes do not persist to the acceptance stage's own subprocess.",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "minProperties": 1
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "provisioner": {
+                "const": "gcp"
+              }
+            },
+            "required": [
+              "provisioner"
+            ]
+          },
+          "then": {
+            "required": [
+              "image"
+            ],
+            "properties": {
+              "setfile": false,
+              "docker_mode": false,
+              "setup_commands": false
+            }
+          },
+          "else": {
+            "required": [
+              "setfile"
+            ],
+            "properties": {
+              "image": false
+            }
+          }
+        }
+      ]
     },
     "packageList": {
       "type": "array",

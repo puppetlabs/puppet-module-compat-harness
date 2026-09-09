@@ -712,7 +712,25 @@ part of "done," not an optional refinement.
 
 **Phase 1 is done when** `puppet-swap_file` reports `unit+acceptance` in
 `status/ledger.json` for Puppet 8, renders as `el9-gcp:✅` in `STATUS.md`, and
-the VM is confirmed torn down.
+the VM is torn down (or, failing that, backstopped by the service's own
+reaper + 3h TTL per §9 — a failed `teardown_vm` is never a blocker).
+
+**Verified 2026-09-09** (run
+[34296524333](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34296524333/job/102294296919)):
+spine + fix confirmed end-to-end against the real service — 33 examples, 0
+failures, `compatibility_state: compatible`. `read_fact_overrides` read the
+VM's real memory (7.01 GiB) and `write_fact_overrides` wrote the corrected
+override; the three previously-`ENOSPC`-failing resources
+(`tmp file swap`, `tmp file swap 1`, `tmp file swap 2`) and the
+fully-default example all created their swapfiles successfully. `teardown_vm`
+itself failed on this run (`Connection reset by peer` — the same transient
+error class hit `provision_vm` on the run immediately before it, suggesting a
+brief facade-side blip that night rather than anything harness-side);
+correctly did not affect classification, per the backstop design above. This
+run used the `modules_json` workflow-dispatch override, which — as noted in
+§7 Verification — skips ledger persistence by design, so `status/ledger.json`
+and `STATUS.md` will pick up the real `el9-gcp:✅` row on the first nightly
+run after this lands on `main`, not immediately at merge time.
 
 *If the Facter-override plumbing proves awkward to land first,
 `puppet-rsyslog` (§7.4) is an equally strong pilot candidate and needs no
@@ -720,6 +738,49 @@ harness capability beyond the provisioning spine itself — it was the
 highest-confidence module in the entire triage. Swap_file remains the primary
 choice because its blocker is the most legible "a VM fixes this" story to
 validate the spine against.*
+
+#### Phase 1 result: the `BEAKER_FACTER_memory.system.total` override was a silent no-op
+
+The first live end-to-end run (Sept 2026) provisioned, escalated, installed
+Puppet Core, and ran the real acceptance suite — but 8 of 33 examples failed
+with `dd: error writing '/mnt/swapfile1': No space left on device`, at
+`count=7178` (megabytes) — i.e. `swapfile::files` used the VM's **real**
+~7 GB of memory, not the 300 MiB the harness set via `beaker_env`.
+
+Root cause, confirmed against `voxpupuli-acceptance`'s own source
+(`Facts.write_beaker_facts_on`) and against Facter's external-fact loader
+(`LegacyFacter::Util::DirectoryLoader#add_data`): a `BEAKER_FACTER_<dotted.path>`
+env var is written to `/etc/facter/facts.d/` as a **flat**, dotted-key JSON
+value (`{"memory.system.total": "300 MiB"}`). Facter's external-fact loader
+takes a JSON top-level key as a literal fact name — it does not split on
+`.` — so this registers as an unrelated, unused fact literally named
+`memory.system.total`, and never reaches the nested
+`$facts['memory']['system']['total']` the module actually reads. This is not
+a harness-specific mistake: `puppet-swap_file`'s own upstream CI
+(`voxpupuli/gha-puppet`'s `beaker.yml`) passes the identical
+`beaker_facter: 'memory.system.total:TotalMemory:300 MiB'` input, which
+resolves through `puppet_metadata`'s `metadata2gha` to the exact same
+`BEAKER_FACTER_memory.system.total` env var and the same (4.4.x)
+`voxpupuli-acceptance` gem — so it is equally a no-op there. Upstream's own
+CI is green anyway because its `vagrant_libvirt` VMs apparently have enough
+disk headroom relative to their configured memory that the real,
+un-overridden swapfile size still fits; the harness's default GCP boot disk
+does not have that headroom once the OS and Puppet Core agent install are
+accounted for (only ~2.4 GB was free at failure time).
+
+**Fix:** `Vm#write_fact_overrides` (`lib/module_tester/vm.rb`), run as a new
+optional stage after `install_puppet_core_vm`. For any `beaker_env` entry
+shaped like `BEAKER_FACTER_<a.b.c>`, it reads the real value of the
+top-level fact (`facter -j <a>`), deep-merges the override into it (so
+sibling values like `memory.swap.*` survive rather than being blanked out
+by the external fact's higher weight), and writes the merged, correctly
+nested structure to a distinctly-named facts.d file
+(`/etc/facter/facts.d/harness-fact-overrides.json`) — deliberately leaving
+`voxpupuli-acceptance`'s own (flat, functionally inert) file alone rather
+than trying to race or suppress it. Flat (non-dotted) `BEAKER_FACTER_*`
+overrides are untouched and continue to work via the existing mechanism.
+`config/modules.json`'s `beaker_env` declaration for `puppet-swap_file`
+required no change — the fix is entirely harness-side.
 
 ### 7.4 Phase 2 — zero new harness capability beyond the spine
 
@@ -894,7 +955,7 @@ from this evidence next time rather than from scratch.
 | Phase | Status |
 |---|---|
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
-| Phase 1 — `puppet-swap_file` pilot (§7.3) | Not started |
+| Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | Not started |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
 | Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |

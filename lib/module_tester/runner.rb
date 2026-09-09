@@ -23,7 +23,10 @@ module ModuleTester
       docker_mode: 'sshd',
       install_puppetserver: false,
       setup_commands: [],
-      pre_acceptance_commands: []
+      pre_acceptance_commands: [],
+      provisioner: 'docker',
+      vm_image: nil,
+      beaker_env: {}
     }.freeze
 
     def initialize(argv)
@@ -31,12 +34,14 @@ module ModuleTester
       @options = DEFAULTS.dup
       parse_options!
 
-      @stage_runner = StageRunner.new
-      @bootstrap   = Bootstrap.new(@stage_runner)
-      @guardrails  = Guardrails.new(@stage_runner)
-      @docker      = Docker.new(@stage_runner, @options[:workspace_dir])
-      @adapters    = Adapters.new(@stage_runner, @docker, @options)
-      @reporting   = Reporting.new(@options[:output_dir])
+      @stage_runner       = StageRunner.new
+      @bootstrap          = Bootstrap.new(@stage_runner)
+      @guardrails         = Guardrails.new(@stage_runner)
+      @docker             = Docker.new(@stage_runner, @options[:workspace_dir])
+      @vm                 = Vm.new(@stage_runner, @options[:workspace_dir])
+      @provision_service  = ProvisionService.new
+      @adapters           = Adapters.new(@stage_runner, @docker, @vm, @provision_service, @options)
+      @reporting          = Reporting.new(@options[:output_dir])
     end
 
     def run
@@ -164,10 +169,17 @@ module ModuleTester
         opts.on('--install-puppetserver') { @options[:install_puppetserver] = true }
         opts.on('--setup-commands JSON') { |v| @options[:setup_commands] = JSON.parse(v) }
         opts.on('--pre-acceptance-commands JSON') { |v| @options[:pre_acceptance_commands] = JSON.parse(v) }
+        opts.on('--provisioner NAME')   { |v| @options[:provisioner] = v.to_s.strip.downcase }
+        opts.on('--vm-image NAME')      { |v| @options[:vm_image] = v }
+        opts.on('--beaker-env JSON')    { |v| @options[:beaker_env] = JSON.parse(v) }
       end.parse!(@argv)
 
       unless %w[unit acceptance].include?(@options[:test_mode])
         raise "Unsupported test mode '#{@options[:test_mode]}'. Expected one of: unit, acceptance"
+      end
+
+      unless %w[docker gcp].include?(@options[:provisioner])
+        raise "Unsupported provisioner '#{@options[:provisioner]}'. Expected one of: docker, gcp"
       end
     end
 

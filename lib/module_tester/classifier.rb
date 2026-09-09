@@ -21,6 +21,14 @@ module ModuleTester
           build_sut_image
           rake_tasks
           pdk_version
+          provision_vm
+          prepare_vm_keygen
+          prepare_vm_wait_ssh
+          prepare_vm_escalate
+          prepare_vm_verify_root
+          install_puppet_core_vm
+          read_fact_overrides
+          write_fact_overrides
         ].include?(stage.name)
       end
       return 'harness_error' if harness_stage_failures

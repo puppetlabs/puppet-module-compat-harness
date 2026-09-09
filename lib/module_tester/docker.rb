@@ -105,13 +105,66 @@ module ModuleTester
       ].each { |key| env.delete(key) }
     end
 
+    # Returns the shell command lines that install puppet-agent from Puppet
+    # Core repos, shared between the Docker path (embedded in a Dockerfile RUN
+    # layer, below) and the VM path (piped over SSH — see vm.rb). Each line is
+    # a plain shell statement with no trailing continuation backslash; callers
+    # join them for their own transport (Dockerfile `&&`-chaining vs. a plain
+    # multi-line script).
+    #
+    # `api_key_expr` is a shell expression, already correctly quoted by the
+    # caller, that evaluates to the Puppet Core API key — e.g. Docker passes
+    # `"$(cat /run/secrets/puppet_core_api_key)"` (sourced from a BuildKit
+    # secret mount at RUN-time); the VM path passes the literal key value
+    # (already substituted into the script text before it is piped over SSH,
+    # so the credential never appears as a subprocess argv element on either
+    # host — see vm.rb). Either way the key exists on disk (in the repo file)
+    # only transiently, and is removed by the final `rm -f` line before the
+    # script returns.
+    def self.puppet_core_agent_install_lines(variant, version, puppet_major, api_key_expr:, install_puppetserver: false)
+      collection = "puppet#{puppet_major}"
+      case variant
+      when 'el', 'centos', 'redhat', 'rocky', 'alma', 'fedora', 'amazon'
+        release_rpm = "https://yum-puppetcore.puppet.com/public/#{collection}-release-#{variant}-#{version}.noarch.rpm"
+        repo_file = "/etc/yum.repos.d/#{collection}-release.repo"
+        puppet_install_pkgs = install_puppetserver ? 'puppet-agent puppetserver' : 'puppet-agent'
+        [
+          "PUPPET_CORE_API_KEY=#{api_key_expr}",
+          "rpm -Uvh #{release_rpm}",
+          "sed -i '/^\\[#{collection}\\]/a username=forge-key\\npassword='\"$PUPPET_CORE_API_KEY\" #{repo_file}",
+          "dnf install -y #{puppet_install_pkgs} || yum install -y #{puppet_install_pkgs}",
+          "rm -f #{repo_file}"
+        ]
+      when 'debian', 'ubuntu'
+        release_deb_url = "https://apt-puppetcore.puppet.com/public/#{collection}-release-$(. /etc/os-release && echo $VERSION_CODENAME).deb"
+        auth_file = "/etc/apt/auth.conf.d/#{collection}-puppetcore.conf"
+        [
+          "PUPPET_CORE_API_KEY=#{api_key_expr}",
+          'apt-get update -qq && apt-get install -y wget',
+          "wget -O /tmp/#{collection}-release.deb \"#{release_deb_url}\"",
+          "dpkg -i /tmp/#{collection}-release.deb",
+          'mkdir -p /etc/apt/auth.conf.d',
+          "echo \"machine apt-puppetcore.puppet.com login forge-key password $PUPPET_CORE_API_KEY\" > #{auth_file}",
+          'apt-get update -qq && apt-get install -y puppet-agent',
+          'ln -sf /opt/puppetlabs/bin/puppet /usr/bin/puppet',
+          'ln -sf /opt/puppetlabs/bin/facter /usr/bin/facter',
+          'ln -sf /opt/puppetlabs/bin/hiera /usr/bin/hiera',
+          'command -v puppet',
+          'puppet --version',
+          "rm -f #{auth_file}",
+          'grep -RIl --exclude-dir=preferences.d apt-puppetcore.puppet.com /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null | xargs -r rm -f || true'
+        ]
+      else
+        raise "Unsupported platform variant '#{variant}' for Puppet Core agent install"
+      end
+    end
+
     private
 
     # Generates a Dockerfile that installs puppet-agent from Puppet Core repos.
     # Credentials are consumed from a BuildKit secret mount and are never stored
     # in image layers or build metadata.
     def puppet_core_dockerfile(base_image, setup_commands, variant, version, puppet_major, docker_mode: 'sshd', install_puppetserver: false, certname: nil)
-      collection = "puppet#{puppet_major}"
       lines = []
       lines << '# syntax=docker/dockerfile:1.4'
       lines << "FROM #{base_image}"
@@ -127,17 +180,14 @@ module ModuleTester
 
       case variant
       when 'el', 'centos', 'redhat', 'rocky', 'alma', 'fedora', 'amazon'
-        release_rpm = "https://yum-puppetcore.puppet.com/public/#{collection}-release-#{variant}-#{version}.noarch.rpm"
-        repo_file = "/etc/yum.repos.d/#{collection}-release.repo"
-        puppet_install_pkgs = install_puppetserver ? 'puppet-agent puppetserver' : 'puppet-agent'
-        lines << "RUN --mount=type=secret,id=puppet_core_api_key \\" \
-                 "\n PUPPET_CORE_API_KEY=\"$(cat /run/secrets/puppet_core_api_key)\" \\" \
-                 "\n && rpm -Uvh #{release_rpm} \\" \
-                 "\n && sed -i '/^\\[#{collection}\\]/a username=forge-key\\npassword='\"$PUPPET_CORE_API_KEY\" #{repo_file} \\" \
-                 "\n && dnf install -y #{puppet_install_pkgs} || yum install -y #{puppet_install_pkgs} \\" \
-                 "\n && rm -f #{repo_file}"
+        install_lines = self.class.puppet_core_agent_install_lines(
+          variant, version, puppet_major,
+          api_key_expr: '"$(cat /run/secrets/puppet_core_api_key)"',
+          install_puppetserver: install_puppetserver
+        )
+        lines << dockerize_run("--mount=type=secret,id=puppet_core_api_key", install_lines)
         lines << "RUN dnf install -y openssh-server openssh-clients passwd || yum install -y openssh-server openssh-clients passwd"
-        
+
         if install_puppetserver
           lines << "RUN dnf install -y rpm-build rpmdevtools || yum install -y rpm-build rpmdevtools"
           lines << "COPY openvox-server.spec /tmp/openvox-server.spec"
@@ -152,23 +202,19 @@ module ModuleTester
           lines << "RUN dnf remove -y rpm-build rpmdevtools || yum remove -y rpm-build rpmdevtools"
         end
       when 'debian', 'ubuntu'
-        release_deb_url = "https://apt-puppetcore.puppet.com/public/#{collection}-release-$(. /etc/os-release && echo $VERSION_CODENAME).deb"
-        auth_file = "/etc/apt/auth.conf.d/#{collection}-puppetcore.conf"
-        lines << "RUN --mount=type=secret,id=puppet_core_api_key \\" \
-                 "\n PUPPET_CORE_API_KEY=\"$(cat /run/secrets/puppet_core_api_key)\" \\" \
-                 "\n && apt-get update -qq && apt-get install -y wget \\" \
-                 "\n && wget -O /tmp/#{collection}-release.deb \"#{release_deb_url}\" \\" \
-                 "\n && dpkg -i /tmp/#{collection}-release.deb \\" \
-                 "\n && mkdir -p /etc/apt/auth.conf.d \\" \
-                 "\n && echo \"machine apt-puppetcore.puppet.com login forge-key password $PUPPET_CORE_API_KEY\" > #{auth_file} \\" \
-                 "\n && apt-get update -qq && apt-get install -y puppet-agent openssh-server openssh-client passwd \\" \
-                 "\n && ln -sf /opt/puppetlabs/bin/puppet /usr/bin/puppet \\" \
-                 "\n && ln -sf /opt/puppetlabs/bin/facter /usr/bin/facter \\" \
-                 "\n && ln -sf /opt/puppetlabs/bin/hiera /usr/bin/hiera \\" \
-                 "\n && command -v puppet \\" \
-                 "\n && puppet --version \\" \
-                 "\n && rm -f #{auth_file} \\" \
-                 "\n && grep -RIl --exclude-dir=preferences.d apt-puppetcore.puppet.com /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null | xargs -r rm -f || true"
+        install_lines = self.class.puppet_core_agent_install_lines(
+          variant, version, puppet_major,
+          api_key_expr: '"$(cat /run/secrets/puppet_core_api_key)"',
+          install_puppetserver: install_puppetserver
+        )
+        # Docker's original apt install line additionally pulled in
+        # openssh-server/openssh-client/passwd inline (the EL branch installs
+        # these as a separate RUN afterward instead) — preserve that exact
+        # placement so the generated Dockerfile is unchanged.
+        install_lines = install_lines.map do |line|
+          line == 'apt-get update -qq && apt-get install -y puppet-agent' ? "#{line} openssh-server openssh-client passwd" : line
+        end
+        lines << dockerize_run("--mount=type=secret,id=puppet_core_api_key", install_lines)
       else
         raise "Unsupported platform variant '#{variant}' for Puppet Core agent install"
       end
@@ -211,6 +257,19 @@ module ModuleTester
       end
 
       lines.join("\n") + "\n"
+    end
+
+    # Joins install lines into a single Dockerfile `RUN <mount_flag> \` block
+    # with `&&`-chaining, matching the exact continuation-line style Docker
+    # expects for a multi-command RUN instruction: the first content line has
+    # no `&&` prefix, every subsequent line does, and consecutive lines are
+    # joined with a trailing backslash before the newline.
+    def dockerize_run(mount_flag, install_lines)
+      logical_lines = ["RUN #{mount_flag}"]
+      install_lines.each_with_index do |line, idx|
+        logical_lines << "#{idx.zero? ? ' ' : ' && '}#{line}"
+      end
+      logical_lines.join(" \\\n")
     end
   end
 end

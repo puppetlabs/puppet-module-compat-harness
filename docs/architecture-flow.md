@@ -73,6 +73,7 @@ flowchart TD
 
         subgraph AccPath["Acceptance Test Path"]
             AK{"Puppet Core<br/>API key set?"}
+            PR{"Provisioner?<br/>(per acceptance target)"}
 
             subgraph TwoStage["Two-Stage Docker Isolation Model"]
                 S1["Stage 1 · Build SUT Image<br/>docker build — API key present here<br/>Installs Puppet Core agent<br/>Scrubs key from all image layers"]
@@ -81,6 +82,17 @@ flowchart TD
                 S2S["Stage 2 · Run Tests (sshd)<br/>sshd as PID 1 — no systemd<br/>Secrets stripped from environment"]
                 S2D["Stage 2 · Run Tests (systemd)<br/>systemd as PID 1 — privileged<br/>Secrets stripped from environment"]
             end
+
+            subgraph VMPath["GCP VM Provisioning<br/>docs/vm-based-acceptance-testing.md"]
+                PV["provision_vm<br/>POST provision service<br/>no credentials required — authorized by<br/>the calling GitHub run URL"]
+                PVM["prepare_vm<br/>escalate litmus user → root via an<br/>ephemeral SSH key; litmus password<br/>discarded once this returns"]
+                IPC["install_puppet_core_vm<br/>same install+scrub logic as Stage 1,<br/>piped over SSH — key never a<br/>subprocess argv element"]
+                WFO["write_fact_overrides (optional)<br/>rewrites dotted BEAKER_FACTER_ overrides<br/>as a correctly-nested facts.d file —<br/>voxpupuli-acceptance's own writer can't<br/>nest a dotted fact path"]
+                WSF["write_vm_setfile<br/>hypervisor: none · no secrets embedded"]
+            end
+            PACG["Pre-acceptance setup (optional)<br/>same mechanism as the Docker path"]
+            ACCVM["Run acceptance<br/>bundle exec rake beaker"]
+            TD["teardown_vm<br/>DELETE provision service — best-effort<br/>backed by the service's reaper + 3h VM TTL"]
 
             FOSS["FOSS Fallback<br/>Public puppet-agent — no API key needed<br/>bundle exec rake beaker"]
         end
@@ -118,12 +130,17 @@ flowchart TD
     PDK & Rake --> CL
 
     TM -- acceptance --> AK
-    AK -- "yes — Puppet Core" --> S1
+    AK -- "yes — Puppet Core" --> PR
+    PR -- "docker (default)" --> S1
     S1 --> DM
     DM --> PAC
     PAC -- "sshd (default)" --> S2S --> CL
     PAC -- "systemd" --> S2D --> CL
     AK -- "no — FOSS fallback" --> FOSS --> CL
+
+    PR -- "gcp" --> PV
+    PV --> PVM --> IPC --> WFO --> WSF --> PACG --> ACCVM --> CL
+    PV -.->|"always, ensure-wrapped"| TD
 
     CL --> RP --> RS --> WS --> UA
     UA -- "fan-in (all jobs complete)" --> DA
@@ -131,8 +148,9 @@ flowchart TD
 
     class MJ,LG datasource
     class BR gemswap
-    class S1,S2S,S2D isolation
+    class S1,S2S,S2D,PV,PVM,IPC,WSF,TD isolation
     style TwoStage fill:#fdf2f8,stroke:#be185d,stroke-width:2px
+    style VMPath fill:#fdf2f8,stroke:#be185d,stroke-width:2px
 ```
 
 ---
@@ -147,8 +165,8 @@ flowchart TD
 | JavaScript action runtime | Workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` so JavaScript-based actions run on Node 24 ahead of runner defaults. |
 | Validate schema | `validate_modules_config.py` checks `config/modules.json` against the JSON schema before anything fans out. |
 | Detect changes (lean matrix) | `detect_changes.py` decides which modules need testing this run, scoped to the calling workflow's own `PUPPET_MAJOR` (`'8'` or `'9'`) — every ledger read (`coverage_state`, staleness `tested_at`) comes from that major's own `puppet_majors[major]` slice, never the sibling major's. It sets `run_all` if a **material harness path** changed within the window, or on a manual dispatch with `lean=false`. Material paths are split into a shared list (`.github/actions/`, `lib/`, `bin/`, `scripts/`, `Gemfile*`, `profiles/`) plus the caller's **own** workflow file only (`compatibility-runner-puppet8.yml` for the 8 caller, the `puppet9` file for the 9 caller) — editing one major's caller file does not trip `run_all` on the other major's run. Otherwise it includes a module only if its (major-scoped) ledger status is **not green** (never-tested / unit-failing / acceptance-failing), it is **stale** (`> STALE_DAYS`, default 30), or it had an **upstream commit** on its ref within the window (GitHub commits API, shared across majors — a module's own upstream activity legitimately warrants retesting on every major). Any indeterminate signal (git failure, API error, non-GitHub host) **fails safe by including** the module. Writes `.tmp/change-decisions.json` (uploaded as the `change-decisions` artifact) and exposes `run_all` + `include_ids` as step outputs. Skipped when a `modules_json` override is supplied — the override runs verbatim. |
-| Build matrix | `build_matrix.rb` expands the module list into two matrices (unit + acceptance, one row per module × target OS), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance entry carries `docker_mode`, `install_puppetserver`, `setup_commands`, and `pre_acceptance_commands` from `modules.json`. It also emits `has_unit` / `has_acceptance` flags. |
-| Empty-matrix gating | GitHub Actions treats an **empty matrix vector as a hard workflow error** (`Matrix vector 'module' does not contain any values`) rather than as zero combinations, so `test_unit` and `test_acceptance` are each gated on the matching `has_*` flag from the matrix step. When the filter selects nothing, both test jobs are skipped, `publish` reports a **NO-OP** run, and the workflow **succeeds**. |
+| Build matrix | `build_matrix.rb` expands the module list into **three** matrices (unit, Docker-provisioner acceptance, GCP-provisioner acceptance — one row per module × target), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance target's `provisioner` field (default `docker`) decides which matrix it lands in. Docker entries carry `docker_mode`, `setup_commands`; every acceptance entry (either provisioner) carries `install_puppetserver`, `pre_acceptance_commands`, and `beaker_env` from `modules.json`; GCP entries additionally carry `image`. It also emits `has_unit` / `has_acceptance` / `has_vm_acceptance` flags. |
+| Empty-matrix gating | GitHub Actions treats an **empty matrix vector as a hard workflow error** (`Matrix vector 'module' does not contain any values`) rather than as zero combinations, so `test_unit`, `test_acceptance`, and `test_acceptance_vm` are each gated on the matching `has_*` flag from the matrix step. When the filter selects nothing for a given job, that job is skipped, `publish` reports a **NO-OP** run, and the workflow **succeeds**. |
 
 ### Per-Job Finalisation (end of every parallel job)
 
@@ -162,7 +180,7 @@ After the runner writes its outputs, each matrix job runs three additional steps
 
 ### CI: Publish (fan-in)
 
-The `publish` job runs after **all** unit and acceptance jobs finish (`if: always() && needs.prepare.result == 'success'`, so it runs even when individual test jobs fail **or when both test jobs were skipped as a no-op**). It holds `permissions: contents: write` so it can commit status back to the repo, and the whole workflow uses a `concurrency` group so ledger commits on the same ref never race. It:
+The `publish` job runs after **all** unit, Docker-acceptance, and VM-acceptance jobs finish (`if: always() && needs.prepare.result == 'success'`, so it runs even when individual test jobs fail **or when any/all were skipped as a no-op**). It holds `permissions: contents: write` so it can commit status back to the repo, and the whole workflow uses a `concurrency` group so ledger commits on the same ref never race. It:
 
 1. Downloads every `compatibility-*` artifact into `all-artifacts/` via `actions/download-artifact@v8`. Skipped on a no-op run, when there are no artifacts to fetch.
 2. Runs `summarize_module_statuses.py`, which walks the artifact tree collecting every `module-status.json`, sorts results by lane and module id, and writes a consolidated `GITHUB_STEP_SUMMARY` with:
@@ -236,23 +254,38 @@ After `fact_provider`, the adapter runs `unit_runtime_probe` (`bundle exec ruby 
 
 ### Acceptance Test Path
 
-Acceptance tests run against a real OS inside a Docker container managed by
-[Beaker](https://github.com/voxpupuli/beaker). The target OS is defined by a
-**setfile** — a YAML file under `config/beaker/setfiles/` that declares the
-Docker image and platform string.
+Acceptance tests run against a real OS, on one of two SUT **provisioners**
+selected per acceptance target (`provisioner` in `modules.json`, default
+`docker`; a target uses exactly one, never both — see
+[`docs/vm-based-acceptance-testing.md`](vm-based-acceptance-testing.md) §6.1):
+
+- **`docker`** (default) — a Docker container managed by
+  [Beaker](https://github.com/voxpupuli/beaker). The target OS is defined by a
+  **setfile** — a YAML file under `config/beaker/setfiles/` that declares the
+  Docker image and platform string.
+- **`gcp`** — a real VM provisioned on demand from Puppet DevX's GCP provision
+  service, for modules a container cannot satisfy (kernel params, real init,
+  reboot, SELinux LSM, etc.). No setfile; the target OS is a GCP `image`
+  string, mapped to a Beaker platform by `Vm::PLATFORM_BY_IMAGE`
+  (`lib/module_tester/vm.rb`). See the design doc for the full rationale.
 
 #### Docker Container Modes
 
-Each acceptance target can specify a `docker_mode` in `modules.json` that
-controls how the SUT container runs:
+Each **Docker-provisioner** acceptance target can specify a `docker_mode` in
+`modules.json` that controls how the SUT container runs (not applicable to
+`gcp` targets — a VM is a real machine with a real init):
 
 | Mode | PID 1 process | Use case | Tradeoffs |
 |------|---------------|----------|-----------|
 | `sshd` (default) | `/usr/sbin/sshd -D -e` | General modules that don't require systemd service management. Fast, portable, stable SSH. | Services managed by systemd (e.g. chronyd, firewalld) cannot start. |
 | `systemd` | setfile `docker_cmd` (fallback `/sbin/init`) | Modules whose acceptance tests assert service running/enabled state. Container runs privileged with cgroup mounts. | Heavier, requires privileged container, may be less stable across CI kernels. |
-Each acceptance target may also declare **`setup_commands`** — a list of shell commands appended to `docker_image_commands` in the generated Dockerfile during Stage 1 (SUT image build). This allows module-specific SUT preparation without affecting other modules or the global runner. A typical use case is disabling AppArmor for modules like `puppet-openldap` whose acceptance tests write LDAP databases to `mktmpdir` paths that the `slapd` AppArmor profile would otherwise block.
 
-Each acceptance target may also declare **`pre_acceptance_commands`** — a list of shell commands that run on the **host runner** (not inside Docker) after the SUT image is built but before Beaker starts. Commands execute from the cloned module directory, so relative paths like `bash scripts/start-gitlab.sh` resolve correctly. Use this for modules whose acceptance tests require external services to be running — for example, `puppet-gitlab_ci_runner` starts a GitLab CE container and a Squid proxy, writing their IPs to `~/GITLAB_IP` and `~/SQUID_IP` so that `spec_helper_acceptance.rb` can read them at load time. Each command is tracked as a named stage (`pre_acceptance_setup_0`, `pre_acceptance_setup_1`, …) so failures are visible in the compatibility report; if any command fails the pipeline short-circuits before Beaker runs.
+Each Docker-provisioner target may also declare **`setup_commands`** — a list of shell commands appended to `docker_image_commands` in the generated Dockerfile during Stage 1 (SUT image build). This allows module-specific SUT preparation without affecting other modules or the global runner. A typical use case is disabling AppArmor for modules like `puppet-openldap` whose acceptance tests write LDAP databases to `mktmpdir` paths that the `slapd` AppArmor profile would otherwise block.
+
+Any acceptance target (either provisioner) may also declare **`pre_acceptance_commands`** — a list of shell commands that run on the **host runner** (not inside the SUT) after the SUT is ready but before Beaker starts. Commands execute from the cloned module directory, so relative paths like `bash scripts/start-gitlab.sh` resolve correctly. Use this for modules whose acceptance tests require external services to be running — for example, `puppet-gitlab_ci_runner` starts a GitLab CE container and a Squid proxy, writing their IPs to `~/GITLAB_IP` and `~/SQUID_IP` so that `spec_helper_acceptance.rb` can read them at load time. Each command is tracked as a named stage (`pre_acceptance_setup_0`, `pre_acceptance_setup_1`, …) so failures are visible in the compatibility report; if any command fails the pipeline short-circuits before Beaker runs.
+
+Any acceptance target may also declare **`beaker_env`** — a map of extra environment variables merged into the acceptance test environment before Beaker runs, for module-specific Beaker behaviour that a one-off host command can't achieve (host-command changes don't persist into the separate `acceptance` stage's own subprocess). For example, `puppet-swap_file`'s GCP target sets `BEAKER_FACTER_memory.system.total` so its swapfile-sizing logic doesn't size off a full VM's real memory.
+
 The `sshd` mode was chosen as the default because Beaker's built-in default
 command (`service sshd start; tail -f /dev/null`) caused ECONNRESET loops in
 non-systemd containers, and running sshd directly as PID 1 resolved that
@@ -274,9 +307,65 @@ code**:
    that references only the pre-built local image tag — no credentials
    anywhere. Before invoking Beaker, it strips `PUPPET_CORE_API_KEY`,
    `BUNDLE_RUBYGEMS___PUPPETCORE__PUPPET__COM`, `PASSWORD`, and `USERNAME`
-    from the subprocess environment and carries host-level `dockeropts` (for
-    example privileged mode and cgroup/tmpfs mounts required by systemd
-    targets). Module test code runs with no access to any secret.
+   from the subprocess environment. Module test code runs with no access to
+   any secret.
+
+#### GCP VM Provisioning (`provisioner: gcp`)
+
+The same "credential present only until the SUT is ready, stripped before
+untrusted code runs" property, adapted for a real VM instead of a container.
+Four stages run before the same `acceptance` stage used by the Docker path,
+followed by best-effort teardown:
+
+1. **`provision_vm`**: `ProvisionService` POSTs to the DevX facade — no
+   credentials of any kind; authorization is server-side, keyed off the
+   calling GitHub run URL. Returns a VM reachable only as a non-root `litmus`
+   user with a service-issued, per-request password.
+2. **`prepare_vm`** (four sub-stages: `prepare_vm_keygen`,
+   `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`):
+   generates an ephemeral SSH keypair for this run only; retries for up to
+   100s since a freshly-provisioned VM is not immediately reachable; uses
+   the litmus password once to install the public half as a root-authorized
+   key, then discards the password — it never reaches the `acceptance`
+   stage or any env hash.
+3. **`install_puppet_core_vm`**: runs the *same* install-and-scrub commands
+   `Docker.puppet_core_agent_install_lines` defines for the Dockerfile path
+   (shared, not duplicated), piped over SSH stdin with the API key
+   interpolated directly into the script text — never a subprocess argv
+   element on either host, so it cannot leak via `ps`.
+4. **`write_fact_overrides`** (optional, two sub-stages: `read_fact_overrides`,
+   `write_fact_overrides`): fixes a real gap in `acceptanceTarget.beaker_env`'s
+   `BEAKER_FACTER_<fact.path>` mechanism. `voxpupuli-acceptance`'s own
+   `Facts.write_beaker_facts_on` writes these as a **flat**, dotted-key
+   external fact file (`{"memory.system.total": "..."}`) — Facter's external
+   fact loader takes a JSON top-level key as a literal fact name and does not
+   split on `.`, so a dotted override never reaches a module reading the
+   nested `$facts['memory']['system']['total']`. Confirmed as a real,
+   silent no-op against a live run (`puppet-swap_file`, Sept 2026): the
+   module fell back to the VM's real memory and tried to build a swapfile
+   larger than the VM's disk. When `beaker_env` contains a dotted
+   `BEAKER_FACTER_*` key, `Vm#write_fact_overrides` reads the affected
+   fact's real structure (`facter -j <name>`), deep-merges the override in
+   (so untouched sibling values like `memory.swap.*` survive), and writes
+   the merged result to a distinctly-named facts.d file — leaving
+   `voxpupuli-acceptance`'s own (flat, functionally inert) file alone rather
+   than trying to race or suppress it. A module with only flat
+   `BEAKER_FACTER_*` overrides never triggers this — those already work via
+   the existing mechanism.
+5. **`write_vm_setfile`**: emits a Beaker setfile with `hypervisor: none`,
+   the VM's IP, and a reference to the ephemeral key's *path* (never its
+   contents) — no secrets embedded.
+
+Then `pre_acceptance_commands` and the `acceptance` stage run exactly as they
+do for the Docker path, against `BEAKER_PUPPET_COLLECTION=preinstalled`.
+Finally **`teardown_vm`** issues `DELETE` against the provision service from
+an `ensure` block, so it fires on every exit path — including a VM that only
+got partway through setup. A failed teardown is not a harness or
+compatibility concern; it falls back to the service's own run-status reaper
+and hard 3-hour VM TTL. `provision_vm`, the three `prepare_vm_*` stages,
+`install_puppet_core_vm`, and `read_fact_overrides`/`write_fact_overrides`
+are all classified as harness-error stages (see Result Classification
+below) — an infrastructure flake must never read as a module incompatibility.
 
 #### FOSS Fallback
 
@@ -302,7 +391,7 @@ After all stages complete, the `Classifier` assigns one of these states:
 The classifier evaluates conditions in this order, stopping at the first match:
 
 1. Auth status is not `ok` → **`harness_error`**
-2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`) → **`harness_error`**
+2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`, `read_fact_overrides`, `write_fact_overrides`) → **`harness_error`**
 3. Any non-bootstrap stage failed → **`not_compatible`** _(subject to downgrade overrides — see below)_
 4. Metadata reports the Puppet version as unsupported **and** `metadata_mode=fail` → **`not_compatible`**
 5. Metadata reports unsupported version (warn mode) → **`conditionally_compatible`**
@@ -313,7 +402,7 @@ The classifier evaluates conditions in this order, stopping at the first match:
 
 Dependency warnings can come from either Gemfile conflict recovery or OpenFact detection by the `fact_provider` stage.
 
-For **acceptance mode** the logic is simpler: if the `acceptance` stage is absent the result is `inconclusive`; otherwise the stage exit code maps directly to `compatible` or `not_compatible`.
+For **acceptance mode** the logic is simpler: if the `acceptance` stage is absent the result is `inconclusive`; otherwise the stage exit code maps directly to `compatible` or `not_compatible`. This is why the VM path's infrastructure stages must be checked at step 2, before this step is ever reached — otherwise a provisioning failure (no `acceptance` stage recorded) would misclassify as `inconclusive` rather than `harness_error`. Note `teardown_vm` is deliberately **not** in the harness-stage list at step 2: a failed teardown is a best-effort concern backed by the provision service's own reaper and 3-hour VM TTL, not a harness or compatibility signal.
 
 #### Downgrade overrides
 

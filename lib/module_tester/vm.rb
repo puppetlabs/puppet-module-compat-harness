@@ -1,0 +1,293 @@
+# frozen_string_literal: true
+
+require 'fileutils'
+require 'yaml'
+require 'json'
+require 'shellwords'
+
+module ModuleTester
+  # VM preparation for the GCP provision-service acceptance path
+  # (docs/vm-based-acceptance-testing.md §2.4, §3.1-3.2). A VM returned by
+  # ProvisionService arrives reachable only as a non-root "litmus" user with
+  # a service-issued password. This class escalates to root via an ephemeral,
+  # harness-generated key (so the shared password never reaches the
+  # untrusted test stage), installs the Puppet Core agent using the same
+  # install logic Docker.puppet_core_agent_install_lines defines, and writes
+  # the Beaker setfile that points at the result.
+  class Vm
+    SSH_OPTS = %w[-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10].freeze
+
+    # Full path, not a bare command — the EL install path (unlike Debian/Ubuntu,
+    # see Docker.puppet_core_agent_install_lines) does not symlink facter onto
+    # a default PATH, and a non-interactive SSH command does not source
+    # /etc/profile.d. Beaker itself always calls out with full paths for the
+    # same reason.
+    FACTER_BIN = '/opt/puppetlabs/bin/facter'
+
+    # A BEAKER_FACTER_<fact> override (config/modules.schema.json's
+    # acceptanceTarget.beaker_env) is consumed by voxpupuli-acceptance's
+    # Facts.write_beaker_facts_on, which writes a FLAT, dotted-key external
+    # fact file (e.g. {"memory.system.total": "300 MiB"}). Facter's external
+    # fact loader takes JSON top-level keys as literal fact names — it does
+    # not split on "." — so a dotted key like "memory.system.total" never
+    # reaches the nested $facts['memory']['system']['total'] a module
+    # actually reads. Confirmed against a live run (puppet-swap_file, Sept
+    # 2026): the override was silently a no-op and the module fell back to
+    # the VM's real memory. For a genuinely nested fact, the harness has to
+    # write the correctly-nested structure itself.
+    FACT_OVERRIDE_FILE = '/etc/facter/facts.d/harness-fact-overrides.json'
+
+    # GCP image family -> Beaker platform string (design doc §3.1). Small and
+    # mechanical by design — see the doc for why this doesn't need YAML
+    # setfiles the way the Docker path does.
+    PLATFORM_BY_IMAGE = {
+      'rocky-linux-cloud/rocky-linux-9' => 'el-9-x86_64',
+      'rhel-9' => 'el-9-x86_64',
+      'centos-stream-9' => 'el-9-x86_64',
+      'almalinux-cloud/almalinux-9' => 'el-9-x86_64',
+      'rocky-linux-cloud/rocky-linux-8' => 'el-8-x86_64',
+      'rhel-8' => 'el-8-x86_64',
+      'centos-stream-8' => 'el-8-x86_64',
+      'rhel-10' => 'el-10-x86_64',
+      'debian-12' => 'debian-12-x86_64',
+      'ubuntu-2404-lts' => 'ubuntu-24.04-x86_64'
+    }.freeze
+
+    def initialize(stage_runner, workspace_dir)
+      @stage = stage_runner
+      @workspace_dir = workspace_dir
+    end
+
+    def self.platform_for_image(image)
+      PLATFORM_BY_IMAGE.fetch(image) { raise "No Beaker platform mapping for GCP image '#{image}' — add one to Vm::PLATFORM_BY_IMAGE" }
+    end
+
+    # Escalates from the service's litmus/password login to root via an
+    # ephemeral SSH key generated for this run only. Returns
+    # [key_path_or_nil, StageResult]. The litmus password is used only in
+    # this method (as an ad-hoc `extra_secrets` redaction value, since it is
+    # never placed in an env hash — see Redactor) and is discarded once this
+    # returns; nothing downstream ever sees it.
+    def prepare_vm(host, module_dir)
+      key_path = File.expand_path(File.join(@workspace_dir, '.vm-keys', "#{host.uuid}_id_ed25519"))
+      FileUtils.mkdir_p(File.dirname(key_path))
+      FileUtils.rm_f(key_path)
+      FileUtils.rm_f("#{key_path}.pub")
+
+      keygen = @stage.run_stage(
+        'prepare_vm_keygen',
+        ['ssh-keygen', '-t', 'ed25519', '-N', '', '-f', key_path, '-q'],
+        module_dir, {}
+      )
+      return [nil, keygen] unless keygen.status == 'passed'
+
+      File.chmod(0o600, key_path)
+      pubkey = File.read("#{key_path}.pub").strip
+
+      # A freshly-provisioned VM is not immediately reachable — its startup
+      # script (creating the litmus user, enabling password auth) needs a
+      # few seconds to a couple of minutes to finish. Retry up to 100s before
+      # attempting the real escalation, matching the wait loop validated in
+      # docs/vm-based-acceptance-testing.md's spike 1/2 workflows (an earlier
+      # omission of this loop here caused a real "connection timed out"
+      # failure on the first Phase 1 live-verification run).
+      wait_script = <<~WAITSCRIPT
+        set -uo pipefail
+        for i in $(seq 1 20); do
+          if sshpass -e ssh #{SSH_OPTS.join(' ')} #{Shellwords.escape("#{host.user}@#{host.ip}")} 'echo ok' 2>/dev/null | grep -q ok; then
+            echo "SSH auth succeeded after $((i * 5))s"
+            exit 0
+          fi
+          sleep 5
+        done
+        echo "Could not authenticate as #{host.user} within 100s" >&2
+        exit 1
+      WAITSCRIPT
+
+      wait_stage = @stage.run_stage(
+        'prepare_vm_wait_ssh',
+        ['bash', '-c', wait_script],
+        module_dir, { 'SSHPASS' => host.password },
+        extra_secrets: [host.password]
+      )
+      return [nil, wait_stage] unless wait_stage.status == 'passed'
+
+      script = <<~REMOTESCRIPT
+        set -euo pipefail
+        sudo mkdir -p /root/.ssh
+        echo #{Shellwords.escape(pubkey)} | sudo tee -a /root/.ssh/authorized_keys > /dev/null
+        sudo chmod 700 /root/.ssh
+        sudo chmod 600 /root/.ssh/authorized_keys
+        sudo sed -i 's/^#\\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+        sudo systemctl restart sshd
+      REMOTESCRIPT
+
+      escalate = @stage.run_stage(
+        'prepare_vm_escalate',
+        ['sshpass', '-e', 'ssh', *SSH_OPTS, "#{host.user}@#{host.ip}", 'bash', '-s'],
+        module_dir, { 'SSHPASS' => host.password },
+        stdin: script,
+        extra_secrets: [host.password]
+      )
+      return [nil, escalate] unless escalate.status == 'passed'
+
+      verify = @stage.run_stage(
+        'prepare_vm_verify_root',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'whoami'],
+        module_dir, {}
+      )
+      return [nil, verify] unless verify.status == 'passed' && verify.output.to_s.include?('root')
+
+      [key_path, verify]
+    end
+
+    # Installs the Puppet Core agent over SSH using the same install logic
+    # Docker.puppet_core_agent_install_lines defines for the container path.
+    # The API key is interpolated into the script text locally, before it is
+    # piped over SSH stdin, so it never appears as a subprocess argv element
+    # on either host (verified byte-for-byte in the design doc's spike 1).
+    def install_puppet_core_vm(host, key_path, platform, puppet_major, api_key, module_dir, install_puppetserver: false)
+      variant, version, = platform.split('-', 3)
+      install_lines = Docker.puppet_core_agent_install_lines(
+        variant, version, puppet_major,
+        api_key_expr: Shellwords.escape(api_key),
+        install_puppetserver: install_puppetserver
+      )
+
+      script = <<~REMOTESCRIPT
+        set -euo pipefail
+        #{install_lines.join("\n")}
+      REMOTESCRIPT
+
+      @stage.run_stage(
+        'install_puppet_core_vm',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'bash', '-s'],
+        module_dir, {},
+        stdin: script,
+        extra_secrets: [api_key]
+      )
+    end
+
+    # Fixes the BEAKER_FACTER_<dotted.fact.path> nesting gap described above
+    # for FACT_OVERRIDE_FILE. Only dotted (structured) overrides need this —
+    # a flat override (e.g. BEAKER_FACTER_role=foo) already works correctly
+    # through voxpupuli-acceptance's own mechanism and is left alone, so this
+    # returns nil (no stage) when beaker_env has no dotted-fact keys.
+    #
+    # Reads the real value of each affected top-level fact first and merges
+    # the override into it, rather than replacing the fact outright — an
+    # external fact's weight (10,000) beats every core resolver for the whole
+    # fact, so writing only the overridden leaf would silently blank out
+    # every sibling (e.g. memory.swap.*, memory.system.available) a module
+    # might also read. Returns an Array of StageResult (1 or 2 entries) so
+    # the caller can log/append all of them, or nil if there was nothing to do.
+    def write_fact_overrides(host, key_path, beaker_env)
+      overrides = parse_nested_fact_overrides(beaker_env)
+      return nil if overrides.empty?
+
+      top_names = overrides.keys
+      read_stage = @stage.run_stage(
+        'read_fact_overrides',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", FACTER_BIN, '-j', *top_names],
+        @workspace_dir, {}
+      )
+      return [read_stage] if read_stage.status != 'passed'
+
+      current = begin
+        JSON.parse(read_stage.output.to_s)
+      rescue JSON::ParserError
+        {}
+      end
+
+      merged = overrides.each_with_object({}) do |(name, override), acc|
+        base = current[name].is_a?(Hash) ? current[name] : {}
+        acc[name] = deep_merge_facts(base, override)
+      end
+
+      script = <<~REMOTESCRIPT
+        set -euo pipefail
+        mkdir -p #{File.dirname(FACT_OVERRIDE_FILE)}
+        cat > #{FACT_OVERRIDE_FILE} <<'HARNESS_FACT_OVERRIDE_JSON'
+        #{JSON.generate(merged)}
+        HARNESS_FACT_OVERRIDE_JSON
+      REMOTESCRIPT
+
+      write_stage = @stage.run_stage(
+        'write_fact_overrides',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'bash', '-s'],
+        @workspace_dir, {},
+        stdin: script
+      )
+      [read_stage, write_stage]
+    end
+
+    # Writes a Beaker setfile pointing at the prepared VM. Unlike the Docker
+    # path's write_clean_setfile, there is no base setfile to start from —
+    # everything Beaker needs (platform, ip, key path) is derived directly
+    # (design doc §3.1). No secrets are embedded; the key path is a
+    # reference, not key material.
+    def write_vm_setfile(host, key_path, platform)
+      setfile = {
+        'HOSTS' => {
+          'gcp-vm' => {
+            'platform' => platform,
+            'hypervisor' => 'none',
+            'ip' => host.ip,
+            'user' => 'root',
+            'ssh' => {
+              'keys' => [key_path],
+              'paranoid' => false
+            }
+          }
+        },
+        'CONFIG' => {
+          'log_level' => 'verbose',
+          'type' => 'foss'
+        }
+      }
+
+      out_dir = File.join(@workspace_dir, '.beaker-setfiles')
+      FileUtils.mkdir_p(out_dir)
+      out_path = File.join(out_dir, "gcp-#{host.uuid}.yml")
+      File.write(out_path, YAML.dump(setfile))
+      File.expand_path(out_path)
+    end
+
+    private
+
+    # {"BEAKER_FACTER_memory.system.total" => "300 MiB"} ->
+    # {"memory" => {"system" => {"total" => "300 MiB"}}}
+    def parse_nested_fact_overrides(beaker_env)
+      overrides = {}
+      beaker_env.each do |key, value|
+        match = key.match(/\ABEAKER_FACTER_(.+)\z/)
+        next unless match
+
+        segments = match[1].split('.')
+        next if segments.length < 2
+
+        top = segments.first
+        overrides[top] ||= {}
+        deep_set_fact_path!(overrides[top], segments[1..], value)
+      end
+      overrides
+    end
+
+    def deep_set_fact_path!(hash, segments, value)
+      if segments.length == 1
+        hash[segments.first] = value
+      else
+        hash[segments.first] ||= {}
+        deep_set_fact_path!(hash[segments.first], segments[1..], value)
+      end
+    end
+
+    def deep_merge_facts(base, override)
+      merged = base.is_a?(Hash) ? base.dup : {}
+      override.each do |key, value|
+        merged[key] = value.is_a?(Hash) ? deep_merge_facts(merged[key], value) : value
+      end
+      merged
+    end
+  end
+end

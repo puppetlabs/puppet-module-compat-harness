@@ -820,9 +820,18 @@
         ]
       },
       "acceptance": {
-        "enabled": false,
-        "status": "blocked",
-        "reason": "Manages kernel-level swap file operations via swapon/swapoff. Docker containers restrict swap functionality at the cgroup/namespace level, preventing swap activation regardless of container configuration. Requires a full VM or bare-metal environment for acceptance testing."
+        "enabled": true,
+        "status": "running",
+        "targets": [
+          {
+            "name": "el9-gcp",
+            "provisioner": "gcp",
+            "image": "rocky-linux-cloud/rocky-linux-9",
+            "beaker_env": {
+              "BEAKER_FACTER_memory.system.total": "300 MiB"
+            }
+          }
+        ]
       }
     },
     {

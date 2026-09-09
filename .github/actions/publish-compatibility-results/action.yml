@@ -40,6 +40,10 @@ inputs:
     description: "'true' if this run's acceptance matrix was non-empty"
     required: false
     default: 'false'
+  has-vm-acceptance:
+    description: "'true' if this run's GCP-provisioner (VM) acceptance matrix was non-empty"
+    required: false
+    default: 'false'
   stale-days:
     description: 'Staleness threshold in days (for the dashboard staleness column)'
     required: false
@@ -54,7 +58,7 @@ runs:
         python-version: '3.11'
 
     - name: Download module artifacts
-      if: inputs.has-unit == 'true' || inputs.has-acceptance == 'true'
+      if: inputs.has-unit == 'true' || inputs.has-acceptance == 'true' || inputs.has-vm-acceptance == 'true'
       uses: actions/download-artifact@v8
       with:
         path: all-artifacts
