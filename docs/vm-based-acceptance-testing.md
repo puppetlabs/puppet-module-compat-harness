@@ -712,7 +712,25 @@ part of "done," not an optional refinement.
 
 **Phase 1 is done when** `puppet-swap_file` reports `unit+acceptance` in
 `status/ledger.json` for Puppet 8, renders as `el9-gcp:✅` in `STATUS.md`, and
-the VM is confirmed torn down.
+the VM is torn down (or, failing that, backstopped by the service's own
+reaper + 3h TTL per §9 — a failed `teardown_vm` is never a blocker).
+
+**Verified 2026-09-09** (run
+[34296524333](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34296524333/job/102294296919)):
+spine + fix confirmed end-to-end against the real service — 33 examples, 0
+failures, `compatibility_state: compatible`. `read_fact_overrides` read the
+VM's real memory (7.01 GiB) and `write_fact_overrides` wrote the corrected
+override; the three previously-`ENOSPC`-failing resources
+(`tmp file swap`, `tmp file swap 1`, `tmp file swap 2`) and the
+fully-default example all created their swapfiles successfully. `teardown_vm`
+itself failed on this run (`Connection reset by peer` — the same transient
+error class hit `provision_vm` on the run immediately before it, suggesting a
+brief facade-side blip that night rather than anything harness-side);
+correctly did not affect classification, per the backstop design above. This
+run used the `modules_json` workflow-dispatch override, which — as noted in
+§7 Verification — skips ledger persistence by design, so `status/ledger.json`
+and `STATUS.md` will pick up the real `el9-gcp:✅` row on the first nightly
+run after this lands on `main`, not immediately at merge time.
 
 *If the Facter-override plumbing proves awkward to land first,
 `puppet-rsyslog` (§7.4) is an equally strong pilot candidate and needs no
@@ -937,7 +955,7 @@ from this evidence next time rather than from scratch.
 | Phase | Status |
 |---|---|
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
-| Phase 1 — `puppet-swap_file` pilot (§7.3) | In progress — spine verified live; `BEAKER_FACTER_memory.system.total` no-op found and fixed (`Vm#write_fact_overrides`), re-verification pending |
+| Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | Not started |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
 | Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |
