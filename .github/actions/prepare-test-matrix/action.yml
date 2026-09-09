@@ -95,11 +95,18 @@ runs:
     - name: Build module matrix
       id: matrix
       shell: bash
+      env:
+        # Passed as env vars, not interpolated into the script text, so
+        # arbitrary content (an apostrophe, or a deliberate shell-injection
+        # attempt) in modules-json — or in a module id, however unlikely —
+        # can never break out of a quoted string in this script.
+        OVERRIDE: ${{ inputs.modules-json }}
+        RUN_ALL_INPUT: ${{ steps.detect.outputs.run_all }}
+        INCLUDE_IDS_INPUT: ${{ steps.detect.outputs.include_ids }}
       run: |
         set -euo pipefail
-        OVERRIDE='${{ inputs.modules-json }}'
-        RUN_ALL='${{ steps.detect.outputs.run_all }}'
-        INCLUDE_IDS='${{ steps.detect.outputs.include_ids }}'
+        RUN_ALL="$RUN_ALL_INPUT"
+        INCLUDE_IDS="$INCLUDE_IDS_INPUT"
         # No detection ran (modules_json override) -> include everything.
         if [ -z "$RUN_ALL" ]; then RUN_ALL='true'; fi
         RUN_ALL="$RUN_ALL" INCLUDE_IDS="$INCLUDE_IDS" ruby scripts/build_matrix.rb "$OVERRIDE" > .tmp-matrix.json

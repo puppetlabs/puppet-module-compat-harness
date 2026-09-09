@@ -189,10 +189,12 @@ jobs:
       - name: Seed Beaker host mappings
         if: runner.os == 'Linux'
         shell: bash
+        env:
+          SETFILE_STEM: ${{ matrix.module.setfile }}
         run: |
           set -euo pipefail
           mkdir -p .tmp
-          setfile="config/beaker/setfiles/${{ matrix.module.setfile }}.yml"
+          setfile="config/beaker/setfiles/${SETFILE_STEM}.yml"
           echo "Reading host entries from $setfile"
 
           ruby -ryaml -e "
