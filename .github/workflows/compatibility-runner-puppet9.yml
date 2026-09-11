@@ -311,6 +311,7 @@ jobs:
           allow-acceptance: 'true'
           provisioner: gcp
           vm-image: ${{ matrix.module.image }}
+          vm-setup-commands: ${{ toJson(matrix.module.vm_setup_commands) }}
           output-dir: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
           artifact-name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}
           test-lane: acceptance

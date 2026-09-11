@@ -221,6 +221,56 @@ module ModuleTester
       [read_stage, write_stage]
     end
 
+    # Harness-side VM preparation (acceptanceTarget.vm_setup_commands),
+    # anticipated but left undesigned by docs/vm-based-acceptance-testing.md
+    # §7.4. Runs over SSH as root after Puppet Core is installed and before
+    # any module code touches the VM — for environment prep the acceptance
+    # suite itself doesn't (and shouldn't have to) do, e.g. relaxing a
+    # systemd start-rate limit before a suite that restarts a service
+    # repeatedly. Never touches the module under test. Returns nil (no
+    # stage) when the target declares no commands.
+    def run_vm_setup_commands(host, key_path, module_dir, commands)
+      return nil if commands.nil? || commands.empty?
+
+      script = <<~REMOTESCRIPT
+        set -euo pipefail
+        #{commands.join("\n")}
+      REMOTESCRIPT
+
+      @stage.run_stage(
+        'vm_setup_commands',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'bash', '-s'],
+        module_dir, {},
+        stdin: script
+      )
+    end
+
+    # Best-effort, harness-only diagnostics captured after the acceptance
+    # stage finishes (pass or fail) and before teardown. Never affects
+    # classification (not in Classifier's harness-stage list — see
+    # classifier.rb) and never touches the module under test. Exists so a
+    # systemd unit wedged into a permanently "failed" state (e.g. from a
+    # start-rate limit tripped by a suite that restarts a service
+    # repeatedly) is visible in the compatibility report without having to
+    # reproduce it by hand. Deliberately tolerant of its own commands
+    # failing (no `set -e`) — a diagnostics stage must never itself become
+    # the thing that breaks the run.
+    def collect_vm_diagnostics(host, key_path, module_dir)
+      script = <<~'REMOTESCRIPT'
+        echo '--- systemctl --failed ---'
+        systemctl list-units --failed --all --no-legend --no-pager
+        echo '--- start-limit / dependency-failure journal entries (this boot) ---'
+        journalctl -b --no-pager | grep -iE 'start-limit|dependency failed|start request repeated' || echo '(none found)'
+      REMOTESCRIPT
+
+      @stage.run_stage(
+        'vm_diagnostics',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'bash', '-s'],
+        module_dir, {},
+        stdin: script
+      )
+    end
+
     # Writes a Beaker setfile pointing at the prepared VM. Unlike the Docker
     # path's write_clean_setfile, there is no base setfile to start from —
     # everything Beaker needs (platform, ip, key path) is derived directly

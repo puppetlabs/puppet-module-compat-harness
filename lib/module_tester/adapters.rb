@@ -108,6 +108,8 @@ module ModuleTester
 
     def run_acceptance(module_dir, env, result, profile)
       teardown_uuid = nil
+      vm_host = nil
+      vm_key_path = nil
       return unless @options[:allow_acceptance]
       return unless File.exist?(File.join(module_dir, 'Rakefile')) && @stage.command_available?('bundle')
 
@@ -117,7 +119,7 @@ module ModuleTester
       return unless tasks.include?('beaker')
 
       if @options.fetch(:provisioner, 'docker') == 'gcp'
-        acceptance_env, teardown_uuid = prepare_gcp_acceptance_env(module_dir, env, result, profile)
+        acceptance_env, teardown_uuid, vm_host, vm_key_path = prepare_gcp_acceptance_env(module_dir, env, result, profile)
       else
         acceptance_env = prepare_docker_acceptance_env(env, result, profile)
       end
@@ -143,6 +145,16 @@ module ModuleTester
       result[:stages] << probe_runtime_versions(module_dir, acceptance_env, 'acceptance_runtime_probe')
       result[:stages] << @stage.run_stage('acceptance', ['bundle', 'exec', 'rake', 'beaker'], module_dir, acceptance_env)
     ensure
+      # Best-effort, harness-only diagnostics (vm.rb#collect_vm_diagnostics) —
+      # captured before teardown so a systemd unit left wedged in a failed
+      # state by the acceptance run is visible in the report. Runs whenever a
+      # VM actually exists, regardless of how the acceptance stage above
+      # went, and never affects classification.
+      if vm_host && vm_key_path
+        diagnostics_stage = @vm.collect_vm_diagnostics(vm_host, vm_key_path, module_dir)
+        result[:stages] << diagnostics_stage if diagnostics_stage
+      end
+
       # Best-effort — a failed teardown is not a compatibility concern (see
       # ProvisionService#teardown and docs/vm-based-acceptance-testing.md §9);
       # the service's own run-status reaper and 3h VM TTL are the real
@@ -194,9 +206,11 @@ module ModuleTester
     end
 
     # GCP VM path (docs/vm-based-acceptance-testing.md §3.1). Returns
-    # [acceptance_env_or_nil, uuid_or_nil] — the uuid is returned (for
-    # teardown) as soon as a VM exists, even if a later stage in this method
-    # fails, so a partially-set-up VM is still torn down.
+    # [acceptance_env_or_nil, uuid_or_nil, host_or_nil, key_path_or_nil] — the
+    # uuid is returned (for teardown) as soon as a VM exists, even if a later
+    # stage in this method fails, so a partially-set-up VM is still torn
+    # down; host/key_path are likewise returned as soon as root SSH works, so
+    # collect_vm_diagnostics can run even if a later stage fails.
     def prepare_gcp_acceptance_env(module_dir, env, result, profile)
       puppet_core_api_key = ENV.fetch('PUPPET_CORE_API_KEY', '').strip
       if puppet_core_api_key.empty?
@@ -205,38 +219,48 @@ module ModuleTester
         # real (cost-bearing) VM without a key to install it would be pure
         # waste. Fail before provisioning anything.
         result[:stages] << Result.failed_stage('provision_vm', 'PUPPET_CORE_API_KEY is required for provisioner=gcp (no FOSS fallback for the VM path)')
-        return [nil, nil]
+        return [nil, nil, nil, nil]
       end
 
       image = @options[:vm_image]
       if image.to_s.strip.empty?
         result[:stages] << Result.failed_stage('provision_vm', 'No --vm-image specified for provisioner=gcp')
-        return [nil, nil]
+        return [nil, nil, nil, nil]
       end
 
       run_url = github_run_url
       if run_url.nil?
         result[:stages] << Result.failed_stage('provision_vm', 'GITHUB_REPOSITORY/GITHUB_RUN_ID are not set — required to construct the run URL the provision service authorizes against')
-        return [nil, nil]
+        return [nil, nil, nil, nil]
       end
 
       host, provision_stage = @provision_service.provision(image, run_url: run_url)
       result[:stages] << provision_stage
-      return [nil, nil] if host.nil?
+      return [nil, nil, nil, nil] if host.nil?
 
       uuid = host.uuid
       platform = Vm.platform_for_image(image)
 
       key_path, prepare_stage = @vm.prepare_vm(host, module_dir)
       result[:stages] << prepare_stage
-      return [nil, uuid] if key_path.nil?
+      return [nil, uuid, nil, nil] if key_path.nil?
 
       install_stage = @vm.install_puppet_core_vm(
         host, key_path, platform, profile.fetch('puppet_major'), puppet_core_api_key, module_dir,
         install_puppetserver: @options[:install_puppetserver]
       )
       result[:stages] << install_stage
-      return [nil, uuid] if install_stage.status != 'passed'
+      return [nil, uuid, host, key_path] if install_stage.status != 'passed'
+
+      # Harness-side VM prep (acceptanceTarget.vm_setup_commands), run before
+      # any module code touches the VM — e.g. relaxing a systemd start-rate
+      # limit for a suite that restarts a service repeatedly. No-op (nil)
+      # when the target declares no commands.
+      setup_stage = @vm.run_vm_setup_commands(host, key_path, module_dir, @options.fetch(:vm_setup_commands, []))
+      if setup_stage
+        result[:stages] << setup_stage
+        return [nil, uuid, host, key_path] if setup_stage.status != 'passed'
+      end
 
       # A dotted BEAKER_FACTER_<fact.path> override (acceptanceTarget.beaker_env)
       # needs a correctly-nested facts.d file written directly — see
@@ -246,7 +270,7 @@ module ModuleTester
       fact_override_stages = @vm.write_fact_overrides(host, key_path, @options.fetch(:beaker_env, {}))
       if fact_override_stages
         result[:stages].concat(fact_override_stages)
-        return [nil, uuid] if fact_override_stages.any? { |stage| stage.status != 'passed' }
+        return [nil, uuid, host, key_path] if fact_override_stages.any? { |stage| stage.status != 'passed' }
       end
 
       acceptance_env = env.dup
@@ -254,7 +278,7 @@ module ModuleTester
       acceptance_env['BEAKER_SETFILE'] = @vm.write_vm_setfile(host, key_path, platform)
       acceptance_env['BEAKER_PUPPET_COLLECTION'] = 'preinstalled'
 
-      [acceptance_env, uuid]
+      [acceptance_env, uuid, host, key_path]
     end
 
     def record_acceptance_env_diagnostic(result, acceptance_env)

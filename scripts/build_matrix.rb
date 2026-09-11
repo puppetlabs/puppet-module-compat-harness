@@ -104,7 +104,10 @@ modules.each do |m|
     }
 
     if provisioner == 'gcp'
-      vm_acceptance << common.merge('image' => target.fetch('image'))
+      vm_acceptance << common.merge(
+        'image' => target.fetch('image'),
+        'vm_setup_commands' => target.fetch('vm_setup_commands', [])
+      )
     else
       acceptance << common.merge(
         'setfile' => target.fetch('setfile'),

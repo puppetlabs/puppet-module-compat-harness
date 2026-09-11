@@ -241,6 +241,15 @@
             "minLength": 1
           }
         },
+        "vm_setup_commands": {
+          "type": "array",
+          "description": "GCP-only. Shell commands run over SSH as root on the VM itself, after Puppet Core is installed and before the acceptance test run — harness-side VM preparation the test suite doesn't (and shouldn't have to) do itself, e.g. relaxing a systemd start-rate limit before a suite that restarts a service repeatedly, or disabling SELinux enforcement. Must not alter the module under test.",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
         "beaker_env": {
           "type": "object",
           "description": "Extra environment variables merged into the acceptance test environment before Beaker runs, in addition to the harness's own BEAKER_* variables. Use for module-specific Beaker behaviour, e.g. BEAKER_FACTER_memory.system.total for a module that sizes an operation off the SUT's real memory (would otherwise be unreasonably slow/large on a full-size VM). Not a substitute for pre_acceptance_commands, whose changes do not persist to the acceptance stage's own subprocess.",
@@ -277,7 +286,8 @@
               "setfile"
             ],
             "properties": {
-              "image": false
+              "image": false,
+              "vm_setup_commands": false
             }
           }
         }

@@ -762,12 +762,17 @@
       "acceptance": {
         "enabled": true,
         "status": "running",
-        "reason": "Previously blocked on rocky-linux-cloud/rocky-linux-9 (run 34300665485): the module's before(:suite) cleanup step runs `rpm -e rsyslog`, which failed because GCP's own preinstalled google-compute-engine RPM hard-depends on rsyslog (`Requires: rsyslog`). Confirmed against GoogleCloudPlatform/guest-configs' own packaging that this is EL-specific — the Debian packaging for the same guest-environment package only has `Recommends: rsyslog | system-log-daemon`, a soft, alternative-satisfiable dependency that does not block removal. Switched to a debian-12 GCP target on that basis.",
+        "reason": "Previously blocked on rocky-linux-cloud/rocky-linux-9 (run 34300665485): the module's before(:suite) cleanup step runs `rpm -e rsyslog`, which failed because GCP's own preinstalled google-compute-engine RPM hard-depends on rsyslog (`Requires: rsyslog`). Confirmed against GoogleCloudPlatform/guest-configs' own packaging that this is EL-specific — the Debian packaging for the same guest-environment package only has `Recommends: rsyslog | system-log-daemon`, a soft, alternative-satisfiable dependency that does not block removal. Switched to a debian-12 GCP target on that basis. That got past the RPM blocker but hit a second, unrelated issue live (run 34634543138): rsyslog.service (Requires=syslog.socket, Restart=on-failure per Debian's unit file) got wedged in a permanent 'Dependency failed' state after a few rapid Puppet-triggered restarts early in the suite, failing every subsequent example that expected the service running. vm_setup_commands below disables systemd's default start-rate limiting on the VM before the suite runs, as a harness-side workaround, plus a vm_diagnostics stage (lib/module_tester/vm.rb) captures failed-unit state after the run either way so the theory is checked, not assumed.",
         "targets": [
           {
             "name": "debian12-gcp",
             "provisioner": "gcp",
-            "image": "debian-12"
+            "image": "debian-12",
+            "vm_setup_commands": [
+              "mkdir -p /etc/systemd/system.conf.d",
+              "printf '[Manager]\\nDefaultStartLimitIntervalSec=0\\n' > /etc/systemd/system.conf.d/99-harness-disable-start-limit.conf",
+              "systemctl daemon-reexec"
+            ]
           }
         ]
       }

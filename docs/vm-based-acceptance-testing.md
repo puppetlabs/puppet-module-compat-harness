@@ -837,6 +837,36 @@ blocker would return there — stay on `debian-12` specifically. Landed on
 branch `vm-acceptance/rsyslog-debian12` as a `config/modules.json`-only
 change; update this note once a live CI run confirms it.
 
+**Second live run (2026-09-11, run 34634543138): past the RPM blocker,
+into a new one.** `debian12-gcp` provisioned and ran cleanly through the
+`before(:suite)` cleanup — `Package[rsyslog]/ensure: removed` succeeded,
+confirming the packaging-source analysis above. But 14 of 36 examples then
+failed, all tracing to one root cause: `rsyslog.service` (Debian's unit
+file sets `Requires=syslog.socket` and `Restart=on-failure`, no explicit
+`StartLimit*`) got wedged in a permanent `systemd[1]: Dependency failed for
+rsyslog.service` state after a handful of rapid Puppet-triggered restarts
+early in the suite, and never recovered for the rest of the run — every
+later spec file that expected the service running hit the identical error.
+Not a rediscovery of the Rocky 9 blocker; a different, VM-timing-shaped
+issue the RPM fix was never going to touch.
+
+**Workaround + diagnostics landed the same day, not yet live-verified.**
+Rather than guess, this became the first real use of the `vm_setup_commands`
+capability (see the `openldap` update below — built here first): the
+`debian12-gcp` target now ships
+`["mkdir -p /etc/systemd/system.conf.d", "printf '[Manager]\nDefaultStartLimitIntervalSec=0\n' > /etc/systemd/system.conf.d/99-harness-disable-start-limit.conf", "systemctl daemon-reexec"]`,
+which disables systemd's default start-rate limiting VM-wide before the
+suite runs (`rsyslog.service` sets no unit-level `StartLimit*` of its own,
+so it inherits this default). Paired with a new, always-on `vm_diagnostics`
+stage (`Vm#collect_vm_diagnostics`, runs after `acceptance` regardless of
+outcome, never affects classification) that dumps `systemctl list-units
+--failed` and any start-limit/dependency-failure journal lines — so the
+next live run either shows the suite passing (workaround confirmed) or
+shows exactly which unit is still failing and how (theory revised from
+evidence, not re-guessed). `rsyslog`'s config entry stays enabled
+(`running`/`gcp`) as of this edit, pending that next run; revert to
+`blocked` with an updated `reason` if it doesn't pan out.
+
 **`openldap` is deferred out of that slice.** Its `setenforce 0` requirement
 does not fit either existing mechanism: `setup_commands` only runs during
 the Docker image build (the schema forbids it for `provisioner: gcp`), and
@@ -845,9 +875,16 @@ SSH on the VM. Landing it needs a small new capability — something in the
 shape of a `vm_setup_commands` list, run over SSH as root right after
 `install_puppet_core_vm` and before the fact-override/setfile stages, reusing
 `Vm`'s existing SSH stage pattern and classified as a harness stage (like
-`provision_vm`) in `classifier.rb`. That capability is not yet designed;
-treat `openldap` as its own follow-up rather than assuming it rides along
-with the next batch.
+`provision_vm`) in `classifier.rb`.
+
+**Update 2026-09-11: this capability now exists**, built for `rsyslog`'s
+retry (see the `debian-12` note above) rather than for `openldap` directly —
+`acceptanceTarget.vm_setup_commands` (schema), `Vm#run_vm_setup_commands`
+(`lib/module_tester/vm.rb`), wired into `Adapters#prepare_gcp_acceptance_env`
+right after `install_puppet_core_vm`, and added to `Classifier`'s
+harness-stage list. `openldap` can reuse it directly (`["setenforce 0"]`) —
+still its own follow-up (untested for that specific case), but no longer
+blocked on new plumbing.
 
 Rewrite the `reason` text for `elastic_stack` and `openldap` when their config
 entries are edited (§3.1) — even though both are being enabled, the corrected
@@ -900,19 +937,19 @@ from this evidence next time rather than from scratch.
 | File | Change |
 |---|---|
 | `lib/module_tester/provision_service.rb` | **New** — POST/DELETE client, inventory parsing |
-| `lib/module_tester/vm.rb` | **New** — `prepare_vm`, `install_puppet_core_vm`, `write_vm_setfile` |
+| `lib/module_tester/vm.rb` | **New** — `prepare_vm`, `install_puppet_core_vm`, `write_vm_setfile`; **2026-09-11:** `run_vm_setup_commands` (`vm_setup_commands` capability, §7.4 update) and `collect_vm_diagnostics` (post-acceptance systemd/journal diagnostics, never affects classification) |
 | `lib/module_tester/docker.rb` | Extract the EL/Debian install+scrub logic from `puppet_core_dockerfile` into a shared script generator; extend `strip_secrets_from_env!` |
-| `lib/module_tester/adapters.rb` | Branch on provisioner at line 120; wrap acceptance in `ensure` for teardown |
-| `lib/module_tester/runner.rb` | New CLI flags (`--provisioner`, `--vm-image`) |
-| `lib/module_tester/classifier.rb` | Add the VM infrastructure stages to the harness-stage list (§9) |
-| `config/modules.schema.json` | `provisioner` + `image` on `acceptanceTarget`; `setfile` conditionally optional; mixed-provisioner constraint |
+| `lib/module_tester/adapters.rb` | Branch on provisioner at line 120; wrap acceptance in `ensure` for teardown; **2026-09-11:** run `vm_setup_commands` after `install_puppet_core_vm`, run `collect_vm_diagnostics` in the `ensure` block before teardown |
+| `lib/module_tester/runner.rb` | New CLI flags (`--provisioner`, `--vm-image`); **2026-09-11:** `--vm-setup-commands` |
+| `lib/module_tester/classifier.rb` | Add the VM infrastructure stages to the harness-stage list (§9); **2026-09-11:** add `vm_setup_commands` (deliberately *not* adding `vm_diagnostics` — it must never affect classification) |
+| `config/modules.schema.json` | `provisioner` + `image` on `acceptanceTarget`; `setfile` conditionally optional; mixed-provisioner constraint; **2026-09-11:** `vm_setup_commands` (gcp-only) |
 | `config/modules.json` | Flip triaged modules from `blocked` to `running` with a `gcp` target |
-| `scripts/build_matrix.rb` | Third matrix + `has_vm_acceptance` output |
-| `.github/workflows/compatibility-runner-puppet{8,9}.yml` | New `test_acceptance_vm` job — **identically in both** |
+| `scripts/build_matrix.rb` | Third matrix + `has_vm_acceptance` output; **2026-09-11:** thread `vm_setup_commands` into each `vm_acceptance` row |
+| `.github/workflows/compatibility-runner-puppet{8,9}.yml` | New `test_acceptance_vm` job — **identically in both**; **2026-09-11:** pass `vm-setup-commands` through, identically in both |
 | `.github/actions/prepare-test-matrix/action.yml` | New output passthrough |
-| `.github/actions/run-module-test/action.yml` | New inputs |
+| `.github/actions/run-module-test/action.yml` | New inputs; **2026-09-11:** `vm-setup-commands` input, threaded to `--vm-setup-commands` |
 | `.github/actions/publish-compatibility-results/action.yml` | `needs:` the new job |
-| `docs/architecture-flow.md` | Provisioner branch in the diagram; VM stage table; generalize the two-stage isolation section beyond Docker |
+| `docs/architecture-flow.md` | Provisioner branch in the diagram; VM stage table; generalize the two-stage isolation section beyond Docker; **2026-09-11:** `vm_setup_commands` + `vm_diagnostics` stages |
 
 ---
 
@@ -1010,7 +1047,7 @@ from this evidence next time rather than from scratch.
 |---|---|
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
-| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `elastic_stack` landed and live-verified 2026-09-09 (branch `phase2/rsyslog-elastic_stack-vm-pilot`, [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)). `rsyslog` was enabled in the same slice but reverted to `blocked` after live verification found a real, different GCP-image-specific blocker (`google-compute-engine`'s `rsyslog` dependency on Rocky 9) — see §7.4. Re-attempted 2026-09-11 on a `debian-12` target (branch `vm-acceptance/rsyslog-debian12`), pending live CI verification. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
+| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `elastic_stack` landed and live-verified 2026-09-09 (branch `phase2/rsyslog-elastic_stack-vm-pilot`, [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)). `rsyslog` was enabled in the same slice but reverted to `blocked` after live verification found a real, different GCP-image-specific blocker (`google-compute-engine`'s `rsyslog` dependency on Rocky 9) — see §7.4. Re-attempted 2026-09-11 on a `debian-12` target (branch `vm-acceptance/rsyslog-debian12`): got past that blocker, hit a second, unrelated one live ([run 34634543138](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34634543138) — `rsyslog.service` wedged in a systemd `Dependency failed` state, see §7.4). Same-day follow-up built the `vm_setup_commands` capability (see below — no longer "not yet designed") plus an always-on `vm_diagnostics` stage and used both to add a start-limit workaround; not yet live-verified. `openldap` can now reuse `vm_setup_commands` directly (`setenforce 0`) but remains its own untested follow-up |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
 | Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |
 | Phase 5 — deferred: augeasproviders_grub (§7.7) | Not started |

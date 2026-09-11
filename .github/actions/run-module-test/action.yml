@@ -77,6 +77,10 @@ inputs:
     description: "GCP image family (provisioner=gcp only), e.g. 'rocky-linux-cloud/rocky-linux-9'"
     required: false
     default: ''
+  vm-setup-commands:
+    description: 'JSON array of shell commands to run over SSH as root on the VM (provisioner=gcp only), after Puppet Core is installed and before the acceptance test run — harness-side VM prep, not module test code'
+    required: false
+    default: '[]'
   beaker-env-json:
     description: 'JSON object of extra environment variables merged into the acceptance test environment before Beaker runs (acceptanceTarget.beaker_env)'
     required: false
@@ -201,6 +205,7 @@ runs:
         RUNNER_PRE_ACCEPTANCE_COMMANDS: ${{ inputs.pre-acceptance-commands }}
         RUNNER_PROVISIONER: ${{ inputs.provisioner }}
         RUNNER_VM_IMAGE: ${{ inputs.vm-image }}
+        RUNNER_VM_SETUP_COMMANDS: ${{ inputs.vm-setup-commands }}
         RUNNER_BEAKER_ENV: ${{ inputs.beaker-env-json }}
       run: |
         runner_args=(
@@ -234,6 +239,9 @@ runs:
         fi
         if [ -n "$RUNNER_VM_IMAGE" ]; then
           runner_args+=(--vm-image "$RUNNER_VM_IMAGE")
+        fi
+        if [ "$RUNNER_VM_SETUP_COMMANDS" != "[]" ] && [ "$RUNNER_VM_SETUP_COMMANDS" != "" ]; then
+          runner_args+=(--vm-setup-commands "$RUNNER_VM_SETUP_COMMANDS")
         fi
         if [ "$RUNNER_BEAKER_ENV" != "{}" ] && [ "$RUNNER_BEAKER_ENV" != "" ]; then
           runner_args+=(--beaker-env "$RUNNER_BEAKER_ENV")

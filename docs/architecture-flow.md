@@ -87,11 +87,13 @@ flowchart TD
                 PV["provision_vm<br/>POST provision service<br/>no credentials required — authorized by<br/>the calling GitHub run URL"]
                 PVM["prepare_vm<br/>escalate litmus user → root via an<br/>ephemeral SSH key; litmus password<br/>discarded once this returns"]
                 IPC["install_puppet_core_vm<br/>same install+scrub logic as Stage 1,<br/>piped over SSH — key never a<br/>subprocess argv element"]
+                VSC["vm_setup_commands (optional)<br/>harness-side VM prep over SSH as root —<br/>e.g. relaxing a systemd start-rate limit —<br/>never touches the module under test"]
                 WFO["write_fact_overrides (optional)<br/>rewrites dotted BEAKER_FACTER_ overrides<br/>as a correctly-nested facts.d file —<br/>voxpupuli-acceptance's own writer can't<br/>nest a dotted fact path"]
                 WSF["write_vm_setfile<br/>hypervisor: none · no secrets embedded"]
             end
             PACG["Pre-acceptance setup (optional)<br/>same mechanism as the Docker path"]
             ACCVM["Run acceptance<br/>bundle exec rake beaker"]
+            VMD["vm_diagnostics<br/>best-effort, never affects classification —<br/>captures failed systemd units + related<br/>journal entries before teardown"]
             TD["teardown_vm<br/>DELETE provision service — best-effort<br/>backed by the service's reaper + 3h VM TTL"]
 
             FOSS["FOSS Fallback<br/>Public puppet-agent — no API key needed<br/>bundle exec rake beaker"]
@@ -139,7 +141,7 @@ flowchart TD
     AK -- "no — FOSS fallback" --> FOSS --> CL
 
     PR -- "gcp" --> PV
-    PV --> PVM --> IPC --> WFO --> WSF --> PACG --> ACCVM --> CL
+    PV --> PVM --> IPC --> VSC --> WFO --> WSF --> PACG --> ACCVM --> VMD --> CL
     PV -.->|"always, ensure-wrapped"| TD
 
     CL --> RP --> RS --> WS --> UA
@@ -165,7 +167,7 @@ flowchart TD
 | JavaScript action runtime | Workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` so JavaScript-based actions run on Node 24 ahead of runner defaults. |
 | Validate schema | `validate_modules_config.py` checks `config/modules.json` against the JSON schema before anything fans out. |
 | Detect changes (lean matrix) | `detect_changes.py` decides which modules need testing this run, scoped to the calling workflow's own `PUPPET_MAJOR` (`'8'` or `'9'`) — every ledger read (`coverage_state`, staleness `tested_at`) comes from that major's own `puppet_majors[major]` slice, never the sibling major's. It sets `run_all` if a **material harness path** changed within the window, or on a manual dispatch with `lean=false`. Material paths are split into a shared list (`.github/actions/`, `lib/`, `bin/`, `scripts/`, `Gemfile*`, `profiles/`) plus the caller's **own** workflow file only (`compatibility-runner-puppet8.yml` for the 8 caller, the `puppet9` file for the 9 caller) — editing one major's caller file does not trip `run_all` on the other major's run. Otherwise it includes a module only if its (major-scoped) ledger status is **not green** (never-tested / unit-failing / acceptance-failing), it is **stale** (`> STALE_DAYS`, default 30), or it had an **upstream commit** on its ref within the window (GitHub commits API, shared across majors — a module's own upstream activity legitimately warrants retesting on every major). Any indeterminate signal (git failure, API error, non-GitHub host) **fails safe by including** the module. Writes `.tmp/change-decisions.json` (uploaded as the `change-decisions` artifact) and exposes `run_all` + `include_ids` as step outputs. Skipped when a `modules_json` override is supplied — the override runs verbatim. |
-| Build matrix | `build_matrix.rb` expands the module list into **three** matrices (unit, Docker-provisioner acceptance, GCP-provisioner acceptance — one row per module × target), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance target's `provisioner` field (default `docker`) decides which matrix it lands in. Docker entries carry `docker_mode`, `setup_commands`; every acceptance entry (either provisioner) carries `install_puppetserver`, `pre_acceptance_commands`, and `beaker_env` from `modules.json`; GCP entries additionally carry `image`. It also emits `has_unit` / `has_acceptance` / `has_vm_acceptance` flags. |
+| Build matrix | `build_matrix.rb` expands the module list into **three** matrices (unit, Docker-provisioner acceptance, GCP-provisioner acceptance — one row per module × target), **filtered** to `INCLUDE_IDS` unless `RUN_ALL=true`. Each acceptance target's `provisioner` field (default `docker`) decides which matrix it lands in. Docker entries carry `docker_mode`, `setup_commands`; every acceptance entry (either provisioner) carries `install_puppetserver`, `pre_acceptance_commands`, and `beaker_env` from `modules.json`; GCP entries additionally carry `image` and `vm_setup_commands`. It also emits `has_unit` / `has_acceptance` / `has_vm_acceptance` flags. |
 | Empty-matrix gating | GitHub Actions treats an **empty matrix vector as a hard workflow error** (`Matrix vector 'module' does not contain any values`) rather than as zero combinations, so `test_unit`, `test_acceptance`, and `test_acceptance_vm` are each gated on the matching `has_*` flag from the matrix step. When the filter selects nothing for a given job, that job is skipped, `publish` reports a **NO-OP** run, and the workflow **succeeds**. |
 
 ### Per-Job Finalisation (end of every parallel job)
@@ -333,7 +335,14 @@ followed by best-effort teardown:
    (shared, not duplicated), piped over SSH stdin with the API key
    interpolated directly into the script text — never a subprocess argv
    element on either host, so it cannot leak via `ps`.
-4. **`write_fact_overrides`** (optional, two sub-stages: `read_fact_overrides`,
+4. **`vm_setup_commands`** (optional): runs `acceptanceTarget.vm_setup_commands`
+   over SSH as root — harness-side VM preparation the acceptance suite itself
+   doesn't (and shouldn't have to) do, e.g. disabling systemd's default
+   start-rate limit before a suite that restarts a service repeatedly, or
+   `setenforce 0`. Runs after Puppet Core is installed and before any module
+   code touches the VM; must never alter the module under test. A no-op
+   (no stage recorded) when the target declares no commands.
+5. **`write_fact_overrides`** (optional, two sub-stages: `read_fact_overrides`,
    `write_fact_overrides`): fixes a real gap in `acceptanceTarget.beaker_env`'s
    `BEAKER_FACTER_<fact.path>` mechanism. `voxpupuli-acceptance`'s own
    `Facts.write_beaker_facts_on` writes these as a **flat**, dotted-key
@@ -352,20 +361,28 @@ followed by best-effort teardown:
    than trying to race or suppress it. A module with only flat
    `BEAKER_FACTER_*` overrides never triggers this — those already work via
    the existing mechanism.
-5. **`write_vm_setfile`**: emits a Beaker setfile with `hypervisor: none`,
+6. **`write_vm_setfile`**: emits a Beaker setfile with `hypervisor: none`,
    the VM's IP, and a reference to the ephemeral key's *path* (never its
    contents) — no secrets embedded.
 
 Then `pre_acceptance_commands` and the `acceptance` stage run exactly as they
-do for the Docker path, against `BEAKER_PUPPET_COLLECTION=preinstalled`.
-Finally **`teardown_vm`** issues `DELETE` against the provision service from
-an `ensure` block, so it fires on every exit path — including a VM that only
-got partway through setup. A failed teardown is not a harness or
+do for the Docker path, against `BEAKER_PUPPET_COLLECTION=preinstalled`. Before
+teardown, **`vm_diagnostics`** runs unconditionally (pass or fail) and captures
+`systemctl list-units --failed` plus start-limit/dependency-failure journal
+lines from this boot — a best-effort, harness-only diagnostic (never affects
+classification) so a systemd unit left wedged in a failed state by the
+acceptance run is visible in the compatibility report without reproducing it
+by hand. Finally **`teardown_vm`** issues `DELETE` against the provision
+service from an `ensure` block, so it fires on every exit path — including a
+VM that only got partway through setup. A failed teardown is not a harness or
 compatibility concern; it falls back to the service's own run-status reaper
 and hard 3-hour VM TTL. `provision_vm`, the three `prepare_vm_*` stages,
-`install_puppet_core_vm`, and `read_fact_overrides`/`write_fact_overrides`
-are all classified as harness-error stages (see Result Classification
-below) — an infrastructure flake must never read as a module incompatibility.
+`install_puppet_core_vm`, `vm_setup_commands`, and
+`read_fact_overrides`/`write_fact_overrides` are all classified as
+harness-error stages (see Result Classification below) — an infrastructure
+flake must never read as a module incompatibility. `vm_diagnostics` is
+deliberately *not* in that list — it must never be able to turn a compatible
+run into a harness error itself.
 
 #### FOSS Fallback
 
@@ -391,7 +408,7 @@ After all stages complete, the `Classifier` assigns one of these states:
 The classifier evaluates conditions in this order, stopping at the first match:
 
 1. Auth status is not `ok` → **`harness_error`**
-2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`, `read_fact_overrides`, `write_fact_overrides`) → **`harness_error`**
+2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`, `vm_setup_commands`, `read_fact_overrides`, `write_fact_overrides`) → **`harness_error`**
 3. Any non-bootstrap stage failed → **`not_compatible`** _(subject to downgrade overrides — see below)_
 4. Metadata reports the Puppet version as unsupported **and** `metadata_mode=fail` → **`not_compatible`**
 5. Metadata reports unsupported version (warn mode) → **`conditionally_compatible`**
