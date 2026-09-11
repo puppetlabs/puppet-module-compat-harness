@@ -151,7 +151,13 @@ module ModuleTester
       # VM actually exists, regardless of how the acceptance stage above
       # went, and never affects classification.
       if vm_host && vm_key_path
-        diagnostics_stage = @vm.collect_vm_diagnostics(vm_host, vm_key_path, module_dir)
+        # TODO: hardcoded to the units under active investigation
+        # (rsyslog's systemd "Dependency failed" — docs/vm-based-acceptance-testing.md
+        # §7.4) rather than made module-configurable, since this is a live
+        # debugging aid, not a stable per-module knob yet. Generalize (e.g.
+        # a vm_diagnostics_units acceptanceTarget field) if this need
+        # recurs for a different module/unit.
+        diagnostics_stage = @vm.collect_vm_diagnostics(vm_host, vm_key_path, module_dir, extra_units: %w[rsyslog.service syslog.socket])
         result[:stages] << diagnostics_stage if diagnostics_stage
       end
 

@@ -255,13 +255,34 @@ module ModuleTester
     # reproduce it by hand. Deliberately tolerant of its own commands
     # failing (no `set -e`) — a diagnostics stage must never itself become
     # the thing that breaks the run.
-    def collect_vm_diagnostics(host, key_path, module_dir)
-      script = <<~'REMOTESCRIPT'
+    #
+    # `extra_units`: unit names to additionally `systemctl status` and
+    # `journalctl -u` in full, unfiltered (beyond the generic `--failed`
+    # listing, which stays module-agnostic). A first pass here grepped the
+    # journal for a fixed set of keywords ("start-limit", "dependency
+    # failed") and came back looking clean even though the suite was still
+    # failing — the grep was too narrow to show what the implicated units
+    # were actually doing. Passing the specific unit(s) under investigation
+    # (e.g. rsyslog's `rsyslog.service`/`syslog.socket`) gets their complete,
+    # untrimmed state and history instead of a keyword guess.
+    def collect_vm_diagnostics(host, key_path, module_dir, extra_units: [])
+      unit_sections = extra_units.map do |unit|
+        safe_unit = Shellwords.escape(unit)
+        <<~UNITSCRIPT
+          echo '--- systemctl status #{safe_unit} ---'
+          systemctl status #{safe_unit} --no-pager -l || true
+          echo '--- systemctl show #{safe_unit} (all properties) ---'
+          systemctl show #{safe_unit} --no-pager || true
+          echo '--- journalctl -u #{safe_unit} (this boot, full) ---'
+          journalctl -b -u #{safe_unit} --no-pager || true
+        UNITSCRIPT
+      end.join("\n")
+
+      script = <<~SCRIPT
         echo '--- systemctl --failed ---'
         systemctl list-units --failed --all --no-legend --no-pager
-        echo '--- start-limit / dependency-failure journal entries (this boot) ---'
-        journalctl -b --no-pager | grep -iE 'start-limit|dependency failed|start request repeated' || echo '(none found)'
-      REMOTESCRIPT
+        #{unit_sections}
+      SCRIPT
 
       @stage.run_stage(
         'vm_diagnostics',
