@@ -821,6 +821,22 @@ needs either a different GCP image (a Debian/Ubuntu family plausibly
 doesn't carry this dependency) or another approach, as its own follow-up
 rather than blocking `elastic_stack` on it.
 
+**Follow-up: switched to a `debian-12` target (2026-09-11), pending live
+verification.** Confirmed against `GoogleCloudPlatform/guest-configs`'
+own packaging source that the RPM hard-dependency is EL-specific: the
+`.spec` file has `Requires: rsyslog`, while the Debian `control` file for
+the same `google-compute-engine` package only has `Recommends: rsyslog |
+system-log-daemon` — a soft, alternative-satisfiable dependency that does
+not block `puppet package{'rsyslog': ensure => absent}`. Ubuntu carries
+the identical soft dependency, but Debian is preferred over Ubuntu per the
+existing caution in the table above (the upstream-repo assertion's
+`python3-apt` shellout). One caveat for later: Debian 13 (trixie) ships a
+separate `gce-configs-trixie` package with a hard `Depends: rsyslog`, so
+if a trixie image is ever added to `Vm::PLATFORM_BY_IMAGE`, this exact
+blocker would return there — stay on `debian-12` specifically. Landed on
+branch `vm-acceptance/rsyslog-debian12` as a `config/modules.json`-only
+change; update this note once a live CI run confirms it.
+
 **`openldap` is deferred out of that slice.** Its `setenforce 0` requirement
 does not fit either existing mechanism: `setup_commands` only runs during
 the Docker image build (the schema forbids it for `provisioner: gcp`), and
@@ -994,7 +1010,7 @@ from this evidence next time rather than from scratch.
 |---|---|
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
-| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `elastic_stack` landed and live-verified 2026-09-09 (branch `phase2/rsyslog-elastic_stack-vm-pilot`, [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)). `rsyslog` was enabled in the same slice but reverted to `blocked` after live verification found a real, different GCP-image-specific blocker (`google-compute-engine`'s `rsyslog` dependency on Rocky 9) — see §7.4. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
+| Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `elastic_stack` landed and live-verified 2026-09-09 (branch `phase2/rsyslog-elastic_stack-vm-pilot`, [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)). `rsyslog` was enabled in the same slice but reverted to `blocked` after live verification found a real, different GCP-image-specific blocker (`google-compute-engine`'s `rsyslog` dependency on Rocky 9) — see §7.4. Re-attempted 2026-09-11 on a `debian-12` target (branch `vm-acceptance/rsyslog-debian12`), pending live CI verification. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
 | Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
 | Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |
 | Phase 5 — deferred: augeasproviders_grub (§7.7) | Not started |
