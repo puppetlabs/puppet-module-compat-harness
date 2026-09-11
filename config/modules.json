@@ -762,7 +762,7 @@
       "acceptance": {
         "enabled": false,
         "status": "blocked",
-        "reason": "Live-verified against a real GCP VM (rocky-linux-cloud/rocky-linux-9, run 34300665485) — the harness's Docker-specific RPM DB corruption theory was wrong, but a real, different blocker exists on that image: the module's before(:suite) cleanup step runs `rpm -e rsyslog`, which fails because GCP's own preinstalled google-compute-engine package hard-depends on rsyslog (\"Failed dependencies: rsyslog is needed by (installed) google-compute-engine\"). This is an image-specific package conflict, not a Puppet Core compatibility question. Needs a different GCP image (e.g. a Debian/Ubuntu family without that dependency) or another approach before re-enabling."
+        "reason": "Blocked on two GCP images, neither a Puppet Core compatibility issue. Rocky 9: google-compute-engine hard-depends on rsyslog, blocking the module's own package-removal cleanup. Switching to debian-12 got past that but hit a different, real bug: rsyslog.service's Requires=syslog.socket resolves via its Alias=syslog.service name, which only exists while the unit is enabled — the suite's repeated package install/remove cycles intermittently disable it mid-run, breaking the socket trigger. Confirmed via Ubuntu 24.04's packaging that this is a Debian-family-wide rsyslog.service quirk, not an image choice, so switching images again wouldn't help. A start-rate-limit workaround was tried and had no effect. Needs an upstream/module-side fix, not a harness one."
       }
     },
     {
