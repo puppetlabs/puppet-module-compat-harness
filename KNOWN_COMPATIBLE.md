@@ -44,7 +44,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ 8.21.0 | ❌ |
+| [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.21.0 | ✅ 9.0.0 |
