@@ -873,10 +873,48 @@ image already used for `elastic_stack`.
 
 ### 7.6 Phase 4 — needs bundle-group handling and a larger time budget
 
+**`puppet-systemd` turned out not to need this phase's namesake capability at
+all — same pattern as Phase 3's reboot-capability assumption.** The "bundle-
+group handling" prerequisite in this section's title is real for
+`elasticsearch` but was never actually true for `systemd`; its own note below
+only ever listed live-VM risks to watch, not a missing capability. Landed
+2026-09-18 on branch `vm-acceptance/systemd-el9` as a config change: a full
+read of every spec file in `spec/acceptance/` found no `pp`/`manifest`
+mismatches, resource conflicts, or reboots — but one live-only failure
+surfaced that a static read couldn't have caught.
+
+**One of this section's two flagged live-VM risks materialized — but the
+initial root-cause guess for it was wrong, disproven by a live test rather
+than assumed.** A live Rocky 9 run passed 38/39 examples (including the
+DNS-transient-break risk this section worried about) but failed
+`resolved_spec.rb`'s mDNS status check (`resolvectl status` never reported
+`+mDNS`/`MulticastDNS setting: yes` after Puppet correctly wrote
+`MulticastDNS=yes` and refreshed the service). First theory: real kernel
+SELinux enforcement blocking the mDNS multicast bind (RHBZ#1430520-class
+denial), since upstream's own "Rocky 9" CI job is actually a podman container
+on an AppArmor host and has never run this check under SELinux at all.
+**Tested directly and disproven:** a live run with `setenforce 0` (a small
+`vm_setup_commands` SSH-setup capability, built then fully reverted once it
+didn't help) produced the identical failure — SELinux was never the cause.
+The real explanation: **standard GCP VPC networks do not support
+multicast/broadcast at all** ([cloud.google.com/vpc/docs/vpc](https://cloud.google.com/vpc/docs/vpc),
+now recorded permanently in §9) — mDNS is a multicast protocol by
+definition, and upstream's podman-container CI runs on ordinary Docker bridge
+networking, which does support multicast, so it has never exercised this
+either. Not fixable at the guest level by any provisioner-side mechanism.
+Fixed instead with a `pre_acceptance_commands` `sed` (same mechanism as
+`selinux`'s spec patches) that turns that one assertion into an explicit
+`skip` with the GCP-multicast explanation, rather than silently deleting or
+weakening it. A Debian 13 target was also tried mid-investigation to rule out
+SELinux by removing it from the guest entirely — abandoned after it hit the
+*other* flagged risk instead (a `networkd`/`resolved` apply severed the live
+SSH session outright), confirming Rocky 9 (EL9) was the right platform choice
+and Debian/Ubuntu is not viable for this module as-is.
+
 | Module | Verdict | GCP image | Note |
 |---|---|---|---|
 | `puppet-elasticsearch` | **VM-FIXES-WITH-CAVEAT** | Rocky 9 / AlmaLinux 9 | `simp-beaker-helpers`, `rspec-retry` and `bcrypt` are already declared in the module's `:system_tests` Gemfile group — the fix is installing that bundle group, not adding a new gem. `vm.max_map_count` genuinely needs pre-setting to 262144 on the VM (GCP's default of 65530 is why this looks fixed on the CI runner's host kernel but wouldn't be on a fresh VM). Vault-licensed examples self-skip via `ENV['CI']`, so no Vault gem or service is needed. This is the heaviest suite in the fleet — 16 shared-example groups doing full install/restart cycles plus controller-side artifact downloads — budget accordingly against the 3-hour TTL |
-| `puppet-systemd` | **VM-FIXES-WITH-CAVEAT** | Rocky 9 / AlmaLinux 9 | Notably, this unlocks test coverage upstream itself has never exercised: `resolved_spec.rb` only sets `manage_resolv_conf => true` when the hypervisor is not `container_podman`, so the `/etc/resolv.conf` symlink path this harness cares about has zero prior CI signal anywhere. Two VM-specific risks to watch rather than blockers: on EL9 GCP images, `systemd-resolved` isn't the active resolver by default, so symlinking `/etc/resolv.conf` to it can transiently break DNS for the rest of the run; on Ubuntu/Debian GCP images, netplan renders to `systemd-networkd`, so `networkd_spec.rb`'s "configure systemd stopped" context could drop the SSH session entirely. Target EL9 first — losing DNS mid-run is recoverable, losing the network connection is not |
+| `puppet-systemd` | **VM-FIXES-WITH-CAVEAT — landed 2026-09-18, one assertion skipped** | **Rocky 9** | Unlocks test coverage upstream itself has never exercised: `resolved_spec.rb` only sets `manage_resolv_conf => true` when the hypervisor is not `container_podman`, so the `/etc/resolv.conf` symlink path this harness cares about has zero prior CI signal anywhere — upstream's own green CI runs under `container_podman` (an AppArmor host, no SELinux at all) and self-skips it; this harness's `hypervisor: none` setfile does not. Live-verified 38/39 on Rocky 9: the one failure (`resolved_spec.rb`'s mDNS check) is a GCP VPC no-multicast limitation (§9), not Puppet Core compatibility — confirmed by a live `setenforce 0` test that ruled out the initial SELinux theory. Fixed with a `pre_acceptance_commands sed` skip, not a platform swap — a Debian 13 attempt to dodge SELinux hit the *other* flagged risk instead (`networkd`/`resolved` severed the live SSH session), confirming EL9 was the right choice |
 
 ### 7.7 Phase 5 — defer
 
@@ -1007,6 +1045,14 @@ from this evidence next time rather than from scratch.
   runner's public IP, so the host that provisions must be the host that runs
   Beaker. This holds naturally in a single job, but forbids any future split of
   provisioning and testing into separate jobs.
+- **No multicast/broadcast on GCP VPC networks.** Standard GCP VPC networking
+  does not support multicast or broadcast traffic at all
+  ([cloud.google.com/vpc/docs/vpc](https://cloud.google.com/vpc/docs/vpc)) —
+  this is a property of the virtual network fabric, not something any guest-OS
+  or `vm_setup_commands`-style configuration can work around. Found via
+  `puppet-systemd`'s `resolved_spec.rb` mDNS check (§7.6); relevant to *any*
+  future module whose acceptance tests depend on mDNS, LLMNR, DHCP broadcast
+  discovery, or similar multicast/broadcast-based protocols on a `gcp` target.
 
 ---
 
@@ -1017,8 +1063,8 @@ from this evidence next time rather than from scratch.
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `elastic_stack` landed and live-verified 2026-09-09 (branch `phase2/rsyslog-elastic_stack-vm-pilot`, [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)). `rsyslog` was enabled in the same slice but reverted to `blocked` after live verification found a real, different GCP-image-specific blocker (`google-compute-engine`'s `rsyslog` dependency on Rocky 9) — see §7.4. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
-| Phase 3 — selinux, kdump (§7.5) | **In progress.** `selinux` enabled 2026-09-18 on Rocky 9 (branch `vm-acceptance/selinux-el9`), not yet live-verified. Turned out to need no new harness capability — Beaker's own `Host#reboot` already tolerates the SSH reconnect; see §7.5's rewrite. `kdump` untouched, still its own separate spike (`run_puppet_install_helper` / old Beaker pin) |
-| Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |
+| Phase 3 — selinux, kdump (§7.5) | **`selinux` complete.** Landed via PR #29, merged to `main`, live-verified green 2026-09-18 ([run 35387463885](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/35387463885)) — joins the nightly Puppet 8 VM matrix on the next scheduled run. Needed no new harness capability — Beaker's own `Host#reboot` already tolerates the SSH reconnect; see §7.5's rewrite. `kdump` untouched, still its own separate spike (`run_puppet_install_helper` / old Beaker pin) |
+| Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | **`systemd` landed on branch `vm-acceptance/systemd-el9`, live-verified 38/39 on Rocky 9.** No bundle-group handling needed after all (see §7.6's rewrite). One assertion (mDNS check) skipped via `pre_acceptance_commands` — root cause is a GCP VPC no-multicast limitation (§9), not SELinux (disproved live) or Puppet Core compatibility. `elasticsearch` untouched, still needs the real bundle-group capability |
 | Phase 5 — deferred: augeasproviders_grub (§7.7) | Not started |
 | Not scheduled: wget, vault_lookup (§7.8) | N/A — VM does not fix these |
 
