@@ -769,9 +769,21 @@
       "repo": "https://github.com/voxpupuli/puppet-selinux",
       "ref": "master",
       "acceptance": {
-        "enabled": false,
-        "status": "blocked",
-        "reason": "SELinux acceptance tests require kernel-level SELinux LSM support. Docker containers share the host kernel, and GitHub Actions ubuntu-latest runners use AppArmor, so the SELinux LSM is never loaded. Tests fail at setup because /etc/selinux/config does not exist and getenforce/semodule/setenforce require active kernel SELinux enforcement. Requires a self-hosted runner on a SELinux-enforcing host or a VM-based approach."
+        "enabled": true,
+        "status": "running",
+        "reason": "Previously recorded as blocked because Docker/ubuntu-latest never loads the SELinux LSM. Enabled via GCP VM acceptance (docs/vm-based-acceptance-testing.md §7.5) on a real EL9 kernel, which does enforce SELinux. Upstream's own unmerged CI attempt (voxpupuli/puppet-selinux#399, run 25937845190) confirms the suite passes on EL9 (AlmaLinux 9, Rocky 9, CentOS 9, OracleLinux 9 all green there; only EL10 targets failed) once two master-branch bugs are patched — both applied here via pre_acceptance_commands rather than upstream: (1) spec/acceptance/class_disabled_spec.rb mixes let(:pp) and let(:manifest) across its three mode-switch contexts, so two of the three apply_manifest calls reference an undefined pp; (2) spec/acceptance/class_spec.rb declares an explicit selinux::fcontext/selinux::fcontext::equivalence resource pair and then also purges that same resource type in the same catalog. The suite reboots the host three times (class_disabled_spec.rb only); no harness-side reboot-tolerance capability was needed — Beaker's own Host#reboot already retries the SSH reconnect via net-ssh with a fibonacci backoff, independent of hypervisor.",
+        "targets": [
+          {
+            "name": "el9-gcp",
+            "provisioner": "gcp",
+            "image": "rocky-linux-cloud/rocky-linux-9",
+            "pre_acceptance_commands": [
+              "sed -i 's|let(:pp) do|let(:manifest) do|' spec/acceptance/class_disabled_spec.rb",
+              "sed -i 's|apply_manifest(pp,|apply_manifest(manifest,|g' spec/acceptance/class_disabled_spec.rb",
+              "sed -i 's|^\\(\\s*\\)resources.*purge => true }|\\1# resources purge disabled by harness patch (conflicts with explicit selinux::fcontext/equivalence resources declared above)|' spec/acceptance/class_spec.rb"
+            ]
+          }
+        ]
       }
     },
     {
