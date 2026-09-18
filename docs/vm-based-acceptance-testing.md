@@ -840,13 +840,35 @@ reads it.
 
 ### 7.5 Phase 3 — needs reboot support
 
-Beaker exposes `host.reboot`; the harness must additionally tolerate the SSH
-disconnect and reconnect on the same IP with a bounded timeout, and account for
-it in the job's overall time budget. Implement this once, then land:
+Beaker exposes `host.reboot`; the harness was assumed to need its own
+SSH-reconnect tolerance for this and a time-budget adjustment before landing
+anything here. **That assumption turned out to be wrong for `puppet-selinux`,
+checked 2026-09-18 against `Beaker::Host::Unix::Exec#reboot`
+(`voxpupuli/beaker`, `lib/beaker/host/unix/exec.rb`): the SSH reconnect is
+already handled entirely inside Beaker itself**, via its own `net-ssh`
+connection object retrying with a fibonacci backoff
+(`Beaker::SshConnection#connect_block`), independent of hypervisor. A `gcp`
+target's setfile (`hypervisor: none`, `ssh.keys`, `paranoid: false`) is
+exactly the config that mechanism already reads. No new code landed in
+`lib/module_tester/vm.rb` or `classifier.rb` for this — `puppet-selinux` is a
+config-only enable, the same shape as `elastic_stack`'s §7.4 landing. Still
+worth budgeting: `StageRunner`'s default 1800s per-stage timeout
+(`PUPPET_STAGE_TIMEOUT_SECONDS`) must comfortably cover suite runtime plus
+worst-case reconnect waits across all reboots in one job.
+
+Also revises the original triage: this table originally targeted **Rocky
+8/AlmaLinux 8**, theorizing EL9+ breaks the `disabled`-mode `getenforce`
+assertion. Live upstream CI (voxpupuli/puppet-selinux#399, unmerged, run
+[25937845190](https://github.com/voxpupuli/puppet-selinux/actions/runs/25937845190))
+contradicts that: EL9 (AlmaLinux 9, Rocky 9, CentOS 9, OracleLinux 9) is
+green; only **EL10** (Rocky 10, OracleLinux 10) fails there (exact cause
+unknown — that run's logs had already expired past GitHub's 90-day retention
+by the time this was checked). Landed on **Rocky 9** instead, matching the
+image already used for `elastic_stack`.
 
 | Module | Verdict | GCP image | Note |
 |---|---|---|---|
-| `puppet-selinux` | **VM-FIXES-WITH-CAVEAT** | **Rocky 8 / AlmaLinux 8** (not 9) | Four reboots (`hosts.each(&:reboot)` across several contexts). On EL9+, `SELINUX=disabled` in `/etc/selinux/config` no longer disables the LSM at boot — the kernel still enforces, so `class_disabled_spec.rb`'s `getenforce` assertion will fail on EL9/10 specifically. Target EL8 for a fully green result; EL9 will show one legitimate spec failure unrelated to Puppet Core compatibility. No upstream acceptance CI exists for this module, so the suite itself is unvalidated territory |
+| `puppet-selinux` | **VM-FIXES — landed 2026-09-18, targeting EL9 not EL8** | **Rocky 9** (not 8, not 10) | Three reboots, all in `class_disabled_spec.rb` (`hosts.each(&:reboot)` — the design doc's original "four" count was wrong). No upstream acceptance CI exists on `master` (still `acceptance_tests: false` there); PR #399 is upstream's own unmerged attempt, run on their dedicated `vagrant_libvirt` self-hosted runner, not GitHub-hosted — its green result doesn't transfer directly, only its evidence and two of its spec fixes do. Ported via `pre_acceptance_commands` (not upstream) rather than waiting on that PR: (1) `class_disabled_spec.rb` mixes `let(:pp)`/`let(:manifest)` across its three mode-switch contexts on `master` today, so two of three `apply_manifest` calls reference an undefined `pp` — a real bug independent of platform; (2) `class_spec.rb` purges the same resource type (`selinux_fcontext`/`selinux_fcontext_equivalence`) it also declares explicitly in the same catalog. Deliberately did **not** port PR #399's `semanage login -a -s staff_u vagrant` / `setsebool -P ssh_sysadm_login 1` workaround — that addresses a non-root `vagrant` user's SSH login needing an explicit SELinux role mapping; this harness's VM path SSHes in as `root` directly (`Vm#write_vm_setfile`), which gets an unconfined SELinux context by default policy without it. Unvalidated until a live CI run — first candidate to watch for is whether skipping that workaround was actually safe |
 | `treydock-puppet-kdump` | **VM-FIXES-WITH-CAVEAT — larger lift than it first appears** | Rocky 8 / AlmaLinux 8 | Two reboots plus a fixed `sleep 60`, asserting `crashkernel` on `/proc/cmdline` — a VM is the only way to satisfy this. But this module does not use `voxpupuli-acceptance` at all: its `spec_helper_acceptance.rb` calls `run_puppet_install_helper` (from `beaker/puppet_install_helper`), which installs Puppet from the public collections based on `PUPPET_INSTALL_TYPE` and does not honour `BEAKER_PUPPET_COLLECTION=preinstalled`. Left as-is, this module would install FOSS Puppet and never actually exercise Puppet Core. Its Gemfile also pins `beaker ~> 4.29`, against `beaker >= 6, < 8` for the rest of the fleet — each module bundles its own Beaker, so this is not a harness-wide conflict, but it does mean kdump runs against meaningfully older Beaker internals. Do not land this in the same batch as `selinux` on the strength of "reboot support" alone — it additionally needs either an upstream-style override of `run_puppet_install_helper`'s behavior, or a harness-side environment shim making it a no-op the way `install_puppet` did for `windowsfeature` (Appendix A). Treat as its own small spike |
 
 ### 7.6 Phase 4 — needs bundle-group handling and a larger time budget
@@ -995,7 +1017,7 @@ from this evidence next time rather than from scratch.
 | Phase 0 — spikes (§7.2) | ✅ **Complete 2026-09-08.** All 7 spikes closed — 1/2/3/5 by direct testing, 4/6/7 by DevX confirmation (Lukas) |
 | Phase 1 — `puppet-swap_file` pilot (§7.3) | ✅ **Complete 2026-09-09.** Spine + `BEAKER_FACTER_memory.system.total` no-op fix (`Vm#write_fact_overrides`) verified live: 33/33 examples passing. Ledger row lands on the first nightly run after merge (see §7.3) |
 | Phase 2 — zero-new-capability expansion: rsyslog, elastic_stack, openldap (§7.4) | **In progress.** `elastic_stack` landed and live-verified 2026-09-09 (branch `phase2/rsyslog-elastic_stack-vm-pilot`, [run 34300665485](https://github.com/puppetlabs/puppet-module-compat-harness/actions/runs/34300665485)). `rsyslog` was enabled in the same slice but reverted to `blocked` after live verification found a real, different GCP-image-specific blocker (`google-compute-engine`'s `rsyslog` dependency on Rocky 9) — see §7.4. `openldap` deferred — needs a new `vm_setup_commands`-shaped capability for `setenforce 0` that doesn't exist yet (see §7.4) |
-| Phase 3 — reboot support + selinux, kdump (§7.5) | Not started |
+| Phase 3 — selinux, kdump (§7.5) | **In progress.** `selinux` enabled 2026-09-18 on Rocky 9 (branch `vm-acceptance/selinux-el9`), not yet live-verified. Turned out to need no new harness capability — Beaker's own `Host#reboot` already tolerates the SSH reconnect; see §7.5's rewrite. `kdump` untouched, still its own separate spike (`run_puppet_install_helper` / old Beaker pin) |
 | Phase 4 — bundle-group handling + elasticsearch, systemd (§7.6) | Not started |
 | Phase 5 — deferred: augeasproviders_grub (§7.7) | Not started |
 | Not scheduled: wget, vault_lookup (§7.8) | N/A — VM does not fix these |
