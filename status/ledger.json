@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18T03:22:22Z",
+  "generated_at": "2026-09-19T02:24:06Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -958,7 +958,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-09-10T02:21:10Z"
+            "tested_at": "2026-09-19T02:20:35Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -968,9 +968,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "aa0c7a9",
-            "last_run_id": "34429068302",
-            "tested_at": "2026-09-10T02:21:12Z"
+            "last_harness_sha": "3890ddf",
+            "last_run_id": "35415322439",
+            "tested_at": "2026-09-19T02:20:33Z"
           }
         },
         "9": {
@@ -1086,7 +1086,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-09-18T02:20:39Z"
+            "tested_at": "2026-09-19T02:20:36Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1096,9 +1096,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "b384a09",
-            "last_run_id": "35298915479",
-            "tested_at": "2026-09-18T02:20:36Z"
+            "last_harness_sha": "3890ddf",
+            "last_run_id": "35415322439",
+            "tested_at": "2026-09-19T02:20:33Z"
           }
         },
         "9": {
@@ -1335,9 +1335,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "aa0c7a9",
-            "last_run_id": "34429068302",
-            "tested_at": "2026-09-10T02:21:22Z"
+            "last_harness_sha": "3890ddf",
+            "last_run_id": "35415322439",
+            "tested_at": "2026-09-19T02:20:35Z"
           }
         },
         "9": {
@@ -2328,7 +2328,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-09-16T02:21:06Z"
+            "tested_at": "2026-09-19T02:20:36Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "warning",
@@ -2338,9 +2338,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "d7d6823",
-            "last_run_id": "35047574581",
-            "tested_at": "2026-09-16T02:21:06Z"
+            "last_harness_sha": "3890ddf",
+            "last_run_id": "35415322439",
+            "tested_at": "2026-09-19T02:20:34Z"
           }
         },
         "9": {
@@ -2460,14 +2460,14 @@
       "repo": "https://github.com/voxpupuli/puppet-rsyslog"
     },
     "puppet-selinux": {
-      "acceptance_configured": false,
-      "acceptance_reason": "SELinux acceptance tests require kernel-level SELinux LSM support. Docker containers share the host kernel, and GitHub Actions ubuntu-latest runners use AppArmor, so the SELinux LSM is never loaded. Tests fail at setup because /etc/selinux/config does not exist and getenforce/semodule/setenforce require active kernel SELinux enforcement. Requires a self-hosted runner on a SELinux-enforcing host or a VM-based approach.",
-      "acceptance_status": "blocked",
+      "acceptance_configured": true,
+      "acceptance_reason": "Previously recorded as blocked because Docker/ubuntu-latest never loads the SELinux LSM. Enabled via GCP VM acceptance (docs/vm-based-acceptance-testing.md \u00a77.5) on a real EL9 kernel, which does enforce SELinux. Upstream's own unmerged CI attempt (voxpupuli/puppet-selinux#399, run 25937845190) confirms the suite passes on EL9 (AlmaLinux 9, Rocky 9, CentOS 9, OracleLinux 9 all green there; only EL10 targets failed) once two master-branch bugs are patched \u2014 both applied here via pre_acceptance_commands rather than upstream: (1) spec/acceptance/class_disabled_spec.rb mixes let(:pp) and let(:manifest) across its three mode-switch contexts, so two of the three apply_manifest calls reference an undefined pp; (2) spec/acceptance/class_spec.rb declares an explicit selinux::fcontext/selinux::fcontext::equivalence resource pair and then also purges that same resource type in the same catalog. The suite reboots the host three times (class_disabled_spec.rb only); no harness-side reboot-tolerance capability was needed \u2014 Beaker's own Host#reboot already retries the SSH reconnect via net-ssh with a fibonacci backoff, independent of hypervisor.",
+      "acceptance_status": "running",
       "deprecated": false,
       "disposition": "active",
       "puppet_majors": {
         "8": {
-          "coverage_state": "acceptance-blocked",
+          "coverage_state": "unit-pass/acceptance-pending",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -2481,7 +2481,7 @@
           }
         },
         "9": {
-          "coverage_state": "acceptance-blocked",
+          "coverage_state": "unit-pass/acceptance-pending",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -2693,14 +2693,14 @@
       "repo": "https://github.com/voxpupuli/puppet-swap_file"
     },
     "puppet-systemd": {
-      "acceptance_configured": false,
-      "acceptance_reason": "Attempts to manage /etc/resolv.conf via symlink replacement to /run/systemd/resolve/resolv.conf. The Docker container runtime owns /etc/resolv.conf, preventing overlay filesystem manipulation and causing \"Device or resource busy\" errors. Requires non-Docker execution or upstream test changes.",
-      "acceptance_status": "blocked",
+      "acceptance_configured": true,
+      "acceptance_reason": "Previously recorded as blocked because Docker's container runtime owns /etc/resolv.conf, breaking the module's symlink-replacement approach to managing it. Enabled via GCP VM acceptance (docs/vm-based-acceptance-testing.md \u00a77.6) on Rocky 9, a real kernel where /etc/resolv.conf is not container-owned. Note: spec/acceptance/resolved_spec.rb only exercises manage_resolv_conf when the Beaker hypervisor is not container_podman \u2014 upstream's own green CI runs under container_podman and so has never actually exercised this path; this harness's hypervisor: none setfile does. A live run found one failure: the 'with mDNS enabled' context's resolvectl-status check never reports mDNS as active. Initially suspected SELinux (RHBZ#1430520-class denial); disproved by a live setenforce 0 test that changed nothing. Root cause is a GCP VPC networking limitation, not a guest-OS or Puppet Core issue \u2014 standard GCP VPC networks do not support multicast/broadcast at all (cloud.google.com/vpc/docs/vpc), and mDNS is a multicast protocol by definition. Upstream's own CI never exercises this because it runs the identical systemd-resolved package inside a podman container on ordinary Docker bridge networking, which does support multicast. Patched via pre_acceptance_commands (same mechanism as puppet-selinux) to skip just that one assertion; the other 38 acceptance examples are real, valid Puppet Core coverage.",
+      "acceptance_status": "running",
       "deprecated": false,
       "disposition": "active",
       "puppet_majors": {
         "8": {
-          "coverage_state": "acceptance-blocked",
+          "coverage_state": "unit-pass/acceptance-pending",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -2714,7 +2714,7 @@
           }
         },
         "9": {
-          "coverage_state": "acceptance-blocked",
+          "coverage_state": "unit-pass/acceptance-pending",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",

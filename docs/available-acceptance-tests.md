@@ -51,11 +51,11 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) |
 | ✅ | [puppet-redis](https://github.com/voxpupuli/puppet-redis) |
 | ⛔ | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) |
-| ⛔ | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) |
+| ✅ | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) |
 | ✅ | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) |
 | ✅ | [puppet-squid](https://github.com/voxpupuli/puppet-squid) |
 | ✅ | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) |
-| ⛔ | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) |
+| ✅ | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) |
 | ✅ | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) |
 | ✅ | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) |
 | ⛔ | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) |
@@ -93,7 +93,7 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
-## Modules With Acceptance Tests but Not Run in CI (12)
+## Modules With Acceptance Tests but Not Run in CI (10)
 
 These modules have acceptance tests upstream, but the harness does not run them — so their compatibility is confirmed by unit tests only, not fully. They are intentionally excluded from `KNOWN_COMPATIBLE.md`.
 
@@ -104,8 +104,6 @@ These modules have acceptance tests upstream, but the harness does not run them 
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | 🚧 pending | Acceptance tests exist upstream but are not yet wired into a harness setfile/target. |
 | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ⛔ blocked | Acceptance tests use Dir.mktmpdir on the Beaker controller to create temporary directories for LDAP database paths (olcDbDirectory), then reference those host-local paths inside the Docker SUT where they do not exist; slapd rejects them with "invalid path: Permission denied". The tests assume a shared controller/SUT filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT. |
 | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ⛔ blocked | Blocked on two GCP images, neither a Puppet Core compatibility issue. Rocky 9: google-compute-engine hard-depends on rsyslog, blocking the module's own package-removal cleanup. Switching to debian-12 got past that but hit a different, real bug: rsyslog.service's Requires=syslog.socket resolves via its Alias=syslog.service name, which only exists while the unit is enabled — the suite's repeated package install/remove cycles intermittently disable it mid-run, breaking the socket trigger. Confirmed via Ubuntu 24.04's packaging that this is a Debian-family-wide rsyslog.service quirk, not an image choice, so switching images again wouldn't help. A start-rate-limit workaround was tried and had no effect. Needs an upstream/module-side fix, not a harness one. |
-| [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ⛔ blocked | SELinux acceptance tests require kernel-level SELinux LSM support. Docker containers share the host kernel, and GitHub Actions ubuntu-latest runners use AppArmor, so the SELinux LSM is never loaded. Tests fail at setup because /etc/selinux/config does not exist and getenforce/semodule/setenforce require active kernel SELinux enforcement. Requires a self-hosted runner on a SELinux-enforcing host or a VM-based approach. |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ⛔ blocked | Attempts to manage /etc/resolv.conf via symlink replacement to /run/systemd/resolve/resolv.conf. The Docker container runtime owns /etc/resolv.conf, preventing overlay filesystem manipulation and causing "Device or resource busy" errors. Requires non-Docker execution or upstream test changes. |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ⛔ blocked | Tests are purpose-built for Docker and self-contained, but use a three-container topology (certs.local, vault.local, puppetserver.local) that the single-SUT harness cannot orchestrate. The VaultDockerfile and PuppetserverDockerfile use multi-stage COPY --from=certs:latest builds the harness image-build pipeline does not support, and require a live Puppet Server (not puppet apply) with mTLS cert auth via a shared PKI. Requires harness-level support for multi-container nodesets and cross-image build dependencies. |
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ⛔ blocked | Acceptance tests target only legacy OSes (Debian 8-9, Ubuntu 16.04-18.04, RHEL 6-7) — none of which match any available setfile — and hardcode `su - vagrant` to run puppet apply as a Vagrant user not present in Docker-based SUT containers. Requires new legacy setfiles or upstream test modernization. |
 | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | 🚧 pending | Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support. |
