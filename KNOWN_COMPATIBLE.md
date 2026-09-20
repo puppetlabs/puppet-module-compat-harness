@@ -35,7 +35,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ 8.21.0 | ✅ 9.0.0 |
+| [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ❌ | ✅ 9.0.0 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ 8.21.0 | ❌ |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ 8.21.0 | ✅ 9.0.0 |
@@ -43,7 +43,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | ✅ 8.21.0 | ❌ |
 | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ 8.21.0 | ✅ 9.0.0 |
-| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ 8.21.0 | ✅ 9.0.0 |
+| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ❌ | ✅ 9.0.0 |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ 8.21.0 | ✅ 9.0.0 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.21.0 | ✅ 9.0.0 |
