@@ -58,7 +58,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ❌ | ✅ 9.1.0 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | ✅ 8.22.0 | ✅ 9.1.0 |
@@ -70,6 +70,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.22.0 | ❌ |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ 8.22.0 | ❌ |
 | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ 8.22.0 | ❌ |
