@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-09-21 14:02 UTC  
+**Generated:** 2026-09-21 14:05 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -23,16 +23,16 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | Metric | Count |
 |---|---|
 | Unit-tested | 74 |
-| &nbsp;&nbsp;• unit pass | 70 |
-| &nbsp;&nbsp;• unit fail | 4 |
+| &nbsp;&nbsp;• unit pass | 74 |
+| &nbsp;&nbsp;• unit fail | 0 |
 | Acceptance-enabled (running) | 47 |
-| &nbsp;&nbsp;• acceptance run | 45 |
-| &nbsp;&nbsp;• acceptance pass | 42 |
-| &nbsp;&nbsp;• acceptance fail | 3 |
+| &nbsp;&nbsp;• acceptance run | 46 |
+| &nbsp;&nbsp;• acceptance pass | 45 |
+| &nbsp;&nbsp;• acceptance fail | 1 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 7 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 3 |
 | No acceptance tests (N/A) | 17 |
-| **Fully compatible** (unit pass + acceptance pass or N/A) | **58** |
+| **Fully compatible** (unit pass + acceptance pass or N/A) | **62** |
 | Never tested | 0 |
 | Stale | 0 |
 
@@ -84,7 +84,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ | N/A | ✅ | N/A | 2026-09-10 |
 | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-10 |
 | [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-10 |
-| [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ❌ | el9:❌ | ✅ | el9:✅ | 2026-09-21 |
+| [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-21 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ | N/A | ❌ | N/A | 2026-09-21 |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ | N/A | ✅ | N/A | 2026-09-10 |
 | [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-19 |
@@ -92,7 +92,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | ✅ | el9-systemd:✅ | ❌ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-10 |
 | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-10 |
-| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ❌ | N/A | ✅ | N/A | 2026-09-21 |
+| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ | N/A | ✅ | N/A | 2026-09-21 |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-18 |
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-09-10 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-17 |
@@ -101,7 +101,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-10 |
 | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-10 |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-16 |
-| [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ❌ | el9-systemd:❌ | ✅ | el9-systemd:✅ | 2026-09-21 |
+| [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-10 |
 | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-10 |
 | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-10 |
@@ -112,7 +112,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-10 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ | N/A | ✅ | N/A | 2026-09-10 |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-16 |
-| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ❌ | el9-systemd:❌ | ✅ | el9-systemd:✅ | 2026-09-21 |
+| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:❌ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-16 |
 | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-10 |
 | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ✅ | ⏳ awaiting run | ✅ | ⏳ awaiting run | 2026-09-10 |
@@ -120,7 +120,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-10 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ | N/A | ✅ | N/A | 2026-09-10 |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-17 |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ | ⏳ awaiting run | ✅ | el9-gcp:✅ | 2026-09-21 |
+| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-21 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-10 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ | ubuntu24:✅ | ✅ | ubuntu24:✅ | 2026-09-10 |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-10 |

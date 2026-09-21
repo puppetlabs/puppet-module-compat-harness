@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T14:02:04Z",
+  "generated_at": "2026-09-21T14:05:14Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -954,23 +954,23 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9": "failure"
+              "el9": "warning"
             },
-            "tested_at": "2026-09-21T12:45:11Z"
+            "tested_at": "2026-09-21T12:49:42Z"
           },
-          "coverage_state": "unit-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
           "puppet_core_version": "8.21.0",
           "unit": {
-            "class": "failure",
-            "compatibility_state": "harness_error",
+            "class": "warning",
+            "compatibility_state": "conditionally_compatible",
             "last_harness_sha": "d02ff0f",
             "last_run_id": "35554034707",
-            "tested_at": "2026-09-21T12:45:12Z"
+            "tested_at": "2026-09-21T12:49:39Z"
           }
         },
         "9": {
@@ -1327,17 +1327,17 @@
       "disposition": "active",
       "puppet_majors": {
         "8": {
-          "coverage_state": "unit-failing",
+          "coverage_state": "unit-only",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
           "puppet_core_version": "8.21.0",
           "unit": {
-            "class": "failure",
-            "compatibility_state": "harness_error",
+            "class": "warning",
+            "compatibility_state": "conditionally_compatible",
             "last_harness_sha": "d02ff0f",
             "last_run_id": "35554034707",
-            "tested_at": "2026-09-21T12:45:12Z"
+            "tested_at": "2026-09-21T12:49:41Z"
           }
         },
         "9": {
@@ -1755,23 +1755,23 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9-systemd": "failure"
+              "el9-systemd": "warning"
             },
-            "tested_at": "2026-09-21T12:45:13Z"
+            "tested_at": "2026-09-21T12:49:40Z"
           },
-          "coverage_state": "unit-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
           "puppet_core_version": "8.21.0",
           "unit": {
-            "class": "failure",
-            "compatibility_state": "harness_error",
+            "class": "warning",
+            "compatibility_state": "conditionally_compatible",
             "last_harness_sha": "d02ff0f",
             "last_run_id": "35554034707",
-            "tested_at": "2026-09-21T12:45:14Z"
+            "tested_at": "2026-09-21T12:49:42Z"
           }
         },
         "9": {
@@ -2328,19 +2328,19 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-09-21T12:45:16Z"
+            "tested_at": "2026-09-21T12:52:05Z"
           },
-          "coverage_state": "unit-failing",
-          "dependency_status": "none",
+          "coverage_state": "acceptance-failing",
+          "dependency_status": "warning",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
           "puppet_core_version": "8.21.0",
           "unit": {
-            "class": "failure",
-            "compatibility_state": "harness_error",
+            "class": "warning",
+            "compatibility_state": "conditionally_compatible",
             "last_harness_sha": "d02ff0f",
             "last_run_id": "35554034707",
-            "tested_at": "2026-09-21T12:45:14Z"
+            "tested_at": "2026-09-21T12:49:39Z"
           }
         },
         "9": {
@@ -2700,7 +2700,14 @@
       "disposition": "active",
       "puppet_majors": {
         "8": {
-          "coverage_state": "unit-pass/acceptance-pending",
+          "acceptance": {
+            "class": "warning",
+            "targets": {
+              "el9-gcp": "warning"
+            },
+            "tested_at": "2026-09-21T12:49:49Z"
+          },
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -2708,9 +2715,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "3c71064",
-            "last_run_id": "34920837530",
-            "tested_at": "2026-09-15T02:21:43Z"
+            "last_harness_sha": "d02ff0f",
+            "last_run_id": "35554034707",
+            "tested_at": "2026-09-21T12:49:41Z"
           }
         },
         "9": {
