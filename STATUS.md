@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-09-21 15:11 UTC  
+**Generated:** 2026-09-21 15:17 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -18,7 +18,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 
 ### Puppet 8
 
-**Puppet Core version(s) seen:** 8.21.0  
+**Puppet Core version(s) seen:** 8.22.0  
 
 | Metric | Count |
 |---|---|
@@ -26,9 +26,9 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | &nbsp;&nbsp;• unit pass | 74 |
 | &nbsp;&nbsp;• unit fail | 0 |
 | Acceptance-enabled (running) | 47 |
-| &nbsp;&nbsp;• acceptance run | 46 |
+| &nbsp;&nbsp;• acceptance run | 47 |
 | &nbsp;&nbsp;• acceptance pass | 45 |
-| &nbsp;&nbsp;• acceptance fail | 1 |
+| &nbsp;&nbsp;• acceptance fail | 2 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 7 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 3 |
 | No acceptance tests (N/A) | 17 |
@@ -108,14 +108,14 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-21 |
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-21 |
-| [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
+| [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ | el9-systemd:❌ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ | N/A | ✅ | N/A | 2026-09-21 |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-21 |
-| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:❌ | ✅ | el9-systemd:✅ | 2026-09-21 |
+| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-21 |
-| [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ✅ | ⏳ awaiting run | ✅ | el9-gcp:✅ | 2026-09-21 |
+| [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-21 |
 | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-21 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ | N/A | ✅ | N/A | 2026-09-21 |
@@ -127,7 +127,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-21 |
 | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-09-21 |
 | [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-09-21 |
-| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ | el9:✅ | ✅ | el9:❌ | 2026-09-21 |
+| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ | el9:❌ | ✅ | el9:❌ | 2026-09-21 |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ | N/A | ✅ | N/A | 2026-09-21 |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ | el9:✅ | ❌ | el9:❌ | 2026-09-21 |
 | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ | el9-systemd:✅ | ❌ | el9-systemd:❌ | 2026-09-21 |
