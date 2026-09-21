@@ -58,7 +58,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ❌ | ✅ 9.1.0 |
+| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | ✅ 8.22.0 | ✅ 9.1.0 |
