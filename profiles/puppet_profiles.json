@@ -6,7 +6,6 @@
       "facter_version": "4.21.0",
       "puppet_major": 8,
       "ruby_version": "3.2",
-      "bundler_version": "2.5.22",
       "gem_source_mode": "private"
     },
     {
@@ -15,7 +14,6 @@
       "facter_version": "4.20.0",
       "puppet_major": 8,
       "ruby_version": "3.2",
-      "bundler_version": "2.5.22",
       "gem_source_mode": "private"
     },
     {
@@ -24,7 +22,6 @@
       "facter_version": "4.21.0",
       "puppet_major": 9,
       "ruby_version": "4.0",
-      "bundler_version": "2.5.22",
       "gem_source_mode": "private"
     }
   ]

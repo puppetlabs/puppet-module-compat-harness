@@ -65,7 +65,7 @@ For full instructions on adding modules and validating `modules.json` against sc
 
 ## Configure compatibility profiles
 
-Edit `profiles/puppet_profiles.json` to pin Puppet/Ruby/Bundler and artifact mode.
+Edit `profiles/puppet_profiles.json` to pin Puppet/Ruby and artifact mode.
 
 - `gem_source_mode=private` requires `PUPPET_CORE_API_KEY`
 - `puppet_core_version` and `facter_version` are pinned per profile for strict Puppet Core validation

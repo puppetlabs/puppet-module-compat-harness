@@ -25,7 +25,6 @@ ruby bin/puppet-module-tester \
 
 - **Ruby, profile-driven** — core runner (`lib/`, `bin/`, `scripts/*.rb`) runs under whichever Ruby the active profile's `ruby_version` specifies (`.github/actions/run-module-test/action.yml` resolves it before `ruby/setup-ruby`). Puppet 8 profiles use 3.2.x; Puppet 9 profiles require >= 3.4 (see `docs/puppet-core-9-dual-major-support.md` §8).
 - **Python 3.8+** — validation and reporting scripts (`scripts/*.py`)
-- **Bundler 2.5.22** — pinned per profile in `profiles/puppet_profiles.json`
 - **PDK** (Puppet Development Kit) — primary test execution path; Rake is the fallback
 - **Beaker** — acceptance testing framework (Docker-based SUT)
 - **GitHub Actions** — CI/CD platform
