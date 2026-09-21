@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T16:24:59Z",
+  "generated_at": "2026-09-21T16:25:30Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -2130,13 +2130,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9-systemd": "failure"
+              "el9-systemd": "warning"
             },
-            "tested_at": "2026-09-21T14:06:38Z"
+            "tested_at": "2026-09-21T16:20:58Z"
           },
-          "coverage_state": "acceptance-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
