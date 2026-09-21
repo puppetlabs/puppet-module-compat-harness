@@ -2,6 +2,14 @@
   "profiles": [
     {
       "name": "8-latest-maintained",
+      "puppet_core_version": "8.22.0",
+      "facter_version": "4.22.0",
+      "puppet_major": 8,
+      "ruby_version": "3.2",
+      "gem_source_mode": "private"
+    },
+    {
+      "name": "8-previous-maintained",
       "puppet_core_version": "8.21.0",
       "facter_version": "4.21.0",
       "puppet_major": 8,
@@ -9,15 +17,15 @@
       "gem_source_mode": "private"
     },
     {
-      "name": "8-previous-maintained",
-      "puppet_core_version": "8.20.0",
-      "facter_version": "4.20.0",
-      "puppet_major": 8,
-      "ruby_version": "3.2",
+      "name": "9-latest-maintained",
+      "puppet_core_version": "9.1.0",
+      "facter_version": "4.22.0",
+      "puppet_major": 9,
+      "ruby_version": "4.0",
       "gem_source_mode": "private"
     },
     {
-      "name": "9-latest-maintained",
+      "name": "9-previous-maintained",
       "puppet_core_version": "9.0.0",
       "facter_version": "4.21.0",
       "puppet_major": 9,
