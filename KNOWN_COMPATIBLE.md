@@ -49,7 +49,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.22.0 | ❌ |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ 8.22.0 | ✅ 9.1.0 |
@@ -70,7 +70,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.22.0 | ❌ |
+| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ 8.22.0 | ❌ |
 | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ 8.22.0 | ❌ |
