@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-09-23 03:32 UTC  
+**Generated:** 2026-09-23 04:06 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -47,12 +47,12 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | &nbsp;&nbsp;• unit fail | 11 |
 | Acceptance-enabled (running) | 47 |
 | &nbsp;&nbsp;• acceptance run | 47 |
-| &nbsp;&nbsp;• acceptance pass | 41 |
-| &nbsp;&nbsp;• acceptance fail | 6 |
+| &nbsp;&nbsp;• acceptance pass | 40 |
+| &nbsp;&nbsp;• acceptance fail | 7 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 7 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 3 |
 | No acceptance tests (N/A) | 17 |
-| **Fully compatible** (unit pass + acceptance pass or N/A) | **51** |
+| **Fully compatible** (unit pass + acceptance pass or N/A) | **50** |
 | Never tested | 0 |
 | Stale | 0 |
 
@@ -112,7 +112,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ | N/A | ✅ | N/A | 2026-09-23 |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-23 |
-| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
+| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:❌ | 2026-09-23 |
 | [puppet-redis](https://github.com/voxpupuli/puppet-redis) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
 | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-23 |
 | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-23 |
