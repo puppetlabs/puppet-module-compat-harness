@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-09-23 04:06 UTC  
+**Generated:** 2026-09-24 02:42 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -83,9 +83,9 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ | N/A | ✅ | N/A | 2026-09-23 |
 | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-23 |
-| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-23 |
+| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-24 |
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-09-23 |
-| [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ | N/A | ❌ | N/A | 2026-09-23 |
+| [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ | N/A | ❌ | N/A | 2026-09-24 |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ | N/A | ✅ | N/A | 2026-09-23 |
 | [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
 | [puppet-format](https://github.com/voxpupuli/puppet-format) | ✅ | N/A | ✅ | N/A | 2026-09-23 |
@@ -120,7 +120,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ | N/A | ✅ | N/A | 2026-09-23 |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-23 |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-23 |
+| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-09-24 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ | ubuntu24:✅ | ✅ | ubuntu24:✅ | 2026-09-23 |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ✅ | ⛔ blocked | ✅ | ⛔ blocked | 2026-09-23 |
