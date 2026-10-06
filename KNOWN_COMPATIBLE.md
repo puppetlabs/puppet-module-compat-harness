@@ -21,7 +21,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-archive](https://github.com/voxpupuli/puppet-archive) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeas](https://github.com/voxpupuli/puppet-augeas) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) | ✅ 8.22.0 | ❌ |
+| [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ 8.22.0 | ✅ 9.1.0 |
@@ -49,7 +49,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.22.0 | ❌ |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ 8.22.0 | ✅ 9.1.0 |
