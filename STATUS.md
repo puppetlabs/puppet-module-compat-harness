@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-10-12 03:40 UTC  
+**Generated:** 2026-10-13 02:45 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -95,7 +95,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ | N/A | ✅ | N/A | 2026-10-06 |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-06 |
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-10-06 |
-| [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-09 |
+| [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-13 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-09-23 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ | N/A | ✅ | N/A | 2026-10-06 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-06 |
@@ -109,7 +109,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-06 |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-10-06 |
 | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-06 |
-| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-12 |
+| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-13 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ | N/A | ✅ | N/A | 2026-10-06 |
 | [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-10-06 |
 | [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-10 |
