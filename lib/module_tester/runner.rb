@@ -26,7 +26,8 @@ module ModuleTester
       pre_acceptance_commands: [],
       provisioner: 'docker',
       vm_image: nil,
-      beaker_env: {}
+      beaker_env: {},
+      vm_setup_commands: []
     }.freeze
 
     def initialize(argv)
@@ -172,6 +173,7 @@ module ModuleTester
         opts.on('--provisioner NAME')   { |v| @options[:provisioner] = v.to_s.strip.downcase }
         opts.on('--vm-image NAME')      { |v| @options[:vm_image] = v }
         opts.on('--beaker-env JSON')    { |v| @options[:beaker_env] = JSON.parse(v) }
+        opts.on('--vm-setup-commands JSON') { |v| @options[:vm_setup_commands] = JSON.parse(v) }
       end.parse!(@argv)
 
       unless %w[unit acceptance].include?(@options[:test_mode])

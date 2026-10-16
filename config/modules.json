@@ -300,9 +300,19 @@
       "repo": "https://github.com/voxpupuli/puppet-elasticsearch",
       "ref": "master",
       "acceptance": {
-        "enabled": false,
-        "status": "blocked",
-        "reason": "Production-mode bootstrap enforces vm.max_map_count >= 262144 (a host kernel parameter) which cannot be set from inside an unprivileged Docker container; all acceptance specs hit a live Elasticsearch HTTP API and fail. Tests also require systemd (unavailable in standard containers), download from artifacts.elastic.co, and need the simp-beaker-helpers gem. Requires a real VM or privileged container with host kernel tuning."
+        "enabled": true,
+        "status": "running",
+        "reason": "Previously blocked on vm.max_map_count >= 262144 (a host kernel parameter an unprivileged Docker container can't set). Moved to GCP VM acceptance using the new vm_setup_commands capability (docs/vm-based-acceptance-testing.md §7.4/§7.6) to pre-set the sysctl over SSH as root before Beaker starts. A similar SSH-setup mechanism was prototyped once before for an unrelated setenforce 0 test during the systemd investigation and fully reverted when it didn't explain that module's failure — this is the first real (non-throwaway) use of the pattern. Unverified until a live CI run; bundle install needing the module's :system_tests Gemfile group was checked and is NOT an issue (the harness's bundle install has no --without flags, so that group installs by default).",
+        "targets": [
+          {
+            "name": "el9-gcp",
+            "provisioner": "gcp",
+            "image": "rocky-linux-cloud/rocky-linux-9",
+            "vm_setup_commands": [
+              "sysctl -w vm.max_map_count=262144"
+            ]
+          }
+        ]
       }
     },
     {

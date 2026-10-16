@@ -168,6 +168,35 @@ module ModuleTester
       )
     end
 
+    # Runs module-specific root commands on the VM guest itself, after the
+    # Puppet Core agent is installed and before Beaker starts (config/
+    # modules.schema.json's acceptanceTarget.vm_setup_commands). Exists for
+    # preconditions neither pre_acceptance_commands (runs on the GitHub
+    # Actions runner, not the VM) nor the module's own manifests can satisfy
+    # — e.g. puppet-elasticsearch's `vm.max_map_count` sysctl, a host kernel
+    # parameter GCP's default VM image does not set high enough. This is the
+    # capability described as "not yet designed" in
+    # docs/vm-based-acceptance-testing.md §7.4, and partially prototyped
+    # (then fully reverted) for a `setenforce 0` test during the systemd
+    # investigation in §7.6 — see that doc for why landing it for real this
+    # time comes with explicit result documentation per module. No-op (nil)
+    # when there are no commands to run.
+    def run_vm_setup_commands(host, key_path, commands)
+      return nil if commands.nil? || commands.empty?
+
+      script = <<~REMOTESCRIPT
+        set -euo pipefail
+        #{commands.join("\n")}
+      REMOTESCRIPT
+
+      @stage.run_stage(
+        'vm_setup_commands',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'bash', '-s'],
+        @workspace_dir, {},
+        stdin: script
+      )
+    end
+
     # Fixes the BEAKER_FACTER_<dotted.fact.path> nesting gap described above
     # for FACT_OVERRIDE_FILE. Only dotted (structured) overrides need this —
     # a flat override (e.g. BEAKER_FACTER_role=foo) already works correctly

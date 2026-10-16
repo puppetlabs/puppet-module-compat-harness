@@ -27,6 +27,7 @@ module ModuleTester
           prepare_vm_escalate
           prepare_vm_verify_root
           install_puppet_core_vm
+          vm_setup_commands
           read_fact_overrides
           write_fact_overrides
         ].include?(stage.name)

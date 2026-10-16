@@ -238,6 +238,16 @@ module ModuleTester
       result[:stages] << install_stage
       return [nil, uuid] if install_stage.status != 'passed'
 
+      # Module-specific root setup on the VM guest (acceptanceTarget.
+      # vm_setup_commands) — e.g. pre-setting a sysctl a container can't
+      # touch. Runs before fact overrides/setfile so the precondition is in
+      # place for everything that follows.
+      setup_stage = @vm.run_vm_setup_commands(host, key_path, @options.fetch(:vm_setup_commands, []))
+      if setup_stage
+        result[:stages] << setup_stage
+        return [nil, uuid] if setup_stage.status != 'passed'
+      end
+
       # A dotted BEAKER_FACTER_<fact.path> override (acceptanceTarget.beaker_env)
       # needs a correctly-nested facts.d file written directly — see
       # Vm::FACT_OVERRIDE_FILE for why voxpupuli-acceptance's own env-var
