@@ -255,6 +255,15 @@ module ModuleTester
     # everything Beaker needs (platform, ip, key path) is derived directly
     # (design doc §3.1). No secrets are embedded; the key path is a
     # reference, not key material.
+    #
+    # roles: ['agent'] mirrors beaker-hostgenerator's own default (every
+    # module's own CI setfile gets this for free via that tool;
+    # Beaker::Options::Parser#set_default_host! separately auto-adds
+    # 'default' to a lone host, but nothing auto-adds 'agent' to a
+    # hand-written setfile like this one). Without it, any spec that calls
+    # only_host_with_role(hosts, 'agent') — a common Beaker pattern,
+    # including puppet-elasticsearch's — fails with "There should be one
+    # host with agent defined!" regardless of the module under test.
     def write_vm_setfile(host, key_path, platform)
       setfile = {
         'HOSTS' => {
@@ -263,6 +272,7 @@ module ModuleTester
             'hypervisor' => 'none',
             'ip' => host.ip,
             'user' => 'root',
+            'roles' => ['agent'],
             'ssh' => {
               'keys' => [key_path],
               'paranoid' => false
