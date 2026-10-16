@@ -281,7 +281,17 @@ module ModuleTester
         },
         'CONFIG' => {
           'log_level' => 'verbose',
-          'type' => 'foss'
+          'type' => 'foss',
+          # Beaker defaults this to 10 (beaker/options/presets.rb) -- the
+          # number of trailing lines of a failed command's output embedded
+          # in its Beaker::Host::CommandFailure message. For a Puppet apply
+          # that fails partway through a large catalog, 10 lines is often
+          # just the cascade of downstream "Skipping because of failed
+          # dependencies" warnings, with the actual originating resource
+          # error pushed out of view above them -- confirmed live on
+          # puppet-elasticsearch's first VM run (docs/vm-based-acceptance-
+          # testing.md §7.6). Raised well past that cascade's typical size.
+          'trace_limit' => 200
         }
       }
 
