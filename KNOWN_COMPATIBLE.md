@@ -35,7 +35,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ 8.22.0 | ❌ |
+| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ 8.22.0 | ❌ |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ 8.22.0 | ✅ 9.1.0 |

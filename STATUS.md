@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-10-17 03:29 UTC  
+**Generated:** 2026-10-17 03:59 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -46,13 +46,13 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | &nbsp;&nbsp;• unit pass | 63 |
 | &nbsp;&nbsp;• unit fail | 11 |
 | Acceptance-enabled (running) | 48 |
-| &nbsp;&nbsp;• acceptance run | 47 |
-| &nbsp;&nbsp;• acceptance pass | 41 |
+| &nbsp;&nbsp;• acceptance run | 48 |
+| &nbsp;&nbsp;• acceptance pass | 42 |
 | &nbsp;&nbsp;• acceptance fail | 6 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 6 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 3 |
 | No acceptance tests (N/A) | 17 |
-| **Fully compatible** (unit pass + acceptance pass or N/A) | **51** |
+| **Fully compatible** (unit pass + acceptance pass or N/A) | **52** |
 | Never tested | 0 |
 | Stale | 0 |
 
@@ -83,7 +83,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-17 |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ | N/A | ✅ | N/A | 2026-10-17 |
 | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-10-17 |
-| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ | el9-gcp:✅ | ✅ | ⏳ awaiting run | 2026-10-17 |
+| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ | el9-gcp:✅ | ✅ | el9-gcp:✅ | 2026-10-17 |
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ | el9:✅ | ✅ | el9:✅ | 2026-10-17 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ | N/A | ❌ | N/A | 2026-10-17 |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ | N/A | ✅ | N/A | 2026-10-17 |
