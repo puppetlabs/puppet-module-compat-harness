@@ -168,6 +168,35 @@ module ModuleTester
       )
     end
 
+    # Runs module-specific root commands on the VM guest itself, after the
+    # Puppet Core agent is installed and before Beaker starts (config/
+    # modules.schema.json's acceptanceTarget.vm_setup_commands). Exists for
+    # preconditions neither pre_acceptance_commands (runs on the GitHub
+    # Actions runner, not the VM) nor the module's own manifests can satisfy
+    # — e.g. puppet-elasticsearch's `vm.max_map_count` sysctl, a host kernel
+    # parameter GCP's default VM image does not set high enough. This is the
+    # capability described as "not yet designed" in
+    # docs/vm-based-acceptance-testing.md §7.4, and partially prototyped
+    # (then fully reverted) for a `setenforce 0` test during the systemd
+    # investigation in §7.6 — see that doc for why landing it for real this
+    # time comes with explicit result documentation per module. No-op (nil)
+    # when there are no commands to run.
+    def run_vm_setup_commands(host, key_path, commands)
+      return nil if commands.nil? || commands.empty?
+
+      script = <<~REMOTESCRIPT
+        set -euo pipefail
+        #{commands.join("\n")}
+      REMOTESCRIPT
+
+      @stage.run_stage(
+        'vm_setup_commands',
+        ['ssh', *SSH_OPTS, '-i', key_path, "root@#{host.ip}", 'bash', '-s'],
+        @workspace_dir, {},
+        stdin: script
+      )
+    end
+
     # Fixes the BEAKER_FACTER_<dotted.fact.path> nesting gap described above
     # for FACT_OVERRIDE_FILE. Only dotted (structured) overrides need this —
     # a flat override (e.g. BEAKER_FACTER_role=foo) already works correctly
@@ -226,6 +255,15 @@ module ModuleTester
     # everything Beaker needs (platform, ip, key path) is derived directly
     # (design doc §3.1). No secrets are embedded; the key path is a
     # reference, not key material.
+    #
+    # roles: ['agent'] mirrors beaker-hostgenerator's own default (every
+    # module's own CI setfile gets this for free via that tool;
+    # Beaker::Options::Parser#set_default_host! separately auto-adds
+    # 'default' to a lone host, but nothing auto-adds 'agent' to a
+    # hand-written setfile like this one). Without it, any spec that calls
+    # only_host_with_role(hosts, 'agent') — a common Beaker pattern,
+    # including puppet-elasticsearch's — fails with "There should be one
+    # host with agent defined!" regardless of the module under test.
     def write_vm_setfile(host, key_path, platform)
       setfile = {
         'HOSTS' => {
@@ -234,6 +272,7 @@ module ModuleTester
             'hypervisor' => 'none',
             'ip' => host.ip,
             'user' => 'root',
+            'roles' => ['agent'],
             'ssh' => {
               'keys' => [key_path],
               'paranoid' => false
@@ -242,7 +281,17 @@ module ModuleTester
         },
         'CONFIG' => {
           'log_level' => 'verbose',
-          'type' => 'foss'
+          'type' => 'foss',
+          # Beaker defaults this to 10 (beaker/options/presets.rb) -- the
+          # number of trailing lines of a failed command's output embedded
+          # in its Beaker::Host::CommandFailure message. For a Puppet apply
+          # that fails partway through a large catalog, 10 lines is often
+          # just the cascade of downstream "Skipping because of failed
+          # dependencies" warnings, with the actual originating resource
+          # error pushed out of view above them -- confirmed live on
+          # puppet-elasticsearch's first VM run (docs/vm-based-acceptance-
+          # testing.md §7.6). Raised well past that cascade's typical size.
+          'trace_limit' => 200
         }
       }
 

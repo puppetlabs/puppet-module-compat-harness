@@ -6,6 +6,15 @@ require 'shellwords'
 
 module ModuleTester
   class StageRunner
+    # RSpec's own formatters always emit a literal "\nFailures:\n" marker
+    # (rspec-core's Notifications#fully_formatted_failed_examples) right
+    # before per-failure detail, the final summary, and the rerun list.
+    # Everything before it is pass-case noise — gem installs, successful
+    # Puppet applies, progress dots. See condense_output.
+    RSPEC_FAILURES_MARKER = /^Failures:$/
+    CONDENSED_OUTPUT_LIMIT = 200_000
+    FALLBACK_TAIL_LIMIT = 50_000
+
     # `extra_secrets`: ad-hoc runtime values to redact from this stage's
     # command echo, streamed output, and log file, beyond what Redactor
     # already knows about via ENV — e.g. the VM provision service's
@@ -55,8 +64,7 @@ module ModuleTester
 
         elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
         puts "  ✓ Completed in #{elapsed.round(2)}s (exit: #{status.exitstatus})"
-        trimmed_output = output_buffer.to_s
-        trimmed_output = trimmed_output[-20_000, 20_000] || trimmed_output
+        trimmed_output = condense_output(output_buffer.to_s)
 
         StageResult.new(
           name: name,
@@ -71,8 +79,7 @@ module ModuleTester
         puts "  ✗ TIMEOUT after #{elapsed.round(2)}s (limit: #{timeout_seconds}s)"
         puts "  Debug log saved to: #{log_file}"
 
-        trimmed_output = output_buffer.to_s
-        trimmed_output = trimmed_output[-20_000, 20_000] || trimmed_output
+        trimmed_output = condense_output(output_buffer.to_s)
 
         StageResult.new(
           name: name,
@@ -112,6 +119,29 @@ module ModuleTester
     end
 
     private
+
+    # Keeps the signal, drops the noise: condenses to the RSpec "Failures:"
+    # marker onward when one is present (per-failure detail, including each
+    # failure's own captured command output, plus the final summary and
+    # rerun list), instead of a blind tail cut. A tail cut can push an
+    # earlier failure — and the root-cause error it contains — out of the
+    # window entirely while a later, more superficial failure survives; this
+    # happened for real on puppet-elasticsearch's first live VM run (see
+    # docs/vm-based-acceptance-testing.md §7.6), where the two earliest
+    # failures (including the one most likely to carry the actual Puppet
+    # error) were the ones cut. Falls back to a tail cut for stages with no
+    # RSpec output at all (bundle install, provisioning) or that crashed
+    # before RSpec printed a summary. The full, unfiltered stream still goes
+    # to the per-stage .log file regardless of this.
+    def condense_output(raw)
+      marker = raw.index(RSPEC_FAILURES_MARKER)
+      if marker
+        condensed = raw[marker..]
+        condensed.length > CONDENSED_OUTPUT_LIMIT ? condensed[0, CONDENSED_OUTPUT_LIMIT] : condensed
+      else
+        raw.length > FALLBACK_TAIL_LIMIT ? raw[-FALLBACK_TAIL_LIMIT, FALLBACK_TAIL_LIMIT] : raw
+      end
+    end
 
     def resolve_timeout(explicit_timeout = nil)
       explicit_value = explicit_timeout.to_i

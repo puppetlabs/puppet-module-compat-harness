@@ -81,6 +81,10 @@ inputs:
     description: 'JSON object of extra environment variables merged into the acceptance test environment before Beaker runs (acceptanceTarget.beaker_env)'
     required: false
     default: '{}'
+  vm-setup-commands:
+    description: "JSON array of root shell commands run over SSH on the GCP VM guest, after Puppet Core is installed and before Beaker starts (provisioner=gcp only; acceptanceTarget.vm_setup_commands)"
+    required: false
+    default: '[]'
 
 runs:
   using: composite
@@ -202,6 +206,7 @@ runs:
         RUNNER_PROVISIONER: ${{ inputs.provisioner }}
         RUNNER_VM_IMAGE: ${{ inputs.vm-image }}
         RUNNER_BEAKER_ENV: ${{ inputs.beaker-env-json }}
+        RUNNER_VM_SETUP_COMMANDS: ${{ inputs.vm-setup-commands }}
       run: |
         runner_args=(
           --modules-file .tmp/single-module.json
@@ -237,6 +242,9 @@ runs:
         fi
         if [ "$RUNNER_BEAKER_ENV" != "{}" ] && [ "$RUNNER_BEAKER_ENV" != "" ]; then
           runner_args+=(--beaker-env "$RUNNER_BEAKER_ENV")
+        fi
+        if [ "$RUNNER_VM_SETUP_COMMANDS" != "[]" ] && [ "$RUNNER_VM_SETUP_COMMANDS" != "" ]; then
+          runner_args+=(--vm-setup-commands "$RUNNER_VM_SETUP_COMMANDS")
         fi
         ruby bin/puppet-module-tester "${runner_args[@]}"
 

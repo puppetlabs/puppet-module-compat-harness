@@ -25,7 +25,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) |
 | ✅ | [puppet-cron](https://github.com/voxpupuli/puppet-cron) |
 | ✅ | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) |
-| ⛔ | [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) |
+| ✅ | [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) |
 | ✅ | [puppet-epel](https://github.com/voxpupuli/puppet-epel) |
 | ✅ | [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) |
 | ✅ | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) |
@@ -93,14 +93,13 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
-## Modules With Acceptance Tests but Not Run in CI (10)
+## Modules With Acceptance Tests but Not Run in CI (9)
 
 These modules have acceptance tests upstream, but the harness does not run them — so their compatibility is confirmed by unit tests only, not fully. They are intentionally excluded from `KNOWN_COMPATIBLE.md`.
 
 | Module | Status | Reason |
 |--------|--------|--------|
 | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | ⛔ blocked | GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing. |
-| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ⛔ blocked | Production-mode bootstrap enforces vm.max_map_count >= 262144 (a host kernel parameter) which cannot be set from inside an unprivileged Docker container; all acceptance specs hit a live Elasticsearch HTTP API and fail. Tests also require systemd (unavailable in standard containers), download from artifacts.elastic.co, and need the simp-beaker-helpers gem. Requires a real VM or privileged container with host kernel tuning. |
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | 🚧 pending | Acceptance tests exist upstream but are not yet wired into a harness setfile/target. |
 | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ⛔ blocked | Acceptance tests use Dir.mktmpdir on the Beaker controller to create temporary directories for LDAP database paths (olcDbDirectory), then reference those host-local paths inside the Docker SUT where they do not exist; slapd rejects them with "invalid path: Permission denied". The tests assume a shared controller/SUT filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT. |
 | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ⛔ blocked | Blocked on two GCP images, neither a Puppet Core compatibility issue. Rocky 9: google-compute-engine hard-depends on rsyslog, blocking the module's own package-removal cleanup. Switching to debian-12 got past that but hit a different, real bug: rsyslog.service's Requires=syslog.socket resolves via its Alias=syslog.service name, which only exists while the unit is enabled — the suite's repeated package install/remove cycles intermittently disable it mid-run, breaking the socket trigger. Confirmed via Ubuntu 24.04's packaging that this is a Debian-family-wide rsyslog.service quirk, not an image choice, so switching images again wouldn't help. A start-rate-limit workaround was tried and had no effect. Needs an upstream/module-side fix, not a harness one. |

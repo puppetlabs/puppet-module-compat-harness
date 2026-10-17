@@ -329,6 +329,7 @@ jobs:
           install-puppetserver: ${{ matrix.module.install_puppetserver || 'false' }}
           pre-acceptance-commands: ${{ toJson(matrix.module.pre_acceptance_commands) }}
           beaker-env-json: ${{ toJson(matrix.module.beaker_env) }}
+          vm-setup-commands: ${{ toJson(matrix.module.vm_setup_commands) }}
 
       - name: Upload module artifacts (VM acceptance)
         if: always()

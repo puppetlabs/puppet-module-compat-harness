@@ -241,6 +241,15 @@
             "minLength": 1
           }
         },
+        "vm_setup_commands": {
+          "type": "array",
+          "description": "GCP-only. Shell commands run as root over SSH on the VM guest itself, after the Puppet Core agent is installed and before Beaker starts. Use for host-kernel preconditions a Docker container can't satisfy and the module's own manifests don't manage (e.g. a sysctl like vm.max_map_count). Not available for provisioner 'docker' — see setup_commands (image build time) or pre_acceptance_commands (host runner, not the SUT) instead.",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
         "beaker_env": {
           "type": "object",
           "description": "Extra environment variables merged into the acceptance test environment before Beaker runs, in addition to the harness's own BEAKER_* variables. Use for module-specific Beaker behaviour, e.g. BEAKER_FACTER_memory.system.total for a module that sizes an operation off the SUT's real memory (would otherwise be unreasonably slow/large on a full-size VM). Not a substitute for pre_acceptance_commands, whose changes do not persist to the acceptance stage's own subprocess.",
@@ -277,7 +286,8 @@
               "setfile"
             ],
             "properties": {
-              "image": false
+              "image": false,
+              "vm_setup_commands": false
             }
           }
         }
