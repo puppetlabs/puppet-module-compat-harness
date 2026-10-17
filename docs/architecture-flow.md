@@ -87,6 +87,7 @@ flowchart TD
                 PV["provision_vm<br/>POST provision service<br/>no credentials required — authorized by<br/>the calling GitHub run URL"]
                 PVM["prepare_vm<br/>escalate litmus user → root via an<br/>ephemeral SSH key; litmus password<br/>discarded once this returns"]
                 IPC["install_puppet_core_vm<br/>same install+scrub logic as Stage 1,<br/>piped over SSH — key never a<br/>subprocess argv element"]
+                VSC["vm_setup_commands (optional)<br/>root shell commands over SSH on the<br/>VM guest — preconditions a container<br/>can't satisfy, e.g. a sysctl or a<br/>missing base-image package"]
                 WFO["write_fact_overrides (optional)<br/>rewrites dotted BEAKER_FACTER_ overrides<br/>as a correctly-nested facts.d file —<br/>voxpupuli-acceptance's own writer can't<br/>nest a dotted fact path"]
                 WSF["write_vm_setfile<br/>hypervisor: none · no secrets embedded"]
             end
@@ -139,7 +140,7 @@ flowchart TD
     AK -- "no — FOSS fallback" --> FOSS --> CL
 
     PR -- "gcp" --> PV
-    PV --> PVM --> IPC --> WFO --> WSF --> PACG --> ACCVM --> CL
+    PV --> PVM --> IPC --> VSC --> WFO --> WSF --> PACG --> ACCVM --> CL
     PV -.->|"always, ensure-wrapped"| TD
 
     CL --> RP --> RS --> WS --> UA
@@ -286,6 +287,8 @@ Any acceptance target (either provisioner) may also declare **`pre_acceptance_co
 
 Any acceptance target may also declare **`beaker_env`** — a map of extra environment variables merged into the acceptance test environment before Beaker runs, for module-specific Beaker behaviour that a one-off host command can't achieve (host-command changes don't persist into the separate `acceptance` stage's own subprocess). For example, `puppet-swap_file`'s GCP target sets `BEAKER_FACTER_memory.system.total` so its swapfile-sizing logic doesn't size off a full VM's real memory.
 
+A GCP-provisioner target may also declare **`vm_setup_commands`** — the VM-path equivalent of `setup_commands`, but run as root over SSH on the VM guest itself (not during image build, since a GCP VM has no build step) right after `install_puppet_core_vm` and before `write_fact_overrides`/`write_vm_setfile`. Use this for host-kernel or base-image preconditions neither a Docker container nor the module's own manifests can satisfy — `puppet-elasticsearch`'s GCP target sets `vm.max_map_count` via `sysctl` and installs `wget` (missing from the stock `rocky-linux-cloud/rocky-linux-9` image, needed by its `package_url` install path).
+
 The `sshd` mode was chosen as the default because Beaker's built-in default
 command (`service sshd start; tail -f /dev/null`) caused ECONNRESET loops in
 non-systemd containers, and running sshd directly as PID 1 resolved that
@@ -333,7 +336,15 @@ followed by best-effort teardown:
    (shared, not duplicated), piped over SSH stdin with the API key
    interpolated directly into the script text — never a subprocess argv
    element on either host, so it cannot leak via `ps`.
-4. **`write_fact_overrides`** (optional, two sub-stages: `read_fact_overrides`,
+4. **`vm_setup_commands`** (optional, `acceptanceTarget.vm_setup_commands`):
+   runs a list of module-specific root commands over SSH on the VM guest
+   itself, for preconditions neither a Docker container nor the module's own
+   manifests can satisfy — e.g. `puppet-elasticsearch` needs
+   `vm.max_map_count` pre-set (a host kernel sysctl) and `wget` installed
+   (missing from the stock GCP image, needed by its `package_url` install
+   path). Same SSH-as-root pattern as `write_fact_overrides` below, run one
+   stage earlier so the precondition is in place before anything else.
+5. **`write_fact_overrides`** (optional, two sub-stages: `read_fact_overrides`,
    `write_fact_overrides`): fixes a real gap in `acceptanceTarget.beaker_env`'s
    `BEAKER_FACTER_<fact.path>` mechanism. `voxpupuli-acceptance`'s own
    `Facts.write_beaker_facts_on` writes these as a **flat**, dotted-key
@@ -352,9 +363,17 @@ followed by best-effort teardown:
    than trying to race or suppress it. A module with only flat
    `BEAKER_FACTER_*` overrides never triggers this — those already work via
    the existing mechanism.
-5. **`write_vm_setfile`**: emits a Beaker setfile with `hypervisor: none`,
-   the VM's IP, and a reference to the ephemeral key's *path* (never its
-   contents) — no secrets embedded.
+6. **`write_vm_setfile`**: emits a Beaker setfile with `hypervisor: none`,
+   the VM's IP, a reference to the ephemeral key's *path* (never its
+   contents) — no secrets embedded — `roles: ['agent']` (mirrors
+   `beaker-hostgenerator`'s own default; nothing else auto-adds it to a
+   hand-written setfile, and specs that call
+   `only_host_with_role(hosts, 'agent')` fail without it), and
+   `trace_limit: 200` (Beaker defaults this to 10 — the number of trailing
+   lines of a failed command's output embedded in a
+   `Beaker::Host::CommandFailure` message; 10 is often just a cascade of
+   downstream "Skipping because of failed dependencies" warnings, with the
+   actual originating resource error pushed out of view above them).
 
 Then `pre_acceptance_commands` and the `acceptance` stage run exactly as they
 do for the Docker path, against `BEAKER_PUPPET_COLLECTION=preinstalled`.
@@ -363,9 +382,10 @@ an `ensure` block, so it fires on every exit path — including a VM that only
 got partway through setup. A failed teardown is not a harness or
 compatibility concern; it falls back to the service's own run-status reaper
 and hard 3-hour VM TTL. `provision_vm`, the three `prepare_vm_*` stages,
-`install_puppet_core_vm`, and `read_fact_overrides`/`write_fact_overrides`
-are all classified as harness-error stages (see Result Classification
-below) — an infrastructure flake must never read as a module incompatibility.
+`install_puppet_core_vm`, `vm_setup_commands`, and
+`read_fact_overrides`/`write_fact_overrides` are all classified as
+harness-error stages (see Result Classification below) — an infrastructure
+flake must never read as a module incompatibility.
 
 #### FOSS Fallback
 
@@ -391,7 +411,7 @@ After all stages complete, the `Classifier` assigns one of these states:
 The classifier evaluates conditions in this order, stopping at the first match:
 
 1. Auth status is not `ok` → **`harness_error`**
-2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`, `read_fact_overrides`, `write_fact_overrides`) → **`harness_error`**
+2. Any harness stage failed (`clone`, `bundle_config_*`, `bootstrap`, `bootstrap_dependency_patch`, `bootstrap_puppet_core_retry`, `build_sut_image`, `rake_tasks`, `pdk_version`, `provision_vm`, `prepare_vm_keygen`, `prepare_vm_wait_ssh`, `prepare_vm_escalate`, `prepare_vm_verify_root`, `install_puppet_core_vm`, `vm_setup_commands`, `read_fact_overrides`, `write_fact_overrides`) → **`harness_error`**
 3. Any non-bootstrap stage failed → **`not_compatible`** _(subject to downgrade overrides — see below)_
 4. Metadata reports the Puppet version as unsupported **and** `metadata_mode=fail` → **`not_compatible`**
 5. Metadata reports unsupported version (warn mode) → **`conditionally_compatible`**

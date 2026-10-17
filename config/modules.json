@@ -302,7 +302,7 @@
       "acceptance": {
         "enabled": true,
         "status": "running",
-        "reason": "Previously blocked on vm.max_map_count >= 262144 (a host kernel parameter an unprivileged Docker container can't set). Moved to GCP VM acceptance using the vm_setup_commands capability (docs/vm-based-acceptance-testing.md §7.4/§7.6) to pre-set the sysctl and install wget over SSH as root before Beaker starts. The stock Rocky 9 GCP image lacks wget, which the package_url install path needs to download the Elasticsearch package (config/beaker/setfiles/el9.yml's Docker image already bakes wget in for this platform family; the GCP VM path has no equivalent baseline, so no VM-landed module happened to hit this before). Unverified until a live CI run; bundle install needing the module's :system_tests Gemfile group was checked and is NOT an issue (the harness's bundle install has no --without flags, so that group installs by default).",
+        "reason": "Previously blocked on vm.max_map_count >= 262144 (a host kernel parameter an unprivileged Docker container can't set). Enabled via GCP VM acceptance using the vm_setup_commands capability (docs/vm-based-acceptance-testing.md §7.4/§7.6) to pre-set the sysctl and install wget (missing from the stock Rocky 9 GCP image; needed by this module's package_url install path to download the Elasticsearch package) over SSH as root before Beaker starts. Live-verified green on Rocky 9, 171/171 examples passing.",
         "targets": [
           {
             "name": "el9-gcp",
