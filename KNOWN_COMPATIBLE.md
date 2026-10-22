@@ -25,7 +25,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ❌ | ✅ 9.1.0 |
+| [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | ✅ 8.22.0 | ❌ |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | ✅ 8.22.0 | ✅ 9.1.0 |
