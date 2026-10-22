@@ -25,7 +25,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ❌ | ✅ 9.1.0 |
 | [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | ✅ 8.22.0 | ❌ |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | ✅ 8.22.0 | ✅ 9.1.0 |
@@ -71,6 +71,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.22.0 | ❌ |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ 8.22.0 | ❌ |
 | [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ 8.22.0 | ❌ |
