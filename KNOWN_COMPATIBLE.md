@@ -22,7 +22,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-augeas](https://github.com/voxpupuli/puppet-augeas) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ 8.22.0 | ❌ |
 | [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ✅ 8.22.0 | ✅ 9.1.0 |
@@ -44,19 +44,19 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | ✅ 8.22.0 | ❌ |
 | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ 8.22.0 | ❌ |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.22.0 | ❌ |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ 8.22.0 | ❌ |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ 8.22.0 | ✅ 9.1.0 |
@@ -66,11 +66,11 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ 8.22.0 | ❌ |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.22.0 | ✅ 9.1.0 |
+| [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.22.0 | ❌ |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ 8.22.0 | ❌ |
