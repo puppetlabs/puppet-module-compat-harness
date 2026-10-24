@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T03:15:22Z",
+  "generated_at": "2026-10-24T02:21:41Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -2837,7 +2837,7 @@
             "targets": {
               "ubuntu24": "warning"
             },
-            "tested_at": "2026-10-23T02:21:40Z"
+            "tested_at": "2026-10-24T02:19:46Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2847,9 +2847,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "3b8e0ab",
-            "last_run_id": "39889069494",
-            "tested_at": "2026-10-23T02:21:40Z"
+            "last_harness_sha": "0c436de",
+            "last_run_id": "40053650247",
+            "tested_at": "2026-10-24T02:19:40Z"
           }
         },
         "9": {
