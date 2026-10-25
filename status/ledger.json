@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-24T03:22:13Z",
+  "generated_at": "2026-10-25T02:24:45Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1617,19 +1617,19 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T02:19:21Z"
+            "tested_at": "2026-10-25T02:21:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
-          "documentation_status": "warning",
+          "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
           "puppet_core_version": "8.22.0",
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:22Z"
+            "last_harness_sha": "0bd0fd3",
+            "last_run_id": "40154077322",
+            "tested_at": "2026-10-25T02:21:20Z"
           }
         },
         "9": {
