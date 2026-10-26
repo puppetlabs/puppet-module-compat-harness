@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-10-25 03:30 UTC  
+**Generated:** 2026-10-26 02:27 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -97,8 +97,8 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ | 🚧 pending | ✅ | 🚧 pending | 2026-10-18 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-18 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-18 |
-| [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ | N/A | ✅ | N/A | 2026-10-21 |
-| [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-25 |
+| [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ | N/A | ✅ | N/A | 2026-10-26 |
+| [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-26 |
 | [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-24 |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-18 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ | el9-systemd:✅ | ✅ | el9-systemd:✅ | 2026-10-21 |
