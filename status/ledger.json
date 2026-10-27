@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T03:25:19Z",
+  "generated_at": "2026-10-27T02:48:55Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1582,9 +1582,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "8b64dd7",
-            "last_run_id": "40258921921",
-            "tested_at": "2026-10-26T02:25:28Z"
+            "last_harness_sha": "6c26aef",
+            "last_run_id": "40437945922",
+            "tested_at": "2026-10-27T02:22:34Z"
           }
         },
         "9": {
@@ -2290,7 +2290,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:25Z"
+            "tested_at": "2026-10-27T02:22:24Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2300,9 +2300,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:21Z"
+            "last_harness_sha": "6c26aef",
+            "last_run_id": "40437945922",
+            "tested_at": "2026-10-27T02:22:23Z"
           }
         },
         "9": {
@@ -2729,13 +2729,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "warning",
+            "class": "failure",
             "targets": {
-              "el9-gcp": "warning"
+              "el9-gcp": "failure"
             },
-            "tested_at": "2026-10-18T02:32:40Z"
+            "tested_at": "2026-10-27T02:22:27Z"
           },
-          "coverage_state": "unit+acceptance",
+          "coverage_state": "acceptance-failing",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -2743,9 +2743,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:21Z"
+            "last_harness_sha": "6c26aef",
+            "last_run_id": "40437945922",
+            "tested_at": "2026-10-27T02:22:25Z"
           }
         },
         "9": {
