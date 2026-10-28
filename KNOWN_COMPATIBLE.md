@@ -68,7 +68,7 @@ Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ 8.22.0 | ✅ 9.1.0 |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.22.0 | ❌ |
+| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.22.0 | ✅ 9.1.0 |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.22.0 | ✅ 9.1.0 |
