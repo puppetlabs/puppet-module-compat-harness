@@ -11,6 +11,10 @@ docs/puppet-core-9-dual-major-support.md §3):
   Puppet major under `puppet_majors[major]`. The major comes from each row's
   `puppet_major`, stamped by classify_module_result.py from the run's profile.
   A row without one (written before that field existed) defaults to major 8.
+- `validated_versions[version]` records the last time that major's currently
+  pinned version was confirmed fully compatible; a failure on the current pin
+  retracts its entry. See ledger_lib.record_validated_version and
+  docs/lean-testing-and-status-ledger-design.md.
 
 Environment:
   STATUS_ROOT              artifact root to walk (default: all-artifacts)
@@ -27,9 +31,16 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from ledger_lib import derive_id, load_modules_config, parse_known_ids  # noqa: E402
+from ledger_lib import (  # noqa: E402
+    derive_id,
+    is_fully_compatible,
+    is_pass,
+    load_modules_config,
+    parse_known_ids,
+    record_validated_version,
+)
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 DEFAULT_MAJOR = '8'
 _CLASS_RANK = {'clean': 0, 'warning': 1, 'failure': 2}
 
@@ -64,12 +75,6 @@ def collect_rows(root):
         with open(os.path.join(current_root, 'module-status.json'), 'r', encoding='utf-8') as handle:
             rows.append(json.load(handle))
     return rows
-
-
-def is_pass(status_class):
-    # Warnings are deliberate green-keepers (e.g. tolerated metadata gaps); for
-    # reporting we only distinguish pass from fail. Warning counts as pass.
-    return status_class in ('clean', 'warning')
 
 
 def coverage_state(major_entry, cfg):
@@ -143,7 +148,17 @@ def upsert_results(modules, config, rows, now):
             major_entry['acceptance']['class'] = worst_class(major_entry['acceptance'].get('targets', {}).values())
 
 
-def reconcile(modules, config):
+def latest_tested_at(major_entry, default):
+    # ISO-8601 'YYYY-MM-DDTHH:MM:SSZ' timestamps sort correctly as strings.
+    stamps = [
+        major_entry.get('unit', {}).get('tested_at'),
+        major_entry.get('acceptance', {}).get('tested_at'),
+    ]
+    stamps = [s for s in stamps if s]
+    return max(stamps) if stamps else default
+
+
+def reconcile(modules, config, now):
     incompatible_ids = parse_known_ids(os.environ.get('KNOWN_INCOMPATIBLE_FILE', 'KNOWN_INCOMPATIBLE.md'))
     deprecated_ids = parse_known_ids(os.environ.get('KNOWN_DEPRECATED_FILE', 'KNOWN_DEPRECATED.md'))
 
@@ -173,6 +188,10 @@ def reconcile(modules, config):
 
         for major_entry in entry.get('puppet_majors', {}).values():
             major_entry['coverage_state'] = coverage_state(major_entry, cfg)
+            version = major_entry.get('puppet_core_version')
+            if version:
+                compatible = is_fully_compatible(major_entry, entry)
+                record_validated_version(major_entry, version, compatible, latest_tested_at(major_entry, now))
 
 
 def main():
@@ -185,13 +204,13 @@ def main():
     if ledger['modules'] and ledger.get('schema_version') != SCHEMA_VERSION:
         sys.exit(
             f"{ledger_file} is schema_version {ledger.get('schema_version')!r}, expected {SCHEMA_VERSION}. "
-            'Run scripts/migrate_ledger_v2.py against it first.'
+            'Run scripts/backfill_validated_versions.py against it first.'
         )
     config = load_modules_config(modules_file)
     rows = collect_rows(status_root)
 
     upsert_results(ledger['modules'], config, rows, now)
-    reconcile(ledger['modules'], config)
+    reconcile(ledger['modules'], config, now)
 
     ledger['schema_version'] = SCHEMA_VERSION
     ledger['generated_at'] = now

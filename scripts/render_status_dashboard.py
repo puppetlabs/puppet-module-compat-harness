@@ -8,14 +8,15 @@ tracked module. It produces:
   - KNOWN_COMPATIBLE.md — the curated "fully validated" list, derived from the
     same `is_fully_compatible` predicate, so it can never drift from the ledger.
 
-Reads ledger schema v2: per-module test outcomes (unit/acceptance/coverage_state)
-live under `puppet_majors[major]`, so every count and the `is_fully_compatible`
-verdict are computed once per tracked major (see
+Reads ledger schema v3: per-module test outcomes (unit/acceptance/coverage_state/
+validated_versions) live under `puppet_majors[major]`, so every count and the
+`is_fully_compatible` verdict are computed once per tracked major (see
 docs/puppet-core-9-dual-major-support.md §3, §6) rather than once per module.
 The gating major's columns are always rendered; any other major's appear as soon
 as one module reports into it, so the Puppet 9 columns fill in on that major's
-first run. For major "8" alone the output is unchanged from the pre-v2 dashboard
-modulo the per-major column labels.
+first run. `validated_versions` lists every version of that major ever
+confirmed fully compatible — see docs/lean-testing-and-status-ledger-design.md
+for its last-confirmed/retract-on-failure semantics.
 
 Environment:
   LEDGER_FILE            ledger path (default: status/ledger.json)
@@ -31,18 +32,21 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from ledger_lib import load_modules_config, parse_known_ids  # noqa: E402
+from ledger_lib import (  # noqa: E402
+    acceptance_passed,
+    acceptance_status,
+    is_fully_compatible,
+    is_pass,
+    load_modules_config,
+    parse_known_ids,
+    unit_passed,
+)
 
 # The major that gates the fleet's headline status; always shown even if a
 # module has no puppet_majors entry yet (never-tested), so the dashboard shape
 # is stable. Other tested majors (9, ...) are discovered from the ledger and
 # rendered alongside it — see discover_majors().
 GATING_MAJOR = '8'
-
-# Reporting is pass/fail only. Warnings are deliberate green-keepers (tolerated
-# metadata gaps, etc.) and count as pass; we do not surface the warning level.
-def is_pass(status_class):
-    return status_class in ('clean', 'warning')
 
 
 def class_icon(status_class):
@@ -94,14 +98,6 @@ def unit_icon(major_slice):
     return class_icon(unit.get('class'))
 
 
-def acceptance_status(entry):
-    # Config-derived disposition; falls back to the legacy boolean for old ledgers.
-    status = entry.get('acceptance_status')
-    if status:
-        return status
-    return 'running' if entry.get('acceptance_configured') else 'none'
-
-
 def acceptance_cell(major_slice, entry):
     status = acceptance_status(entry)
     if status == 'none':
@@ -118,27 +114,21 @@ def acceptance_cell(major_slice, entry):
     return ' '.join(f"{name}:{class_icon(cls)}" for name, cls in sorted(targets.items()))
 
 
-def unit_passed(major_slice):
-    unit = major_slice.get('unit')
-    return bool(unit) and is_pass(unit.get('class'))
+def validated_versions_cell(major_slice):
+    versions = major_slice.get('validated_versions') or {}
+    if not versions:
+        return '—'
+    return ', '.join(sorted(versions, key=_version_key))
 
 
-def acceptance_passed(major_slice):
-    acceptance = major_slice.get('acceptance')
-    return bool(acceptance) and bool(acceptance.get('targets')) and is_pass(acceptance.get('class'))
-
-
-def is_fully_compatible(major_slice, entry):
-    if not unit_passed(major_slice):
-        return False
-    status = acceptance_status(entry)
-    if status == 'none':
-        return True  # no acceptance tests exist — unit coverage is full coverage
-    if status == 'running':
-        return acceptance_passed(major_slice)
-    # blocked / pending: acceptance tests exist but were never exercised here, so
-    # coverage is incomplete. These are NOT fully compatible.
-    return False
+def _version_key(version):
+    parts = []
+    for part in version.split('.'):
+        try:
+            parts.append(int(part))
+        except ValueError:
+            parts.append(part)
+    return parts
 
 
 def last_tested(major_slice):
@@ -184,8 +174,8 @@ def render_known_compatible(active, path, excluded_ids, majors):
                 continue
             if is_fully_compatible(slice_, entry):
                 compatible_on_any = True
-                version = slice_.get('puppet_core_version', '')
-                cells[major] = f'✅ {version}'.strip() if version else '✅'
+                versions = validated_versions_cell(slice_)
+                cells[major] = f'✅ {versions}' if versions != '—' else '✅'
             else:
                 cells[major] = '❌'
         if compatible_on_any:
@@ -200,9 +190,17 @@ def render_known_compatible(active, path, excluded_ids, majors):
         'This document lists modules that have been fully validated against Puppet Core on at '
         'least one tested major version — meaning all available tests have passed for that major.',
         '',
-        'Each Puppet major has its own column: **✅ &lt;version&gt;** = fully compatible on that '
-        'major, **❌** = tested on that major but not fully compatible, **—** = not yet tested on '
-        'that major.',
+        'Each Puppet major has its own column: **✅ &lt;version(s)&gt;** = fully compatible, listing '
+        'every version of that major ever confirmed compatible (ascending, oldest first); **❌** = '
+        'tested on that major but not fully compatible; **—** = not yet tested on that major.',
+        '',
+        'All but the last-listed version are historical: each one reflects the last time the harness '
+        'tested that exact Puppet Core version and it passed, but the harness does not re-test a '
+        'version once it moves on to a newer pin, so these are point-in-time attestations, not a live '
+        'guarantee against today\'s module release. A version is only listed if it was never '
+        'subsequently shown to fail while it was still the active pin — see '
+        '[docs/lean-testing-and-status-ledger-design.md](docs/lean-testing-and-status-ledger-design.md) '
+        'for the exact semantics.',
         '',
         '**N/A in a major column context** (shown in [STATUS.md](STATUS.md), not here) means the '
         'module has no acceptance tests in its upstream repository; unit tests alone constitute '
@@ -342,6 +340,12 @@ def main():
                  'not yet wired up, `⏳ awaiting run` = enabled but no result yet, `—` = not yet tested on '
                  'that major. Only ✅/N/A count toward that major\'s **Fully compatible**.')
     lines.append('>')
+    lines.append('> **Versions** lists every version of that major ever confirmed fully compatible '
+                 '(ascending). Only the last-listed version is live/current — earlier ones are last '
+                 'confirmed as of their own test date and are not re-verified once the harness moves to '
+                 'a newer pin; a version is removed from this list if a later run on that same pin '
+                 'showed it failing.')
+    lines.append('>')
     lines.append('> ⚠️ next to a module name marks it **deprecated / no longer maintained upstream** — '
                  'independent of compatibility (a deprecated module can still be fully compatible).')
     lines.append('')
@@ -349,6 +353,7 @@ def main():
     for major in majors:
         header.append(f'{major}: Unit')
         header.append(f'{major}: Acceptance')
+        header.append(f'{major}: Versions')
     header.append('Last Tested')
     lines.append('| ' + ' | '.join(header) + ' |')
     lines.append('|' + '|'.join('---' for _ in header) + '|')
@@ -363,6 +368,7 @@ def main():
             slice_ = major_entry(entry, major)
             row.append(unit_icon(slice_))
             row.append(acceptance_cell(slice_, entry))
+            row.append(validated_versions_cell(slice_))
         stamp = module_last_tested(entry)
         when = stamp.strftime('%Y-%m-%d') if stamp else '—'
         if stamp is not None and stamp < stale_cutoff:

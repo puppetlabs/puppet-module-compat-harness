@@ -1,6 +1,17 @@
 {
-  "generated_at": "2026-10-30T14:03:16Z",
+  "generated_at": "2026-10-30T18:48:26Z",
   "modules": {
+    "memcached": {
+      "disposition": "removed-without-disposition",
+      "puppet_majors": {
+        "8": {
+          "coverage_state": "never-tested",
+          "validated_versions": {
+            "8.20.0": "2026-07-16T19:16:16Z"
+          }
+        }
+      }
+    },
     "puppet-alternatives": {
       "acceptance_configured": true,
       "acceptance_status": "running",
@@ -13,7 +24,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:23Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -23,9 +34,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:22Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:40Z",
+            "8.21.0": "2026-09-10T02:21:14Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -34,7 +50,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T03:13:36Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -44,9 +60,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:37Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:42Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -65,7 +85,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:22Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -75,9 +95,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:25Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:43Z",
+            "8.21.0": "2026-09-10T02:21:14Z",
+            "8.22.0": "2026-10-30T17:03:27Z"
           }
         },
         "9": {
@@ -86,7 +111,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T03:13:39Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -96,9 +121,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:38Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:23Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:34Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -117,7 +146,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T02:16:24Z"
+            "tested_at": "2026-10-30T17:03:41Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -127,9 +156,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:25Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:35Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:54Z",
+            "8.21.0": "2026-09-10T02:21:20Z",
+            "8.22.0": "2026-10-30T17:03:41Z"
           }
         },
         "9": {
@@ -138,7 +172,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T03:11:39Z"
+            "tested_at": "2026-10-30T17:07:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -148,9 +182,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:41Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:36Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:48Z",
+            "9.1.0": "2026-10-30T17:07:36Z"
           }
         }
       },
@@ -172,9 +210,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:30Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:36Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:53Z",
+            "8.21.0": "2026-09-10T02:21:30Z",
+            "8.22.0": "2026-10-30T17:03:36Z"
           }
         },
         "9": {
@@ -186,9 +229,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:46Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:35Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:48Z",
+            "9.1.0": "2026-10-30T17:07:35Z"
           }
         }
       },
@@ -211,10 +258,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:34Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:49Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "acceptance-blocked",
@@ -225,10 +273,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:46Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:31Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -249,9 +298,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:25Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:44Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:51Z",
+            "8.21.0": "2026-09-10T02:21:26Z",
+            "8.22.0": "2026-10-30T17:03:44Z"
           }
         },
         "9": {
@@ -263,9 +317,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:46Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:30Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:42Z",
+            "9.1.0": "2026-10-30T17:07:30Z"
           }
         }
       },
@@ -287,9 +345,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:24Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:39Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:48Z",
+            "8.21.0": "2026-09-10T02:21:33Z",
+            "8.22.0": "2026-10-30T17:03:39Z"
           }
         },
         "9": {
@@ -301,9 +364,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:41Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:39Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:47Z",
+            "9.1.0": "2026-10-30T17:07:39Z"
           }
         }
       },
@@ -322,7 +389,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:36Z"
+            "tested_at": "2026-10-30T18:19:14Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -332,9 +399,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:34Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:40Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:55Z",
+            "8.21.0": "2026-09-10T02:21:28Z",
+            "8.22.0": "2026-10-30T18:19:14Z"
           }
         },
         "9": {
@@ -343,7 +415,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T03:13:46Z"
+            "tested_at": "2026-10-30T17:07:33Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -353,9 +425,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:51Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:32Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:53Z",
+            "9.1.0": "2026-10-30T17:07:33Z"
           }
         }
       },
@@ -374,7 +450,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:36Z"
+            "tested_at": "2026-10-30T17:03:37Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -384,9 +460,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:31Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:47Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:43Z",
+            "8.21.0": "2026-09-10T02:21:30Z",
+            "8.22.0": "2026-10-30T17:03:47Z"
           }
         },
         "9": {
@@ -395,7 +476,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T03:13:43Z"
+            "tested_at": "2026-10-30T17:07:41Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -405,9 +486,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:45Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:30Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:55Z",
+            "9.1.0": "2026-10-30T17:07:41Z"
           }
         }
       },
@@ -426,7 +511,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-22T11:35:47Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -436,9 +521,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "43a3079",
-            "last_run_id": "39771646921",
-            "tested_at": "2026-10-22T11:35:45Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:40Z",
+            "8.21.0": "2026-09-17T02:21:30Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -447,7 +537,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-22T03:14:08Z"
+            "tested_at": "2026-10-30T17:07:21Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -457,9 +547,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "9697d89",
-            "last_run_id": "39715657498",
-            "tested_at": "2026-10-22T03:14:06Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-17T03:14:45Z",
+            "9.1.0": "2026-10-30T17:07:21Z"
           }
         }
       },
@@ -473,17 +567,21 @@
       "disposition": "active",
       "puppet_majors": {
         "8": {
-          "coverage_state": "unit-only",
+          "coverage_state": "unit-failing",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
           "puppet_core_version": "8.22.0",
           "unit": {
-            "class": "warning",
-            "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:25Z"
+            "class": "failure",
+            "compatibility_state": "harness_error",
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T18:47:05Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-10T02:21:12Z"
           }
         },
         "9": {
@@ -495,10 +593,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:26Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -516,7 +615,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:20Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -526,9 +625,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:23Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:43Z",
+            "8.21.0": "2026-09-10T02:21:18Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -537,7 +641,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T03:13:35Z"
+            "tested_at": "2026-10-30T17:07:24Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -547,9 +651,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:37Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:35Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -568,7 +676,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-20T02:20:05Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -578,9 +686,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "8599240",
-            "last_run_id": "39358248615",
-            "tested_at": "2026-10-20T02:20:02Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-20T02:23:44Z",
+            "8.21.0": "2026-09-10T02:21:13Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -589,7 +702,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-20T03:14:30Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -599,9 +712,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "8599240",
-            "last_run_id": "39363166898",
-            "tested_at": "2026-10-20T03:14:30Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:35Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -620,7 +737,7 @@
             "targets": {
               "debian12-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:19Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -630,9 +747,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-13T02:51:37Z",
+            "8.21.0": "2026-09-16T02:21:04Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -641,7 +763,7 @@
             "targets": {
               "debian12-systemd": "failure"
             },
-            "tested_at": "2026-10-30T03:11:32Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -651,10 +773,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -672,7 +795,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:16Z"
+            "tested_at": "2026-10-30T17:03:28Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -682,9 +805,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:14Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-18T02:20:39Z",
+            "8.22.0": "2026-10-30T17:03:28Z"
           }
         },
         "9": {
@@ -693,7 +821,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:34Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -703,9 +831,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:36Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-18T03:14:09Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -724,7 +856,7 @@
             "targets": {
               "debian12-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:16Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -734,9 +866,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:15Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:40Z",
+            "8.21.0": "2026-09-10T02:21:12Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -745,7 +882,7 @@
             "targets": {
               "debian12-systemd": "failure"
             },
-            "tested_at": "2026-10-30T03:11:29Z"
+            "tested_at": "2026-10-30T18:19:29Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -755,10 +892,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:27Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -776,7 +914,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T02:19:23Z"
+            "tested_at": "2026-10-30T17:03:28Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -786,9 +924,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:21Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:31Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:42Z",
+            "8.21.0": "2026-09-10T02:21:13Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -797,7 +940,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T03:13:34Z"
+            "tested_at": "2026-10-30T17:07:24Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -807,9 +950,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:40Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:22Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:42Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -831,9 +978,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:17Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:38Z",
+            "8.21.0": "2026-09-10T02:21:12Z",
+            "8.22.0": "2026-10-30T17:03:27Z"
           }
         },
         "9": {
@@ -845,9 +997,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:37Z",
+            "9.1.0": "2026-10-30T17:07:25Z"
           }
         }
       },
@@ -867,7 +1023,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-18T02:19:33Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -877,9 +1033,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.21.0": "2026-09-10T02:21:16Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -888,7 +1048,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-18T03:13:44Z"
+            "tested_at": "2026-10-30T17:07:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -898,9 +1058,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:38Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:42Z",
+            "9.1.0": "2026-10-30T17:07:27Z"
           }
         }
       },
@@ -920,7 +1084,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-18T02:19:29Z"
+            "tested_at": "2026-10-30T17:03:35Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -930,9 +1094,12 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:21Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.22.0": "2026-10-30T17:03:35Z"
           }
         },
         "9": {
@@ -941,7 +1108,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-18T03:13:50Z"
+            "tested_at": "2026-10-30T17:07:28Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -951,9 +1118,12 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:34Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:20Z"
+          },
+          "validated_versions": {
+            "9.1.0": "2026-10-30T17:07:28Z"
           }
         }
       },
@@ -972,7 +1142,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:22Z"
+            "tested_at": "2026-10-30T17:03:28Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -982,9 +1152,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:23Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:44Z",
+            "8.21.0": "2026-09-21T12:49:42Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -993,7 +1168,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T03:13:38Z"
+            "tested_at": "2026-10-30T17:07:26Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1003,9 +1178,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:38Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-21T12:49:17Z",
+            "9.1.0": "2026-10-30T17:07:26Z"
           }
         }
       },
@@ -1027,9 +1206,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:22Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:26Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-18T02:20:40Z",
+            "8.22.0": "2026-10-30T17:03:26Z"
           }
         },
         "9": {
@@ -1041,10 +1225,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "not_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:28Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:28Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -1065,9 +1250,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:22Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-10T02:21:12Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -1079,9 +1269,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:34Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:30Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:36Z",
+            "9.1.0": "2026-10-30T17:07:30Z"
           }
         }
       },
@@ -1100,7 +1294,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:14Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1110,9 +1304,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:15Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-19T02:20:36Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -1121,7 +1320,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:28Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1131,9 +1330,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:31Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-19T03:14:02Z",
+            "9.1.0": "2026-10-30T18:19:26Z"
           }
         }
       },
@@ -1155,9 +1358,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:25Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-15T02:21:07Z",
+            "8.21.0": "2026-09-10T02:21:08Z",
+            "8.22.0": "2026-10-30T17:03:27Z"
           }
         },
         "9": {
@@ -1169,9 +1377,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:35Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:36Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -1190,7 +1402,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-20T02:20:05Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1200,9 +1412,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "8599240",
-            "last_run_id": "39358248615",
-            "tested_at": "2026-10-20T02:20:04Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:37Z",
+            "8.21.0": "2026-09-10T02:21:09Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -1211,7 +1428,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:30Z"
+            "tested_at": "2026-10-30T17:07:22Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -1221,10 +1438,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "not_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T14:00:56Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:26Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -1242,7 +1460,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-21T02:21:29Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1252,9 +1470,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "d52da5d",
-            "last_run_id": "39532474517",
-            "tested_at": "2026-10-21T02:21:29Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:37Z",
+            "8.21.0": "2026-09-10T02:21:17Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -1263,7 +1486,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-21T03:15:12Z"
+            "tested_at": "2026-10-30T17:07:22Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1273,9 +1496,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "d52da5d",
-            "last_run_id": "39537464627",
-            "tested_at": "2026-10-21T03:15:12Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:35Z",
+            "9.1.0": "2026-10-30T17:07:22Z"
           }
         }
       },
@@ -1294,7 +1521,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T02:19:24Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1304,9 +1531,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:22Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-09T02:40:53Z",
+            "8.21.0": "2026-09-10T02:21:13Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -1315,7 +1547,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T03:13:36Z"
+            "tested_at": "2026-10-30T17:07:28Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1325,9 +1557,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:37Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:38Z",
+            "9.1.0": "2026-10-30T17:07:28Z"
           }
         }
       },
@@ -1349,9 +1585,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:18Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-21T12:49:41Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -1363,9 +1604,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:28Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-21T12:49:16Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -1384,7 +1629,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:13Z"
+            "tested_at": "2026-10-30T17:03:34Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1394,9 +1639,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:37Z",
+            "8.21.0": "2026-09-10T02:21:12Z",
+            "8.22.0": "2026-10-30T17:03:34Z"
           }
         },
         "9": {
@@ -1405,7 +1655,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:34Z"
+            "tested_at": "2026-10-30T17:07:21Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1415,9 +1665,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:33Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-18T03:14:11Z",
+            "9.1.0": "2026-10-30T17:07:21Z"
           }
         }
       },
@@ -1440,10 +1694,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:32Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "unit-pass/acceptance-pending",
@@ -1454,10 +1709,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:32Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -1475,7 +1731,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T02:19:22Z"
+            "tested_at": "2026-10-30T18:18:57Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1485,9 +1741,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:33Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-17T02:21:31Z",
+            "8.22.0": "2026-10-30T18:18:57Z"
           }
         },
         "9": {
@@ -1496,7 +1757,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T03:13:38Z"
+            "tested_at": "2026-10-30T17:07:25Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1506,9 +1767,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:36Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:22Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-17T03:14:42Z",
+            "9.1.0": "2026-10-30T17:07:25Z"
           }
         }
       },
@@ -1527,7 +1792,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T02:19:23Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1537,9 +1802,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:26Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:47Z",
+            "8.21.0": "2026-09-10T02:21:15Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -1548,7 +1818,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T03:13:38Z"
+            "tested_at": "2026-10-30T17:07:22Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1558,9 +1828,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:36Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:23Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:38Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -1582,9 +1856,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "6c26aef",
-            "last_run_id": "40437945922",
-            "tested_at": "2026-10-27T02:22:34Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:36Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:47Z",
+            "8.21.0": "2026-09-10T02:21:18Z",
+            "8.22.0": "2026-10-30T17:03:36Z"
           }
         },
         "9": {
@@ -1596,9 +1875,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "9a705a5",
-            "last_run_id": "40443021084",
-            "tested_at": "2026-10-27T03:15:17Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:30Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:50Z",
+            "9.1.0": "2026-10-30T17:07:30Z"
           }
         }
       },
@@ -1617,7 +1900,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:17Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1627,9 +1910,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:20Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:39Z",
+            "8.21.0": "2026-09-10T02:21:15Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -1638,7 +1926,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:30Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1648,9 +1936,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:31Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:23Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:44Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -1669,7 +1961,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-23T02:21:55Z"
+            "tested_at": "2026-10-30T17:03:42Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1679,9 +1971,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "3b8e0ab",
-            "last_run_id": "39889069494",
-            "tested_at": "2026-10-23T02:21:51Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:37Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-12T02:50:48Z",
+            "8.21.0": "2026-09-10T02:21:26Z",
+            "8.22.0": "2026-10-30T17:03:42Z"
           }
         },
         "9": {
@@ -1690,7 +1987,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-24T03:13:42Z"
+            "tested_at": "2026-10-30T17:07:37Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1700,9 +1997,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "041d751",
-            "last_run_id": "40057373934",
-            "tested_at": "2026-10-24T03:13:42Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:34Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:57Z",
+            "9.1.0": "2026-10-30T17:07:37Z"
           }
         }
       },
@@ -1721,7 +2022,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:32Z"
+            "tested_at": "2026-10-30T17:03:32Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1731,9 +2032,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:22Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:35Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:51Z",
+            "8.21.0": "2026-09-16T02:21:07Z",
+            "8.22.0": "2026-10-30T17:03:35Z"
           }
         },
         "9": {
@@ -1742,7 +2048,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:41Z"
+            "tested_at": "2026-10-30T17:07:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1752,9 +2058,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:38Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-16T03:15:12Z",
+            "9.1.0": "2026-10-30T17:07:31Z"
           }
         }
       },
@@ -1773,7 +2083,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-21T02:21:30Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1783,9 +2093,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "d52da5d",
-            "last_run_id": "39532474517",
-            "tested_at": "2026-10-21T02:21:31Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:25Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:42Z",
+            "8.21.0": "2026-09-21T12:49:42Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -1794,7 +2109,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-21T03:15:18Z"
+            "tested_at": "2026-10-30T17:07:21Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1804,9 +2119,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "d52da5d",
-            "last_run_id": "39537464627",
-            "tested_at": "2026-10-21T03:15:13Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-21T12:49:16Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -1825,7 +2144,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T02:16:17Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1835,9 +2154,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:40Z",
+            "8.21.0": "2026-09-10T02:21:09Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -1846,7 +2170,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T03:11:29Z"
+            "tested_at": "2026-10-30T17:07:21Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1856,9 +2180,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:31Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:37Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -1877,7 +2205,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T02:16:17Z"
+            "tested_at": "2026-10-30T17:03:28Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1887,9 +2215,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-10T02:21:47Z",
+            "8.22.0": "2026-10-30T17:03:28Z"
           }
         },
         "9": {
@@ -1898,7 +2231,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T03:11:33Z"
+            "tested_at": "2026-10-30T17:07:21Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1908,9 +2241,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:37Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -1933,10 +2270,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:37Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:35Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "acceptance-blocked",
@@ -1947,10 +2285,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:38Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:29Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -1968,7 +2307,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T02:16:16Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1978,9 +2317,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:15Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:26Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:39Z",
+            "8.21.0": "2026-09-16T02:21:03Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -1989,7 +2333,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-30T03:11:29Z"
+            "tested_at": "2026-10-30T17:07:26Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1999,9 +2343,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:22Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-16T03:15:02Z",
+            "9.1.0": "2026-10-30T17:07:26Z"
           }
         }
       },
@@ -2026,6 +2374,9 @@
             "last_harness_sha": "1dd27a1",
             "last_run_id": "29649895277",
             "tested_at": "2026-07-18T15:24:05Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-07-18T15:24:05Z"
           }
         }
       },
@@ -2044,7 +2395,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:25Z"
+            "tested_at": "2026-10-30T17:03:36Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2054,9 +2405,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:26Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:37Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:50Z",
+            "8.21.0": "2026-09-17T02:21:38Z",
+            "8.22.0": "2026-10-30T17:03:37Z"
           }
         },
         "9": {
@@ -2065,7 +2421,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:39Z"
+            "tested_at": "2026-10-30T17:07:38Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2075,9 +2431,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:40Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:34Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-17T03:14:57Z",
+            "9.1.0": "2026-10-30T17:07:38Z"
           }
         }
       },
@@ -2096,7 +2456,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:27Z"
+            "tested_at": "2026-10-30T18:19:00Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2106,9 +2466,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:32Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:34Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:44Z",
+            "8.21.0": "2026-09-10T02:21:19Z",
+            "8.22.0": "2026-10-30T18:19:00Z"
           }
         },
         "9": {
@@ -2117,7 +2482,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T03:13:43Z"
+            "tested_at": "2026-10-30T17:07:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2127,9 +2492,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:44Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:30Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:44Z",
+            "9.1.0": "2026-10-30T17:07:31Z"
           }
         }
       },
@@ -2148,7 +2517,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:27Z"
+            "tested_at": "2026-10-30T17:03:34Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2158,9 +2527,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:27Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:37Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-07T02:59:43Z",
+            "8.21.0": "2026-09-17T02:21:52Z",
+            "8.22.0": "2026-10-30T17:03:37Z"
           }
         },
         "9": {
@@ -2169,7 +2543,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:41Z"
+            "tested_at": "2026-10-30T17:07:34Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2179,9 +2553,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:39Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:30Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-17T03:14:57Z",
+            "9.1.0": "2026-10-30T17:07:34Z"
           }
         }
       },
@@ -2200,7 +2578,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:19Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2210,9 +2588,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:23Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-06T02:59:58Z",
+            "8.21.0": "2026-09-10T02:21:15Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -2221,7 +2604,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:31Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2231,9 +2614,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:33Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:22Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:34Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -2255,9 +2642,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:25Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:38Z",
+            "8.21.0": "2026-09-10T02:21:10Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -2269,9 +2661,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:38Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:23Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:37Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -2290,7 +2686,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-28T02:15:59Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2300,9 +2696,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ee3cbbc",
-            "last_run_id": "40619821528",
-            "tested_at": "2026-10-28T02:16:04Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:37Z",
+            "8.21.0": "2026-09-16T02:21:03Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -2311,7 +2712,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-28T03:11:21Z"
+            "tested_at": "2026-10-30T17:07:22Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2321,9 +2722,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "333ae64",
-            "last_run_id": "40625175635",
-            "tested_at": "2026-10-28T03:11:18Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-16T03:14:59Z",
+            "9.1.0": "2026-10-30T17:07:22Z"
           }
         }
       },
@@ -2342,7 +2747,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:14Z"
+            "tested_at": "2026-10-30T17:03:30Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "warning",
@@ -2352,9 +2757,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:18Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:35Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -2363,7 +2772,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:28Z"
+            "tested_at": "2026-10-30T17:07:22Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "warning",
@@ -2373,9 +2782,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:28Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:22Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-21T12:49:18Z",
+            "9.1.0": "2026-10-30T17:07:22Z"
           }
         }
       },
@@ -2394,7 +2807,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:23Z"
+            "tested_at": "2026-10-30T17:03:43Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2404,9 +2817,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:23Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:38Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:44Z",
+            "8.21.0": "2026-09-16T02:21:12Z",
+            "8.22.0": "2026-10-30T17:03:43Z"
           }
         },
         "9": {
@@ -2415,7 +2833,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:39Z"
+            "tested_at": "2026-10-30T17:07:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2425,9 +2843,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:43Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:40Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-16T03:15:10Z",
+            "9.1.0": "2026-10-30T17:07:40Z"
           }
         }
       },
@@ -2450,10 +2872,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:25Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "acceptance-blocked",
@@ -2464,10 +2887,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:36Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -2486,7 +2910,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-30T02:16:21Z"
+            "tested_at": "2026-10-30T17:03:36Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2496,9 +2920,12 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.22.0": "2026-10-30T17:03:36Z"
           }
         },
         "9": {
@@ -2507,7 +2934,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-30T03:11:37Z"
+            "tested_at": "2026-10-30T17:07:26Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2517,9 +2944,12 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:26Z"
+          },
+          "validated_versions": {
+            "9.1.0": "2026-10-30T17:07:26Z"
           }
         }
       },
@@ -2538,7 +2968,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:18Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2548,9 +2978,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:18Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-10T02:21:12Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -2559,7 +2994,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:31Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2569,9 +3004,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:28Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:37Z",
+            "9.1.0": "2026-10-30T17:07:24Z"
           }
         }
       },
@@ -2590,7 +3029,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T02:16:31Z"
+            "tested_at": "2026-10-30T17:03:39Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2600,9 +3039,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:39Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:38Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:52Z",
+            "8.21.0": "2026-09-10T02:21:25Z",
+            "8.22.0": "2026-10-30T17:03:39Z"
           }
         },
         "9": {
@@ -2611,7 +3055,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T03:11:43Z"
+            "tested_at": "2026-10-30T17:07:33Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2621,9 +3065,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:38Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:36Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:15:01Z",
+            "9.1.0": "2026-10-30T17:07:36Z"
           }
         }
       },
@@ -2645,9 +3093,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-10T02:21:11Z",
+            "8.22.0": "2026-10-30T17:03:30Z"
           }
         },
         "9": {
@@ -2659,9 +3112,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:22Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:36Z",
+            "9.1.0": "2026-10-30T17:07:22Z"
           }
         }
       },
@@ -2680,7 +3137,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-18T02:25:05Z"
+            "tested_at": "2026-10-30T17:08:58Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2690,9 +3147,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:29Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:34Z"
+          },
+          "validated_versions": {
+            "8.21.0": "2026-09-17T02:21:39Z",
+            "8.22.0": "2026-10-30T17:08:58Z"
           }
         },
         "9": {
@@ -2701,7 +3162,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-18T03:19:13Z"
+            "tested_at": "2026-10-30T17:12:54Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2711,9 +3172,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:41Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-17T03:14:51Z",
+            "9.1.0": "2026-10-30T17:12:54Z"
           }
         }
       },
@@ -2733,7 +3198,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-28T02:16:04Z"
+            "tested_at": "2026-10-30T17:16:10Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2743,9 +3208,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ee3cbbc",
-            "last_run_id": "40619821528",
-            "tested_at": "2026-10-28T02:15:59Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.21.0": "2026-09-21T12:49:49Z",
+            "8.22.0": "2026-10-30T17:16:10Z"
           }
         },
         "9": {
@@ -2754,7 +3223,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-10-28T03:11:24Z"
+            "tested_at": "2026-10-30T17:20:26Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2764,9 +3233,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "333ae64",
-            "last_run_id": "40625175635",
-            "tested_at": "2026-10-28T03:11:19Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-21T12:49:22Z",
+            "9.1.0": "2026-10-30T17:20:26Z"
           }
         }
       },
@@ -2781,13 +3254,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "warning",
+            "class": "failure",
             "targets": {
-              "el9-systemd": "warning"
+              "el9-systemd": "failure"
             },
-            "tested_at": "2026-10-18T02:19:24Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
-          "coverage_state": "unit+acceptance",
+          "coverage_state": "acceptance-failing",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -2795,9 +3268,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:31Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-10T02:21:11Z"
           }
         },
         "9": {
@@ -2806,7 +3283,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T03:13:37Z"
+            "tested_at": "2026-10-30T17:07:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2816,9 +3293,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:34Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:24Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:36Z",
+            "9.1.0": "2026-10-30T17:07:29Z"
           }
         }
       },
@@ -2837,7 +3318,7 @@
             "targets": {
               "ubuntu24": "warning"
             },
-            "tested_at": "2026-10-30T02:16:17Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2847,9 +3328,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:15Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:44Z",
+            "8.21.0": "2026-09-10T02:21:12Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -2858,7 +3344,7 @@
             "targets": {
               "ubuntu24": "warning"
             },
-            "tested_at": "2026-10-30T03:11:30Z"
+            "tested_at": "2026-10-30T17:07:20Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2868,9 +3354,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:31Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:22Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:35Z",
+            "9.1.0": "2026-10-30T17:07:22Z"
           }
         }
       },
@@ -2893,10 +3383,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:23Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "acceptance-blocked",
@@ -2907,10 +3398,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:35Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -2932,10 +3424,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:26Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "acceptance-blocked",
@@ -2946,10 +3439,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:37Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -2971,10 +3465,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5726ef4",
-            "last_run_id": "40990616654",
-            "tested_at": "2026-10-30T02:16:16Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:30Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "unit-pass/acceptance-pending",
@@ -2985,10 +3480,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:27Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:26Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -3010,10 +3506,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "unit-pass/acceptance-pending",
@@ -3024,10 +3521,11 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:36Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:25Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -3045,7 +3543,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-22T03:03:13Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3055,9 +3553,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "64e2959",
-            "last_run_id": "39714632180",
-            "tested_at": "2026-10-22T03:03:12Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-17T02:21:27Z",
+            "8.22.0": "2026-10-30T17:03:28Z"
           }
         },
         "9": {
@@ -3066,7 +3569,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-22T03:14:06Z"
+            "tested_at": "2026-10-30T17:07:23Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3076,9 +3579,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "9697d89",
-            "last_run_id": "39715657498",
-            "tested_at": "2026-10-22T03:14:08Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:21Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-17T03:14:43Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -3100,9 +3607,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "64e2959",
-            "last_run_id": "39714632180",
-            "tested_at": "2026-10-22T03:03:14Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:27Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-10T02:21:11Z",
+            "8.22.0": "2026-10-30T17:03:27Z"
           }
         },
         "9": {
@@ -3114,9 +3626,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "9697d89",
-            "last_run_id": "39715657498",
-            "tested_at": "2026-10-22T03:14:09Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:23Z"
+          },
+          "validated_versions": {
+            "9.0.0": "2026-09-10T03:14:37Z",
+            "9.1.0": "2026-10-30T17:07:23Z"
           }
         }
       },
@@ -3135,7 +3651,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:23Z"
+            "tested_at": "2026-10-30T17:03:29Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3145,9 +3661,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:23Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:31Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:45Z",
+            "8.21.0": "2026-09-10T02:21:20Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -3156,7 +3677,7 @@
             "targets": {
               "el9": "failure"
             },
-            "tested_at": "2026-10-30T03:11:31Z"
+            "tested_at": "2026-10-30T18:19:28Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3166,10 +3687,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:28Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:27Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -3187,7 +3709,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-18T02:19:25Z"
+            "tested_at": "2026-10-30T17:03:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3197,9 +3719,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:22Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:32Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:39Z",
+            "8.21.0": "2026-09-10T02:21:13Z",
+            "8.22.0": "2026-10-30T17:03:32Z"
           }
         },
         "9": {
@@ -3208,7 +3735,7 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-10-30T03:11:30Z"
+            "tested_at": "2026-10-30T18:19:29Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3218,10 +3745,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:29Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "fix-systemd-servicelimits-type",
@@ -3239,7 +3767,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-10-18T02:19:23Z"
+            "tested_at": "2026-10-30T17:03:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3249,9 +3777,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:23Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-10T02:21:11Z",
+            "8.22.0": "2026-10-30T17:03:28Z"
           }
         },
         "9": {
@@ -3260,7 +3793,7 @@
             "targets": {
               "el9": "failure"
             },
-            "tested_at": "2026-10-30T03:11:31Z"
+            "tested_at": "2026-10-30T18:19:24Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3270,10 +3803,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:30Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:29Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -3291,7 +3825,7 @@
             "targets": {
               "el9-systemd": "clean"
             },
-            "tested_at": "2026-10-18T02:19:21Z"
+            "tested_at": "2026-10-30T17:03:30Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3301,9 +3835,14 @@
           "unit": {
             "class": "clean",
             "compatibility_state": "compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:27Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:31Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:37Z",
+            "8.21.0": "2026-09-10T02:21:10Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -3312,7 +3851,7 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-10-30T03:11:32Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3322,10 +3861,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:28Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:28Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -3346,9 +3886,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:31Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:36Z",
+            "8.21.0": "2026-09-10T02:21:13Z",
+            "8.22.0": "2026-10-30T17:03:31Z"
           }
         },
         "9": {
@@ -3360,10 +3905,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:31Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:28Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -3384,9 +3930,14 @@
           "unit": {
             "class": "clean",
             "compatibility_state": "compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:24Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:38Z",
+            "8.21.0": "2026-09-10T02:21:15Z",
+            "8.22.0": "2026-10-30T17:03:28Z"
           }
         },
         "9": {
@@ -3398,10 +3949,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:30Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:27Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "main",
@@ -3422,9 +3974,14 @@
           "unit": {
             "class": "clean",
             "compatibility_state": "compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:23Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:28Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:38Z",
+            "8.21.0": "2026-09-10T02:21:15Z",
+            "8.22.0": "2026-10-30T17:03:28Z"
           }
         },
         "9": {
@@ -3436,10 +3993,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:30Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:28Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
@@ -3460,9 +4018,14 @@
           "unit": {
             "class": "clean",
             "compatibility_state": "compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:26Z"
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T17:03:29Z"
+          },
+          "validated_versions": {
+            "8.20.0": "2026-08-02T18:02:41Z",
+            "8.21.0": "2026-09-10T02:21:13Z",
+            "8.22.0": "2026-10-30T17:03:29Z"
           }
         },
         "9": {
@@ -3474,10 +4037,11 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "ccac8aa",
-            "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:30Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T18:19:24Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "main",
@@ -3491,18 +4055,19 @@
       "disposition": "active",
       "puppet_majors": {
         "8": {
-          "coverage_state": "acceptance-blocked",
+          "coverage_state": "unit-failing",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "supported",
           "puppet_core_version": "8.22.0",
           "unit": {
-            "class": "clean",
-            "compatibility_state": "compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39089642741",
-            "tested_at": "2026-10-18T02:19:22Z"
-          }
+            "class": "failure",
+            "compatibility_state": "harness_error",
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095369138",
+            "tested_at": "2026-10-30T18:30:16Z"
+          },
+          "validated_versions": {}
         },
         "9": {
           "coverage_state": "acceptance-blocked",
@@ -3513,15 +4078,16 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "cd9ed1a",
-            "last_run_id": "39092841667",
-            "tested_at": "2026-10-18T03:13:37Z"
-          }
+            "last_harness_sha": "ecf4798",
+            "last_run_id": "41095959309",
+            "tested_at": "2026-10-30T17:07:26Z"
+          },
+          "validated_versions": {}
         }
       },
       "ref": "master",
       "repo": "https://github.com/treydock/puppet-kdump"
     }
   },
-  "schema_version": 2
+  "schema_version": 3
 }
