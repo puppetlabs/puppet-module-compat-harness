@@ -25,7 +25,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
-| [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ❌ | ✅ 9.0.0, 9.1.0 |
+| [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
@@ -47,7 +47,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
-| [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ❌ | ✅ 9.0.0, 9.1.0 |
+| [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
@@ -58,7 +58,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
-| [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ❌ | ✅ 9.0.0, 9.1.0 |
+| [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
