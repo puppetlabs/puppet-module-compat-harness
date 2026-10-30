@@ -187,6 +187,59 @@ extend it to resolve and stamp `puppet_major` the same way, so it lands in
 `module-status.json` and `update_ledger.py` never has to parse a major out of a
 profile-name string.
 
+### 3.3 Ledger schema v3 — `validated_versions` (per-version history)
+
+Schema v2 only remembers the *current* pinned version per major — every time
+the harness profile bumps to a new patch, the previous version's "this passed"
+fact is overwritten. Schema v3 adds `validated_versions` inside each
+`puppet_majors[major]`, nested exactly like everything else that varies by
+major:
+
+```jsonc
+"puppet_majors": {
+  "8": {
+    "puppet_core_version": "8.22.0",
+    "unit": { "...": "..." },
+    "acceptance": { "...": "..." },
+    "validated_versions": {
+      "8.20.0": "2026-08-09T23:40:00Z",
+      "8.21.0": "2026-09-04T19:10:00Z",
+      "8.22.0": "2026-10-18T02:19:23Z"
+    }
+  }
+}
+```
+
+**Semantics — last-confirmed per version, not first-ever-passed.** Each run
+reports on exactly one version per major (that major's current pin, `V`). See
+`ledger_lib.record_validated_version`:
+- Fully compatible now → `validated_versions[V]` is refreshed to the latest
+  `tested_at`.
+- Not fully compatible now → `validated_versions[V]` is **deleted** if present.
+  The harness re-clones each module's `ref` every run, so the same pinned
+  version can flip pass→fail across nightly runs as upstream commits land; a
+  later failure must retract an earlier green, not coexist with it.
+- A run never touches any key other than `V`. Once the profile rolls to a new
+  pin, the previous version's entry is simply never written again — frozen at
+  whatever it last held: present (with its last-confirmed date) if it was
+  still passing, absent if a late failure had already retracted it.
+
+This answers "would it work if installed today?" honestly: for the current
+pin it's live truth; for a past pin it's "last confirmed on this date,"
+which is the best any harness that doesn't re-test old pins can claim, and it
+is guaranteed to never be a green that was since contradicted.
+
+`scripts/backfill_validated_versions.py` is a one-time script that replays
+every historical ledger revision (`git log --follow -- status/ledger.json`)
+through this same state machine, so existing modules get their full history
+instead of starting from a blank slate on upgrade. It is idempotent (only adds
+keys absent from the live ledger) and bumps `schema_version` to `3`.
+
+`STATUS.md` and `KNOWN_COMPATIBLE.md` render `validated_versions` ascending
+per major (see §6) — this is also the field external consumers (e.g. the
+Forge team) should read to find every Puppet Core version a module has been
+confirmed compatible with.
+
 ---
 
 ## 4. CI topology — two self-contained trigger workflows, shared composite actions
@@ -396,6 +449,11 @@ module table — a per-major summary block (unit pass/fail/pending counts,
 acceptance pass/fail/blocked counts, fully-compatible count) plus a combined
 module table with a column pair (unit, acceptance) per major, rather than one
 wide table that conflates both.
+
+Both tables also carry a **Versions** column/cell per major (§3.3) — the
+ascending `validated_versions` list — rather than just the current pin, so a
+reader pinned to an older Puppet Core can tell whether their version was ever
+confirmed compatible, not only whether the fleet is green today.
 
 ---
 
