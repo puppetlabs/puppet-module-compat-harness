@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-30T03:55:28Z",
+  "generated_at": "2026-10-30T14:03:16Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1223,7 +1223,7 @@
             "compatibility_state": "not_compatible",
             "last_harness_sha": "ccac8aa",
             "last_run_id": "40995898605",
-            "tested_at": "2026-10-30T03:11:29Z"
+            "tested_at": "2026-10-30T14:00:56Z"
           }
         }
       },
