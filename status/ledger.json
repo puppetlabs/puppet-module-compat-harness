@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-30T18:17:30Z",
+  "generated_at": "2026-10-30T18:22:56Z",
   "modules": {
     "memcached": {
       "disposition": "removed-without-disposition",
@@ -594,7 +594,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:23Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
           "validated_versions": {}
         }
@@ -762,7 +762,7 @@
             "targets": {
               "debian12-systemd": "failure"
             },
-            "tested_at": "2026-10-30T17:07:23Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -881,7 +881,7 @@
             "targets": {
               "debian12-systemd": "failure"
             },
-            "tested_at": "2026-10-30T17:07:22Z"
+            "tested_at": "2026-10-30T18:19:29Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -1226,7 +1226,7 @@
             "compatibility_state": "not_compatible",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:24Z"
+            "tested_at": "2026-10-30T18:19:28Z"
           },
           "validated_versions": {}
         }
@@ -1315,13 +1315,13 @@
         },
         "9": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9-systemd": "failure"
+              "el9-systemd": "warning"
             },
-            "tested_at": "2026-10-30T17:07:25Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
-          "coverage_state": "acceptance-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -1334,7 +1334,8 @@
             "tested_at": "2026-10-30T17:07:25Z"
           },
           "validated_versions": {
-            "9.0.0": "2026-09-19T03:14:02Z"
+            "9.0.0": "2026-09-19T03:14:02Z",
+            "9.1.0": "2026-10-30T18:19:26Z"
           }
         }
       },
@@ -1438,7 +1439,7 @@
             "compatibility_state": "not_compatible",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:26Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
           "validated_versions": {}
         }
@@ -3673,7 +3674,7 @@
             "targets": {
               "el9": "failure"
             },
-            "tested_at": "2026-10-30T17:07:24Z"
+            "tested_at": "2026-10-30T18:19:28Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3685,7 +3686,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:22Z"
+            "tested_at": "2026-10-30T18:19:27Z"
           },
           "validated_versions": {}
         }
@@ -3731,7 +3732,7 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-10-30T17:07:25Z"
+            "tested_at": "2026-10-30T18:19:29Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3743,7 +3744,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:25Z"
+            "tested_at": "2026-10-30T18:19:29Z"
           },
           "validated_versions": {}
         }
@@ -3789,7 +3790,7 @@
             "targets": {
               "el9": "failure"
             },
-            "tested_at": "2026-10-30T17:07:26Z"
+            "tested_at": "2026-10-30T18:19:24Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3801,7 +3802,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:22Z"
+            "tested_at": "2026-10-30T18:19:29Z"
           },
           "validated_versions": {}
         }
@@ -3847,7 +3848,7 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-10-30T17:07:21Z"
+            "tested_at": "2026-10-30T18:19:26Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3859,7 +3860,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:26Z"
+            "tested_at": "2026-10-30T18:19:28Z"
           },
           "validated_versions": {}
         }
@@ -3903,7 +3904,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:26Z"
+            "tested_at": "2026-10-30T18:19:28Z"
           },
           "validated_versions": {}
         }
@@ -3947,7 +3948,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:24Z"
+            "tested_at": "2026-10-30T18:19:27Z"
           },
           "validated_versions": {}
         }
@@ -3991,7 +3992,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:22Z"
+            "tested_at": "2026-10-30T18:19:28Z"
           },
           "validated_versions": {}
         }
@@ -4035,7 +4036,7 @@
             "compatibility_state": "harness_error",
             "last_harness_sha": "ecf4798",
             "last_run_id": "41095959309",
-            "tested_at": "2026-10-30T17:07:25Z"
+            "tested_at": "2026-10-30T18:19:24Z"
           },
           "validated_versions": {}
         }

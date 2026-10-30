@@ -40,7 +40,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ 8.20.0, 8.21.0, 8.22.0 | ❌ |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
-| [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ 8.20.0, 8.21.0, 8.22.0 | ❌ |
+| [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-format](https://github.com/voxpupuli/puppet-format) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |
 | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | ✅ 8.20.0, 8.21.0, 8.22.0 | ❌ |
 | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ 8.20.0, 8.21.0, 8.22.0 | ✅ 9.0.0, 9.1.0 |

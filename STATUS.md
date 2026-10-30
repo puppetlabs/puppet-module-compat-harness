@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-10-30 18:17 UTC  
+**Generated:** 2026-10-30 18:22 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -48,12 +48,12 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | &nbsp;&nbsp;• unit fail | 11 |
 | Acceptance-enabled (running) | 48 |
 | &nbsp;&nbsp;• acceptance run | 48 |
-| &nbsp;&nbsp;• acceptance pass | 41 |
-| &nbsp;&nbsp;• acceptance fail | 7 |
+| &nbsp;&nbsp;• acceptance pass | 42 |
+| &nbsp;&nbsp;• acceptance fail | 6 |
 | ⛔ Acceptance blocked (tests exist, can't run here) | 6 |
 | 🚧 Acceptance pending (tests exist, not yet wired) | 3 |
 | No acceptance tests (N/A) | 17 |
-| **Fully compatible** (unit pass + acceptance pass or N/A) | **51** |
+| **Fully compatible** (unit pass + acceptance pass or N/A) | **52** |
 | Never tested | 0 |
 | Stale | 0 |
 
@@ -90,7 +90,7 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0 | ✅ | el9:✅ | 9.0.0, 9.1.0 | 2026-10-30 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0 | ❌ | N/A | — | 2026-10-30 |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0 | ✅ | N/A | 9.0.0, 9.1.0 | 2026-10-30 |
-| [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0 | ✅ | el9-systemd:❌ | 9.0.0 | 2026-10-30 |
+| [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0 | 2026-10-30 |
 | [puppet-format](https://github.com/voxpupuli/puppet-format) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0 | ✅ | N/A | 9.0.0, 9.1.0 | 2026-10-30 |
 | [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0 | ❌ | el9-systemd:✅ | — | 2026-10-30 |
 | [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0 | 2026-10-30 |
