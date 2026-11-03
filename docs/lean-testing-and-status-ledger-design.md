@@ -305,6 +305,15 @@ Notes:
   acceptable under the green-gate process; do not auto-publish off the raw ledger
   without the human green-gate in front of it.)
 
+> **Schema has since evolved past what's shown above.** Schema v2 nests
+> everything that varies by Puppet major under `puppet_majors[major]`,
+> documented in `docs/puppet-core-9-dual-major-support.md` §3. Schema v3 adds
+> `puppet_majors[major].validated_versions` — a per-version compatibility
+> history (last-confirmed-passing, retracted on failure) so customers pinned
+> to an older Puppet Core can see every version their module was ever
+> confirmed compatible with, not just the current pin — documented in that
+> same doc's §3.3.
+
 ### 4.3 Storage, permissions, merge semantics
 
 - **Storage:** commit `status/ledger.json`, the generated `STATUS.md`, and the
