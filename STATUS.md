@@ -3,7 +3,7 @@
 > Auto-generated from `status/ledger.json` by `scripts/render_status_dashboard.py`.
 > Do not edit by hand — changes will be overwritten on the next run.
 
-**Generated:** 2026-11-03 23:04 UTC  
+**Generated:** 2026-11-04 03:10 UTC  
 **Staleness threshold:** 30 days
 
 ## Summary
@@ -66,80 +66,80 @@ Per-major coverage is tracked independently — a Puppet 9 regression does not a
 
 | Module | 8: Unit | 8: Acceptance | 8: Versions | 9: Unit | 9: Acceptance | 9: Versions | Last Tested |
 |---|---|---|---|---|---|---|---|
-| [puppet-alternatives](https://github.com/voxpupuli/puppet-alternatives) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-archive](https://github.com/voxpupuli/puppet-archive) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-augeas](https://github.com/voxpupuli/puppet-augeas) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-03 |
-| [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-03 |
-| [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-collectd](https://github.com/voxpupuli/puppet-collectd) | ✅ | debian12-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | debian12-systemd:❌ | — | 2026-11-03 |
-| [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) | ✅ | debian12-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | debian12-systemd:❌ | — | 2026-11-03 |
-| [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ | el9-gcp:✅ | 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ | el9-gcp:✅ | 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-03 |
-| [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-format](https://github.com/voxpupuli/puppet-format) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9-systemd:✅ | — | 2026-11-03 |
-| [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ | 🚧 pending | — | ✅ | 🚧 pending | — | 2026-11-03 |
-| [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-03 |
-| [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:✅ | 8.20.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-redis](https://github.com/voxpupuli/puppet-redis) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-03 |
-| [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ✅ | el9-gcp:✅ | 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ | el9-gcp:✅ | 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ | el9-gcp:✅ | 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ | ubuntu24:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | ubuntu24:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-03 |
-| [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-03 |
-| [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | ✅ | 🚧 pending | — | ✅ | 🚧 pending | — | 2026-11-03 |
-| [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | ✅ | 🚧 pending | — | ✅ | 🚧 pending | — | 2026-11-03 |
-| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-03 |
-| [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9:❌ | — | 2026-11-03 |
-| [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9-systemd:❌ | — | 2026-11-03 |
-| [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9:❌ | — | 2026-11-03 |
-| [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9-systemd:❌ | — | 2026-11-03 |
-| [smoeding-puppet-debconf](https://github.com/smoeding/puppet-debconf) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-03 |
-| [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-03 |
-| [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-03 |
-| [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-03 |
-| [treydock-puppet-kdump](https://github.com/treydock/puppet-kdump) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-03 |
+| [puppet-alternatives](https://github.com/voxpupuli/puppet-alternatives) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-archive](https://github.com/voxpupuli/puppet-archive) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-augeas](https://github.com/voxpupuli/puppet-augeas) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-augeasproviders_core](https://github.com/voxpupuli/puppet-augeasproviders_core) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-04 |
+| [puppet-augeasproviders_pam](https://github.com/voxpupuli/puppet-augeasproviders_pam) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-augeasproviders_shellvar](https://github.com/voxpupuli/puppet-augeasproviders_shellvar) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-augeasproviders_ssh](https://github.com/voxpupuli/puppet-augeasproviders_ssh) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-augeasproviders_sysctl](https://github.com/voxpupuli/puppet-augeasproviders_sysctl) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-autofs](https://github.com/voxpupuli/puppet-autofs) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-boolean](https://github.com/voxpupuli/puppet-boolean) ⚠️ | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-04 |
+| [puppet-ca_cert](https://github.com/voxpupuli/puppet-ca_cert) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-chrony](https://github.com/voxpupuli/puppet-chrony) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-collectd](https://github.com/voxpupuli/puppet-collectd) | ✅ | debian12-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | debian12-systemd:❌ | — | 2026-11-04 |
+| [puppet-confluence](https://github.com/voxpupuli/puppet-confluence) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-corosync](https://github.com/voxpupuli/puppet-corosync) | ✅ | debian12-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | debian12-systemd:❌ | — | 2026-11-04 |
+| [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ | el9-gcp:✅ | 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ | el9-gcp:✅ | 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-04 |
+| [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-firewalld](https://github.com/voxpupuli/puppet-firewalld) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-format](https://github.com/voxpupuli/puppet-format) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-gitlab](https://github.com/voxpupuli/puppet-gitlab) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9-systemd:✅ | — | 2026-11-04 |
+| [puppet-gitlab_ci_runner](https://github.com/voxpupuli/puppet-gitlab_ci_runner) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ | 🚧 pending | — | ✅ | 🚧 pending | — | 2026-11-04 |
+| [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-04 |
+| [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-postfix](https://github.com/voxpupuli/puppet-postfix) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-prometheus](https://github.com/voxpupuli/puppet-prometheus) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-prometheus_reporter](https://github.com/voxpupuli/puppet-prometheus_reporter) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-python](https://github.com/voxpupuli/puppet-python) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-r10k](https://github.com/voxpupuli/puppet-r10k) | ✅ | el9-systemd:✅ | 8.20.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-redis](https://github.com/voxpupuli/puppet-redis) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-04 |
+| [puppet-selinux](https://github.com/voxpupuli/puppet-selinux) | ✅ | el9-gcp:✅ | 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ | el9-gcp:✅ | 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ | el9-gcp:✅ | 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-gcp:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9-systemd:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ | ubuntu24:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | ubuntu24:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-04 |
+| [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-04 |
+| [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | ✅ | 🚧 pending | — | ✅ | 🚧 pending | — | 2026-11-04 |
+| [puppet-windowsfeature](https://github.com/voxpupuli/puppet-windowsfeature) | ✅ | 🚧 pending | — | ✅ | 🚧 pending | — | 2026-11-04 |
+| [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | el9:✅ | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ | N/A | 9.0.0, 9.1.0, 9.1.3 | 2026-11-04 |
+| [saz-puppet-limits](https://github.com/saz/puppet-limits) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9:❌ | — | 2026-11-04 |
+| [saz-puppet-memcached](https://github.com/jst-cyr/puppet-memcached) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9-systemd:❌ | — | 2026-11-04 |
+| [saz-puppet-sudo](https://github.com/saz/puppet-sudo) | ✅ | el9:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9:❌ | — | 2026-11-04 |
+| [saz-puppet-timezone](https://github.com/saz/puppet-timezone) | ✅ | el9-systemd:✅ | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | el9-systemd:❌ | — | 2026-11-04 |
+| [smoeding-puppet-debconf](https://github.com/smoeding/puppet-debconf) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-04 |
+| [stschulte-puppet-oracle](https://github.com/stschulte/puppet-oracle) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-04 |
+| [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-04 |
+| [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) | ✅ | N/A | 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ | N/A | — | 2026-11-04 |
+| [treydock-puppet-kdump](https://github.com/treydock/puppet-kdump) | ✅ | ⛔ blocked | — | ✅ | ⛔ blocked | — | 2026-11-04 |
 
 > ⛔ **blocked** / 🚧 **pending** modules have acceptance tests upstream that the harness did not run, so their compatibility is confirmed by unit tests only — not fully. The per-module reasons are documented in [docs/available-acceptance-tests.md](docs/available-acceptance-tests.md).
 
