@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T03:19:23Z",
+  "generated_at": "2026-11-10T02:18:28Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -453,7 +453,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-11-09T02:14:47Z"
+            "tested_at": "2026-11-10T02:13:41Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -463,15 +463,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "74eb95f",
-            "last_run_id": "42549758263",
-            "tested_at": "2026-11-09T02:14:47Z"
+            "last_harness_sha": "e31b37e",
+            "last_run_id": "42741112901",
+            "tested_at": "2026-11-10T02:13:56Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:43Z",
             "8.21.0": "2026-09-10T02:21:30Z",
             "8.22.0": "2026-10-18T02:19:36Z",
-            "8.22.2": "2026-11-09T02:14:47Z"
+            "8.22.2": "2026-11-10T02:13:56Z"
           }
         },
         "9": {
@@ -1774,7 +1774,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-11-09T02:14:37Z"
+            "tested_at": "2026-11-10T02:13:27Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1784,15 +1784,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "74eb95f",
-            "last_run_id": "42549758263",
-            "tested_at": "2026-11-09T02:14:38Z"
+            "last_harness_sha": "e31b37e",
+            "last_run_id": "42741112901",
+            "tested_at": "2026-11-10T02:13:15Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:41Z",
             "8.21.0": "2026-09-17T02:21:31Z",
             "8.22.0": "2026-10-18T02:19:24Z",
-            "8.22.2": "2026-11-09T02:14:38Z"
+            "8.22.2": "2026-11-10T02:13:27Z"
           }
         },
         "9": {
@@ -1903,15 +1903,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ba52d5b",
-            "last_run_id": "41953706884",
-            "tested_at": "2026-11-05T02:13:37Z"
+            "last_harness_sha": "e31b37e",
+            "last_run_id": "42741112901",
+            "tested_at": "2026-11-10T02:13:18Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:47Z",
             "8.21.0": "2026-09-10T02:21:18Z",
             "8.22.0": "2026-11-03T02:14:06Z",
-            "8.22.2": "2026-11-05T02:13:37Z"
+            "8.22.2": "2026-11-10T02:13:18Z"
           }
         },
         "9": {
