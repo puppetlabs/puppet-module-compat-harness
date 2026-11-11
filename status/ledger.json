@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11T02:17:39Z",
+  "generated_at": "2026-11-11T02:25:57Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -3412,7 +3412,7 @@
             "targets": {
               "ubuntu24": "failure"
             },
-            "tested_at": "2026-11-11T02:12:29Z"
+            "tested_at": "2026-11-11T02:23:17Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
