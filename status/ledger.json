@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T03:18:47Z",
+  "generated_at": "2026-11-11T02:17:39Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1233,15 +1233,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ba52d5b",
-            "last_run_id": "41953706884",
-            "tested_at": "2026-11-05T02:13:21Z"
+            "last_harness_sha": "fe2be35",
+            "last_run_id": "42944305947",
+            "tested_at": "2026-11-11T02:12:28Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:41Z",
             "8.21.0": "2026-09-18T02:20:40Z",
             "8.22.0": "2026-10-18T02:19:22Z",
-            "8.22.2": "2026-11-05T02:13:21Z"
+            "8.22.2": "2026-11-11T02:12:28Z"
           }
         },
         "9": {
@@ -1903,15 +1903,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "e31b37e",
-            "last_run_id": "42741112901",
-            "tested_at": "2026-11-10T02:13:18Z"
+            "last_harness_sha": "fe2be35",
+            "last_run_id": "42944305947",
+            "tested_at": "2026-11-11T02:12:34Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:47Z",
             "8.21.0": "2026-09-10T02:21:18Z",
             "8.22.0": "2026-11-03T02:14:06Z",
-            "8.22.2": "2026-11-10T02:13:18Z"
+            "8.22.2": "2026-11-11T02:12:34Z"
           }
         },
         "9": {
@@ -3408,13 +3408,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "warning",
+            "class": "failure",
             "targets": {
-              "ubuntu24": "warning"
+              "ubuntu24": "failure"
             },
-            "tested_at": "2026-11-05T02:13:20Z"
+            "tested_at": "2026-11-11T02:12:29Z"
           },
-          "coverage_state": "unit+acceptance",
+          "coverage_state": "acceptance-failing",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -3422,15 +3422,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ba52d5b",
-            "last_run_id": "41953706884",
-            "tested_at": "2026-11-05T02:13:19Z"
+            "last_harness_sha": "fe2be35",
+            "last_run_id": "42944305947",
+            "tested_at": "2026-11-11T02:12:31Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:44Z",
             "8.21.0": "2026-09-10T02:21:12Z",
-            "8.22.0": "2026-10-31T02:13:17Z",
-            "8.22.2": "2026-11-05T02:13:20Z"
+            "8.22.0": "2026-10-31T02:13:17Z"
           }
         },
         "9": {
@@ -3639,7 +3638,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-11-08T02:14:33Z"
+            "tested_at": "2026-11-11T02:12:31Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3649,15 +3648,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "50148af",
-            "last_run_id": "42437626983",
-            "tested_at": "2026-11-08T02:14:30Z"
+            "last_harness_sha": "fe2be35",
+            "last_run_id": "42944305947",
+            "tested_at": "2026-11-11T02:12:30Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:36Z",
             "8.21.0": "2026-09-17T02:21:27Z",
             "8.22.0": "2026-10-22T03:03:13Z",
-            "8.22.2": "2026-11-08T02:14:33Z"
+            "8.22.2": "2026-11-11T02:12:31Z"
           }
         },
         "9": {
