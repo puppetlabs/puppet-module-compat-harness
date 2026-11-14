@@ -70,7 +70,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
+| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ❌ | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-yum](https://github.com/voxpupuli/puppet-yum) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-zypprepo](https://github.com/voxpupuli/puppet-zypprepo) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
