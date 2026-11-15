@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15T02:42:16Z",
+  "generated_at": "2026-11-15T03:41:14Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -417,7 +417,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-11-14T03:09:21Z"
+            "tested_at": "2026-11-15T03:09:58Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -427,14 +427,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:14Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:58Z"
           },
           "validated_versions": {
             "9.0.0": "2026-09-10T03:14:53Z",
             "9.1.0": "2026-11-03T03:09:40Z",
-            "9.1.3": "2026-11-14T03:09:21Z"
+            "9.1.3": "2026-11-15T03:09:58Z"
           }
         }
       },
@@ -602,9 +602,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:03Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:45Z"
           },
           "validated_versions": {}
         }
@@ -777,7 +777,7 @@
             "targets": {
               "debian12-systemd": "failure"
             },
-            "tested_at": "2026-11-14T03:09:03Z"
+            "tested_at": "2026-11-15T03:09:46Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -787,9 +787,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:05Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:51Z"
           },
           "validated_versions": {}
         }
@@ -899,7 +899,7 @@
             "targets": {
               "debian12-systemd": "failure"
             },
-            "tested_at": "2026-11-14T03:09:05Z"
+            "tested_at": "2026-11-15T03:09:47Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -909,9 +909,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:04Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:45Z"
           },
           "validated_versions": {}
         }
@@ -1253,9 +1253,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "not_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:07Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:45Z"
           },
           "validated_versions": {}
         }
@@ -1463,7 +1463,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-11-14T03:09:05Z"
+            "tested_at": "2026-11-15T03:09:46Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -1473,9 +1473,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "not_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:02Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:46Z"
           },
           "validated_versions": {}
         }
@@ -2611,7 +2611,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-11-05T03:09:43Z"
+            "tested_at": "2026-11-15T03:09:52Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2621,14 +2621,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "ba52d5b",
-            "last_run_id": "41959775733",
-            "tested_at": "2026-11-05T03:09:53Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:52Z"
           },
           "validated_versions": {
             "9.0.0": "2026-09-17T03:14:57Z",
             "9.1.0": "2026-11-03T03:09:36Z",
-            "9.1.3": "2026-11-05T03:09:53Z"
+            "9.1.3": "2026-11-15T03:09:52Z"
           }
         }
       },
@@ -3014,7 +3014,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-14T03:09:08Z"
+            "tested_at": "2026-11-15T03:09:50Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3024,13 +3024,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:02Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:47Z"
           },
           "validated_versions": {
             "9.1.0": "2026-10-31T03:09:09Z",
-            "9.1.3": "2026-11-14T03:09:08Z"
+            "9.1.3": "2026-11-15T03:09:50Z"
           }
         }
       },
@@ -3309,13 +3309,13 @@
         },
         "9": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9-gcp": "failure"
+              "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-14T03:09:05Z"
+            "tested_at": "2026-11-15T03:09:48Z"
           },
-          "coverage_state": "acceptance-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -3323,13 +3323,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:01Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:48Z"
           },
           "validated_versions": {
             "9.0.0": "2026-09-21T12:49:22Z",
-            "9.1.0": "2026-10-28T03:11:24Z"
+            "9.1.0": "2026-10-28T03:11:24Z",
+            "9.1.3": "2026-11-15T03:09:48Z"
           }
         }
       },
@@ -3437,7 +3438,7 @@
             "targets": {
               "ubuntu24": "failure"
             },
-            "tested_at": "2026-11-14T03:09:14Z"
+            "tested_at": "2026-11-15T03:09:49Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -3447,9 +3448,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:03Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:49Z"
           },
           "validated_versions": {
             "9.0.0": "2026-09-10T03:14:35Z",
@@ -3663,7 +3664,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-11-14T03:09:03Z"
+            "tested_at": "2026-11-15T03:09:48Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3673,14 +3674,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:01Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:47Z"
           },
           "validated_versions": {
             "9.0.0": "2026-09-17T03:14:43Z",
             "9.1.0": "2026-10-22T03:14:08Z",
-            "9.1.3": "2026-11-14T03:09:03Z"
+            "9.1.3": "2026-11-15T03:09:48Z"
           }
         }
       },
@@ -3775,7 +3776,7 @@
             "targets": {
               "el9": "failure"
             },
-            "tested_at": "2026-11-14T03:09:03Z"
+            "tested_at": "2026-11-15T03:09:46Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3785,9 +3786,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:05Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:45Z"
           },
           "validated_versions": {}
         }
@@ -3834,7 +3835,7 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-11-14T03:09:02Z"
+            "tested_at": "2026-11-15T03:09:45Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3844,9 +3845,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:04Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:47Z"
           },
           "validated_versions": {}
         }
@@ -3893,7 +3894,7 @@
             "targets": {
               "el9": "failure"
             },
-            "tested_at": "2026-11-14T03:09:03Z"
+            "tested_at": "2026-11-15T03:09:49Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3903,9 +3904,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:06Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:50Z"
           },
           "validated_versions": {}
         }
@@ -3952,7 +3953,7 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-11-14T03:09:07Z"
+            "tested_at": "2026-11-15T03:09:47Z"
           },
           "coverage_state": "unit-failing",
           "dependency_status": "none",
@@ -3962,9 +3963,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:05Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:45Z"
           },
           "validated_versions": {}
         }
@@ -4007,9 +4008,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:05Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:49Z"
           },
           "validated_versions": {}
         }
@@ -4052,9 +4053,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:01Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:46Z"
           },
           "validated_versions": {}
         }
@@ -4097,9 +4098,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:04Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:47Z"
           },
           "validated_versions": {}
         }
@@ -4142,9 +4143,9 @@
           "unit": {
             "class": "failure",
             "compatibility_state": "harness_error",
-            "last_harness_sha": "a586fab",
-            "last_run_id": "43550037484",
-            "tested_at": "2026-11-14T03:09:08Z"
+            "last_harness_sha": "3833977",
+            "last_run_id": "43671040071",
+            "tested_at": "2026-11-15T03:09:51Z"
           },
           "validated_versions": {}
         }
