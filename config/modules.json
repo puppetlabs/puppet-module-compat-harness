@@ -906,8 +906,9 @@
         "status": "running",
         "targets": [
           {
-            "name": "ubuntu24",
-            "setfile": "ubuntu24"
+            "name": "ubuntu24-systemd",
+            "setfile": "ubuntu24-systemd",
+            "docker_mode": "systemd"
           }
         ]
       }
