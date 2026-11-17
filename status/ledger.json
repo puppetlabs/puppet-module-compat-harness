@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T03:18:50Z",
+  "generated_at": "2026-11-17T02:42:58Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -3287,7 +3287,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-15T02:14:18Z"
+            "tested_at": "2026-11-17T02:14:50Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3297,14 +3297,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "94db333",
-            "last_run_id": "43666749658",
-            "tested_at": "2026-11-15T02:14:12Z"
+            "last_harness_sha": "5897c5e",
+            "last_run_id": "44001437679",
+            "tested_at": "2026-11-17T02:14:45Z"
           },
           "validated_versions": {
             "8.21.0": "2026-09-21T12:49:49Z",
             "8.22.0": "2026-10-28T02:16:04Z",
-            "8.22.2": "2026-11-15T02:14:18Z"
+            "8.22.2": "2026-11-17T02:14:50Z"
           }
         },
         "9": {
@@ -3410,9 +3410,10 @@
           "acceptance": {
             "class": "failure",
             "targets": {
-              "ubuntu24": "failure"
+              "ubuntu24": "failure",
+              "ubuntu24-systemd": "warning"
             },
-            "tested_at": "2026-11-16T02:15:21Z"
+            "tested_at": "2026-11-17T02:14:44Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -3422,9 +3423,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "2b78ee5",
-            "last_run_id": "43790952226",
-            "tested_at": "2026-11-16T02:15:21Z"
+            "last_harness_sha": "5897c5e",
+            "last_run_id": "44001437679",
+            "tested_at": "2026-11-17T02:14:46Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:44Z",
