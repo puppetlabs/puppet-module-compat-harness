@@ -943,8 +943,7 @@
       "ref": "master",
       "acceptance": {
         "enabled": false,
-        "status": "pending",
-        "reason": "Acceptance tests target Windows; the harness runs Linux Docker SUTs only. Requires Windows runner support."
+        "status": "none"
       }
     },
     {
