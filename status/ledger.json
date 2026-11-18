@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T03:43:18Z",
+  "generated_at": "2026-11-18T02:42:57Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1774,7 +1774,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-11-10T02:13:27Z"
+            "tested_at": "2026-11-18T02:14:44Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1784,15 +1784,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "e31b37e",
-            "last_run_id": "42741112901",
-            "tested_at": "2026-11-10T02:13:15Z"
+            "last_harness_sha": "d22d4ff",
+            "last_run_id": "44221708124",
+            "tested_at": "2026-11-18T02:14:49Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:41Z",
             "8.21.0": "2026-09-17T02:21:31Z",
             "8.22.0": "2026-10-18T02:19:24Z",
-            "8.22.2": "2026-11-10T02:13:27Z"
+            "8.22.2": "2026-11-18T02:14:49Z"
           }
         },
         "9": {
@@ -3287,7 +3287,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-17T02:14:50Z"
+            "tested_at": "2026-11-18T02:14:50Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3297,14 +3297,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5897c5e",
-            "last_run_id": "44001437679",
-            "tested_at": "2026-11-17T02:14:45Z"
+            "last_harness_sha": "d22d4ff",
+            "last_run_id": "44221708124",
+            "tested_at": "2026-11-18T02:14:44Z"
           },
           "validated_versions": {
             "8.21.0": "2026-09-21T12:49:49Z",
             "8.22.0": "2026-10-28T02:16:04Z",
-            "8.22.2": "2026-11-17T02:14:50Z"
+            "8.22.2": "2026-11-18T02:14:50Z"
           }
         },
         "9": {
@@ -3412,7 +3412,7 @@
               "ubuntu24": "failure",
               "ubuntu24-systemd": "warning"
             },
-            "tested_at": "2026-11-17T02:14:44Z"
+            "tested_at": "2026-11-18T02:14:42Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
@@ -3422,9 +3422,9 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "5897c5e",
-            "last_run_id": "44001437679",
-            "tested_at": "2026-11-17T02:14:46Z"
+            "last_harness_sha": "d22d4ff",
+            "last_run_id": "44221708124",
+            "tested_at": "2026-11-18T02:14:44Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:44Z",
