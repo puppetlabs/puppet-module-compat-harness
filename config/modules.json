@@ -610,9 +610,16 @@
         ]
       },
       "acceptance": {
-        "enabled": false,
-        "status": "blocked",
-        "reason": "Acceptance tests use Dir.mktmpdir on the Beaker controller to create temporary directories for LDAP database paths (olcDbDirectory), then reference those host-local paths inside the Docker SUT where they do not exist; slapd rejects them with \"invalid path: Permission denied\". The tests assume a shared controller/SUT filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT."
+        "enabled": true,
+        "status": "running",
+        "reason": "Enabled via GCP VM acceptance on Debian 12 (live-verified green 2026-11-18). Previously recorded as blocked on a shared controller/SUT filesystem assumption (Dir.mktmpdir); that diagnosis was wrong — the module's own file resource creates those directories inside the SUT. The real blockers were environmental: on a Rocky 9 VM, db_spec.rb 'has no change' fails because the test's `rm -r /var/lib/ldap && mkdir` leaves var_lib_t and Puppet then relabels to slapd_db_t (setenforce 0 does not help; Puppet still manages contexts in permissive mode); in a Docker el9-systemd container, slapd (running as ldap) fails to start with 'bind(9) failed errno=13', leaving /etc/openldap/slapd.d unpopulated. Debian has no SELinux and a real init, so neither applies. Upstream CI also passes on Debian 12/13 and Ubuntu 22.04/24.04.",
+        "targets": [
+          {
+            "name": "debian12-gcp",
+            "provisioner": "gcp",
+            "image": "debian-12"
+          }
+        ]
       }
     },
     {

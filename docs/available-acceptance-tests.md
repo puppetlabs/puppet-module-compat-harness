@@ -41,7 +41,7 @@ Modules whose upstream repository contains acceptance tests. ✅ run in CI; ⛔ 
 | ✅ | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) |
 | ✅ | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) |
 | ✅ | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) |
-| ⛔ | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) |
+| ✅ | [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) |
 | ✅ | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) |
 | ✅ | [puppet-php](https://github.com/voxpupuli/puppet-php) |
 | ✅ | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) |
@@ -93,7 +93,7 @@ Repos where no acceptance-test entrypoint exists upstream. Unit coverage alone i
 | [suchpuppet-puppet-resolvconf](https://github.com/suchpuppet/puppet-resolvconf) |
 | [tragiccode-azure_key_vault](https://github.com/TraGicCode/tragiccode-azure_key_vault) |
 
-## Modules With Acceptance Tests but Not Run in CI (9)
+## Modules With Acceptance Tests but Not Run in CI (8)
 
 These modules have acceptance tests upstream, but the harness does not run them — so their compatibility is confirmed by unit tests only, not fully. They are intentionally excluded from `KNOWN_COMPATIBLE.md`.
 
@@ -101,7 +101,6 @@ These modules have acceptance tests upstream, but the harness does not run them 
 |--------|--------|--------|
 | [puppet-augeasproviders_grub](https://github.com/voxpupuli/puppet-augeasproviders_grub) | ⛔ blocked | GRUB providers are confined to specific hardware/boot scenarios; acceptance tests require reboot semantics and filesystem access incompatible with containerized environments. Module scope fundamentally conflicts with Docker/container-based testing. |
 | [puppet-jira](https://github.com/voxpupuli/puppet-jira) | 🚧 pending | Acceptance tests exist upstream but are not yet wired into a harness setfile/target. |
-| [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ⛔ blocked | Acceptance tests use Dir.mktmpdir on the Beaker controller to create temporary directories for LDAP database paths (olcDbDirectory), then reference those host-local paths inside the Docker SUT where they do not exist; slapd rejects them with "invalid path: Permission denied". The tests assume a shared controller/SUT filesystem (VM/Vagrant model). Requires VM-based Beaker or upstream test changes to create directories inside the SUT. |
 | [puppet-rsyslog](https://github.com/voxpupuli/puppet-rsyslog) | ⛔ blocked | Blocked on two GCP images, neither a Puppet Core compatibility issue. Rocky 9: google-compute-engine hard-depends on rsyslog, blocking the module's own package-removal cleanup. Switching to debian-12 got past that but hit a different, real bug: rsyslog.service's Requires=syslog.socket resolves via its Alias=syslog.service name, which only exists while the unit is enabled — the suite's repeated package install/remove cycles intermittently disable it mid-run, breaking the socket trigger. Confirmed via Ubuntu 24.04's packaging that this is a Debian-family-wide rsyslog.service quirk, not an image choice, so switching images again wouldn't help. A start-rate-limit workaround was tried and had no effect. Needs an upstream/module-side fix, not a harness one. |
 | [puppet-vault_lookup](https://github.com/voxpupuli/puppet-vault_lookup) | ⛔ blocked | Tests are purpose-built for Docker and self-contained, but use a three-container topology (certs.local, vault.local, puppetserver.local) that the single-SUT harness cannot orchestrate. The VaultDockerfile and PuppetserverDockerfile use multi-stage COPY --from=certs:latest builds the harness image-build pipeline does not support, and require a live Puppet Server (not puppet apply) with mTLS cert auth via a shared PKI. Requires harness-level support for multi-container nodesets and cross-image build dependencies. |
 | [puppet-wget](https://github.com/voxpupuli/puppet-wget) | ⛔ blocked | Acceptance tests target only legacy OSes (Debian 8-9, Ubuntu 16.04-18.04, RHEL 6-7) — none of which match any available setfile — and hardcode `su - vagrant` to run puppet apply as a Vagrant user not present in Docker-based SUT containers. Requires new legacy setfiles or upstream test modernization. |
