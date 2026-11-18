@@ -446,9 +446,15 @@
       "repo": "https://github.com/voxpupuli/puppet-jira",
       "ref": "master",
       "acceptance": {
-        "enabled": false,
-        "status": "pending",
-        "reason": "Acceptance tests exist upstream but are not yet wired into a harness setfile/target."
+        "enabled": true,
+        "status": "running",
+        "targets": [
+          {
+            "name": "el9-systemd",
+            "setfile": "el9-systemd",
+            "docker_mode": "systemd"
+          }
+        ]
       }
     },
     {
