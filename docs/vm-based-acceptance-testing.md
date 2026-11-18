@@ -1085,11 +1085,11 @@ from this evidence next time rather than from scratch.
 Windows was the original starting point and was investigated in depth before
 being abandoned as poor value. Recorded here so the question is not reopened
 from scratch. **No action is taken on any of these modules by this design** —
-they stay exactly as they are in `config/modules.json`.
+they stay as they are in `config/modules.json` (apart from the `windows_firewall` status correction noted below).
 
 | Module | Finding |
 |---|---|
-| `puppet-windows_firewall` | **No `spec/acceptance/` directory exists on `master`** (verified against the git tree API). Only an orphaned `spec_helper_acceptance.rb` remains, which calls `Spec.configure` (a `NameError`) and `include Serverspec::Helper::WinRM` (a serverspec 1.x namespace; serverspec 2.x retains only `helper/type.rb`). There is nothing to run. Its recorded `pending` status is inaccurate — it has no acceptance tests — but correcting that is unrelated to VM work |
+| `puppet-windows_firewall` | **No `spec/acceptance/` directory exists on `master`** (verified against the git tree API). Only an orphaned `spec_helper_acceptance.rb` remains, which calls `Spec.configure` (a `NameError`) and `include Serverspec::Helper::WinRM` (a serverspec 1.x namespace; serverspec 2.x retains only `helper/type.rb`). There is nothing to run. Its recorded `pending` status was inaccurate — it has no acceptance tests — and was corrected to `none` on 2026-11-18 (commit 1f22bd6) |
 | `puppet-windowsfeature` | Real, clean specs (`apply_manifest` with `catch_failures`/`catch_changes`, plus a genuine serverspec `windows_feature` matcher). But `spec_helper_acceptance.rb` calls `install_puppet`, `install_cert_on_windows` and `puppet_module_install` — all `beaker-puppet` / `beaker-module_install_helper` DSL, and **`voxpupuli-acceptance 4.4.0` depends on neither**. Its own CI never runs acceptance, so this rotted unnoticed. Would require a harness-side DSL shim. Puppet 8 only (`openvox >= 8.19 < 9.0`) |
 | `puppet-windows_env` | The repo 301-redirects to `puppetlabs/puppetlabs-windows_env` — first-party Perforce-maintained now, and Litmus-based rather than Beaker. Arguably outside the community-compatibility remit, but **left in place**; revisit separately |
 
