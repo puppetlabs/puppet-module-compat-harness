@@ -158,6 +158,24 @@ def latest_tested_at(major_entry, default):
     return max(stamps) if stamps else default
 
 
+def prune_stale_acceptance_targets(major_entry, configured_targets):
+    """Drop ledger acceptance targets no longer configured in modules.json.
+
+    Without this, a removed or renamed target keeps its last (possibly failing)
+    result forever and drags the module's acceptance class down via worst_class.
+    No-op when the config names no explicit targets (default setfile path).
+    """
+    acceptance = major_entry.get('acceptance')
+    if not acceptance or not configured_targets:
+        return
+    targets = acceptance.get('targets') or {}
+    kept = {name: cls for name, cls in targets.items() if name in configured_targets}
+    if len(kept) == len(targets):
+        return
+    acceptance['targets'] = kept
+    acceptance['class'] = worst_class(kept.values())
+
+
 def reconcile(modules, config, now):
     incompatible_ids = parse_known_ids(os.environ.get('KNOWN_INCOMPATIBLE_FILE', 'KNOWN_INCOMPATIBLE.md'))
     deprecated_ids = parse_known_ids(os.environ.get('KNOWN_DEPRECATED_FILE', 'KNOWN_DEPRECATED.md'))
@@ -187,6 +205,8 @@ def reconcile(modules, config, now):
             entry['disposition'] = 'removed-without-disposition'
 
         for major_entry in entry.get('puppet_majors', {}).values():
+            if cfg is not None:
+                prune_stale_acceptance_targets(major_entry, cfg.get('acceptance_targets') or [])
             major_entry['coverage_state'] = coverage_state(major_entry, cfg)
             version = major_entry.get('puppet_core_version')
             if version:
