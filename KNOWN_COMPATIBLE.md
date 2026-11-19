@@ -48,12 +48,12 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
-| [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ 8.22.2 | ❌ |
+| [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ 8.22.2 | ✅ 9.1.3 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-logrotate](https://github.com/voxpupuli/puppet-logrotate) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
-| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ❌ |
+| [puppet-nfs](https://github.com/voxpupuli/puppet-nfs) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-nftables](https://github.com/voxpupuli/puppet-nftables) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2 | ✅ 9.0.0, 9.1.0, 9.1.3 |
