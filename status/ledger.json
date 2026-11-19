@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-19T21:39:05Z",
+  "generated_at": "2026-11-19T23:29:34Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1786,7 +1786,7 @@
             "targets": {
               "el9-systemd": "failure"
             },
-            "tested_at": "2026-11-19T20:42:09Z"
+            "tested_at": "2026-11-19T23:01:32Z"
           },
           "coverage_state": "acceptance-failing",
           "dependency_status": "none",
