@@ -48,7 +48,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-grafana](https://github.com/voxpupuli/puppet-grafana) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-hdm](https://github.com/voxpupuli/puppet-hdm) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-hiera](https://github.com/voxpupuli/puppet-hiera) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
-| [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ❌ | ✅ 9.1.3, 9.1.4 |
+| [puppet-jira](https://github.com/voxpupuli/puppet-jira) | ✅ 8.22.2, 8.22.3 | ✅ 9.1.3, 9.1.4 |
 | [puppet-keepalived](https://github.com/voxpupuli/puppet-keepalived) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-kibana](https://github.com/jst-cyr/puppet-kibana) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-kmod](https://github.com/voxpupuli/puppet-kmod) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
