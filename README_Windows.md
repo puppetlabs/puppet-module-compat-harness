@@ -62,7 +62,8 @@ To run module configuration validation (`scripts/validate_modules_config.py`):
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install --upgrade pip jsonschema
+python -m pip install --upgrade pip
+pip install --require-hashes -r requirements.txt
 ```
 
 Deactivate the environment later with:
