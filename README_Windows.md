@@ -6,7 +6,7 @@ This guide covers running the compatibility runner natively on Windows (no WSL).
 
 - RubyInstaller Ruby (x64 UCRT) installed — version must match the profile you're running (3.2.x for `8-*` profiles, >= 3.4 for `9-*` profiles; see `profiles/puppet_profiles.json`'s `ruby_version` field)
 - Git installed
-- Python 3.8+ (for validation and reporting scripts)
+- Python 3.11+ (for validation and reporting scripts)
 - Administrative PowerShell access (for one-time long-path setting)
 - **Acceptance tests require Docker** — see [Acceptance Tests](#8-acceptance-tests) below for Windows limitations
 
