@@ -177,6 +177,19 @@ When you need a narrow CI run, use workflow input `modules_json` with only new o
 - This design ensures third-party module test code cannot exfiltrate the API key.
 - Without an API key, acceptance falls back to the public FOSS puppet-agent from `yum.puppet.com` (capped at 8.10.0).
 
+## Pinned GitHub Actions
+
+Every third-party `uses:` in `.github/workflows/**` and `.github/actions/**` must be pinned to a full 40-char commit SHA with a trailing `# vX.Y.Z` comment naming the exact release (this harness handles `PUPPET_CORE_API_KEY`; do not use floating tags). Dependabot is intentionally not used.
+
+To bump a pinned action:
+
+1. Find the new release tag (`gh api repos/<owner>/<repo>/releases/latest --jq .tag_name`).
+2. Resolve it to a commit SHA: `gh api repos/<owner>/<repo>/git/ref/tags/<tag> --jq '.object.type+" "+.object.sha'`. If the type is `tag` (annotated), dereference with `gh api repos/<owner>/<repo>/git/tags/<sha> --jq .object.sha`.
+3. Replace the SHA and the `# vX.Y.Z` comment on every occurrence (`grep -rn "<owner>/<repo>@" .github`).
+4. Run `python scripts/check_action_freshness.py` (and `python -m unittest discover -s tests`).
+
+`.github/workflows/actions-freshness.yml` runs this check monthly. It fails on unpinned refs, retired Node runtimes (`RETIRED_NODE_RUNTIMES` in the script), or archived repos, and only reports newer releases. `--only-unpinned` is the cheap offline check.
+
 ## Beaker Setfiles
 
 - Each acceptance target in `config/modules.json` references a `setfile` by name (filename stem).
