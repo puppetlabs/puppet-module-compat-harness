@@ -97,7 +97,7 @@ runs:
         git config --global --get core.longpaths
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: '3.11'
 
@@ -167,7 +167,7 @@ runs:
         echo "version=$version" >> "$GITHUB_OUTPUT"
 
     - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@be3c7df29b3349ec6bcfc6b4792f1cf9f5237d18 # v1.343.0
       with:
         ruby-version: ${{ steps.resolve_ruby.outputs.version }}
         bundler-cache: true
