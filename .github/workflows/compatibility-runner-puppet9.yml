@@ -81,7 +81,7 @@ jobs:
       has_vm_acceptance: ${{ steps.prepare.outputs.has-vm-acceptance }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 0
 
@@ -124,7 +124,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       - name: Run module compatibility test
         uses: ./.github/actions/run-module-test
@@ -143,7 +143,7 @@ jobs:
 
       - name: Upload module artifacts (unit)
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: compatibility-${{ matrix.module.id }}-unit
           path: o/${{ matrix.module.id }}
@@ -174,7 +174,7 @@ jobs:
 
     steps:
       - name: Checkout (for Beaker host seeding)
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       - name: Seed Beaker host mappings
         if: runner.os == 'Linux'
@@ -244,7 +244,7 @@ jobs:
 
       - name: Upload module artifacts (acceptance)
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}
           path: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
@@ -252,7 +252,7 @@ jobs:
 
       - name: Upload acceptance fallback diagnostics
         if: ${{ always() && (failure() || cancelled()) }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}-diagnostics
           path: |
@@ -297,7 +297,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       - name: Run module compatibility test (VM acceptance)
         uses: ./.github/actions/run-module-test
@@ -323,7 +323,7 @@ jobs:
 
       - name: Upload module artifacts (VM acceptance)
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}
           path: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
@@ -331,7 +331,7 @@ jobs:
 
       - name: Upload acceptance fallback diagnostics
         if: ${{ always() && (failure() || cancelled()) }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: compatibility-${{ matrix.module.id }}-acceptance-${{ matrix.module.target_id }}-diagnostics
           path: o/${{ matrix.module.id }}-${{ matrix.module.target_id }}
@@ -361,7 +361,7 @@ jobs:
       cancel-in-progress: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0

@@ -53,13 +53,13 @@ runs:
   using: composite
   steps:
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
       with:
         python-version: '3.11'
 
     - name: Download module artifacts
       if: inputs.has-unit == 'true' || inputs.has-acceptance == 'true' || inputs.has-vm-acceptance == 'true'
-      uses: actions/download-artifact@v8
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
       with:
         path: all-artifacts
         pattern: compatibility-*
@@ -67,7 +67,7 @@ runs:
 
     - name: Download change decisions
       continue-on-error: true
-      uses: actions/download-artifact@v8
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
       with:
         name: change-decisions
         path: .tmp-decisions
