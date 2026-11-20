@@ -69,7 +69,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        python -m pip install --disable-pip-version-check jsonschema
+        python -m pip install --disable-pip-version-check --require-hashes -r requirements.txt
         python scripts/validate_modules_config.py --config config/modules.json --schema config/modules.schema.json
 
     - name: Detect changes (lean matrix)

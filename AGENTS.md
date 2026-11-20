@@ -141,7 +141,7 @@ Evidence requirement in agent response:
 Run:
 
 ```bash
-python -m pip install jsonschema
+python -m pip install --require-hashes -r requirements.txt
 python scripts/validate_modules_config.py --config config/modules.json --schema config/modules.schema.json
 ```
 

@@ -43,7 +43,7 @@ Validation script: [scripts/validate_modules_config.py](scripts/validate_modules
 Run locally:
 
 ```bash
-python -m pip install jsonschema
+python -m pip install --require-hashes -r requirements.txt
 python scripts/validate_modules_config.py --config config/modules.json --schema config/modules.schema.json
 ```
 
@@ -115,3 +115,16 @@ Rules for each package list:
 - Run schema validation locally.
 - Ensure no duplicate `id` values in the list.
 - Include `prereqs` for modules with known native/system package requirements.
+
+## Python dependencies
+
+Python dependencies are declared in `requirements.in` (human-edited, direct deps only) and locked, with
+transitive dependencies and hashes, in `requirements.txt`. CI installs with `--require-hashes`. To bump
+or add a dependency, edit `requirements.in` and regenerate (use Python 3.11, matching CI):
+
+```bash
+python -m pip install pip-tools
+pip-compile --generate-hashes --strip-extras -o requirements.txt requirements.in
+```
+
+Scan the lock with `pip-audit -r requirements.txt`.
