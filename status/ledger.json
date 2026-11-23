@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-22T04:05:13Z",
+  "generated_at": "2026-11-23T02:42:00Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1136,13 +1136,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9-gcp": "failure"
+              "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-22T02:14:05Z"
+            "tested_at": "2026-11-23T02:15:23Z"
           },
-          "coverage_state": "acceptance-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -1150,13 +1150,14 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "10f7871",
-            "last_run_id": "44975085877",
-            "tested_at": "2026-11-22T02:14:01Z"
+            "last_harness_sha": "9424ae8",
+            "last_run_id": "45099056133",
+            "tested_at": "2026-11-23T02:15:17Z"
           },
           "validated_versions": {
             "8.22.0": "2026-10-18T02:19:29Z",
-            "8.22.2": "2026-11-19T02:14:09Z"
+            "8.22.2": "2026-11-19T02:14:09Z",
+            "8.22.3": "2026-11-23T02:15:23Z"
           }
         },
         "9": {
@@ -2412,13 +2413,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "debian12-gcp": "failure"
+              "debian12-gcp": "warning"
             },
-            "tested_at": "2026-11-22T03:12:27Z"
+            "tested_at": "2026-11-23T02:15:27Z"
           },
-          "coverage_state": "acceptance-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -2426,12 +2427,13 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "10f7871",
-            "last_run_id": "44975085877",
-            "tested_at": "2026-11-22T02:14:29Z"
+            "last_harness_sha": "9424ae8",
+            "last_run_id": "45099056133",
+            "tested_at": "2026-11-23T02:15:25Z"
           },
           "validated_versions": {
-            "8.22.2": "2026-11-19T02:14:16Z"
+            "8.22.2": "2026-11-19T02:14:16Z",
+            "8.22.3": "2026-11-23T02:15:27Z"
           }
         },
         "9": {
@@ -3349,13 +3351,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9-gcp": "failure"
+              "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-22T03:12:20Z"
+            "tested_at": "2026-11-23T02:15:25Z"
           },
-          "coverage_state": "acceptance-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -3363,14 +3365,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "10f7871",
-            "last_run_id": "44975085877",
-            "tested_at": "2026-11-22T02:14:05Z"
+            "last_harness_sha": "9424ae8",
+            "last_run_id": "45099056133",
+            "tested_at": "2026-11-23T02:15:20Z"
           },
           "validated_versions": {
             "8.21.0": "2026-09-17T02:21:39Z",
             "8.22.0": "2026-10-18T02:25:05Z",
-            "8.22.2": "2026-11-19T02:24:38Z"
+            "8.22.2": "2026-11-19T02:24:38Z",
+            "8.22.3": "2026-11-23T02:15:25Z"
           }
         },
         "9": {
@@ -3412,13 +3415,13 @@
       "puppet_majors": {
         "8": {
           "acceptance": {
-            "class": "failure",
+            "class": "warning",
             "targets": {
-              "el9-gcp": "failure"
+              "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-22T03:13:29Z"
+            "tested_at": "2026-11-23T02:22:29Z"
           },
-          "coverage_state": "acceptance-failing",
+          "coverage_state": "unit+acceptance",
           "dependency_status": "none",
           "documentation_status": "none",
           "metadata_status": "unsupported_by_metadata",
@@ -3426,14 +3429,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "10f7871",
-            "last_run_id": "44975085877",
-            "tested_at": "2026-11-22T02:14:03Z"
+            "last_harness_sha": "9424ae8",
+            "last_run_id": "45099056133",
+            "tested_at": "2026-11-23T02:15:19Z"
           },
           "validated_versions": {
             "8.21.0": "2026-09-21T12:49:49Z",
             "8.22.0": "2026-10-28T02:16:04Z",
-            "8.22.2": "2026-11-19T02:32:52Z"
+            "8.22.2": "2026-11-19T02:32:52Z",
+            "8.22.3": "2026-11-23T02:22:29Z"
           }
         },
         "9": {

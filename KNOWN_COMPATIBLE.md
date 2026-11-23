@@ -37,6 +37,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-cron](https://github.com/voxpupuli/puppet-cron) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-dnsquery](https://github.com/voxpupuli/puppet-dnsquery) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-elastic_stack](https://github.com/voxpupuli/puppet-elastic_stack) | ✅ 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
+| [puppet-elasticsearch](https://github.com/voxpupuli/puppet-elasticsearch) | ✅ 8.22.0, 8.22.2, 8.22.3 | ❌ |
 | [puppet-epel](https://github.com/voxpupuli/puppet-epel) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-extlib](https://github.com/voxpupuli/puppet-extlib) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ❌ |
 | [puppet-filemapper](https://github.com/voxpupuli/puppet-filemapper) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
@@ -57,6 +58,7 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-nginx](https://github.com/voxpupuli/puppet-nginx) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-nodejs](https://github.com/voxpupuli/puppet-nodejs) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-nsswitch](https://github.com/voxpupuli/puppet-nsswitch) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
+| [puppet-openldap](https://github.com/voxpupuli/puppet-openldap) | ✅ 8.22.2, 8.22.3 | ❌ |
 | [puppet-openssl](https://github.com/voxpupuli/puppet-openssl) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-php](https://github.com/voxpupuli/puppet-php) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-posix_acl](https://github.com/voxpupuli/puppet-posix_acl) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
@@ -69,7 +71,8 @@ All but the last-listed version are historical: each one reflects the last time 
 | [puppet-snmp](https://github.com/voxpupuli/puppet-snmp) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-squid](https://github.com/voxpupuli/puppet-squid) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-sssd](https://github.com/voxpupuli/puppet-sssd) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
-| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ❌ | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
+| [puppet-swap_file](https://github.com/voxpupuli/puppet-swap_file) | ✅ 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ❌ |
+| [puppet-systemd](https://github.com/voxpupuli/puppet-systemd) | ✅ 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-telegraf](https://github.com/voxpupuli/puppet-telegraf) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-unattended_upgrades](https://github.com/voxpupuli/puppet-unattended_upgrades) | ✅ 8.20.0, 8.21.0, 8.22.0, 8.22.2, 8.22.3 | ✅ 9.0.0, 9.1.0, 9.1.3, 9.1.4 |
 | [puppet-windows_firewall](https://github.com/voxpupuli/puppet-windows_firewall) | ✅ 8.22.2, 8.22.3 | ✅ 9.1.3, 9.1.4 |
