@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-24T03:18:30Z",
+  "generated_at": "2026-11-25T02:18:09Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1364,7 +1364,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-11-22T02:14:07Z"
+            "tested_at": "2026-11-25T02:15:09Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1374,16 +1374,16 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "10f7871",
-            "last_run_id": "44975085877",
-            "tested_at": "2026-11-22T02:14:03Z"
+            "last_harness_sha": "d30c5dc",
+            "last_run_id": "45531455980",
+            "tested_at": "2026-11-25T02:15:02Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:36Z",
             "8.21.0": "2026-09-19T02:20:36Z",
             "8.22.0": "2026-10-31T02:13:19Z",
             "8.22.2": "2026-11-19T02:14:05Z",
-            "8.22.3": "2026-11-22T02:14:07Z"
+            "8.22.3": "2026-11-25T02:15:09Z"
           }
         },
         "9": {
