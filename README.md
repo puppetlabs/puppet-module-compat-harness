@@ -1,9 +1,33 @@
 # Puppet Module Compatibility Harness
-This repository runs a matrix of unit and acceptance tests for popular community modules to test their compatibility with Puppet Core.
+This repository tests community Puppet modules, primarily from [Vox Pupuli](https://voxpupuli.org/), for compatibility with Puppet Core 8 and 9. Each module's own unit tests, and its acceptance tests where it has them, run nightly against the latest released Puppet Core versions.
+
+Any community module published on the Puppet Forge can be requested, provided it has tests the harness can execute (see [Request a module](#request-a-module)).
 
 The project uses external harness and GitHub Actions, running the module's own test suite, without requiring source changes in the tested module. Puppet Core and Perforce Facter are injected into the tests to validate compatibility against the latest released Puppet Core versions.
 
 Results can be viewed in the [Actions](https://github.com/puppetlabs/puppet-module-compat-harness/actions) tab.
+
+## Request a module
+
+Open a [module request](https://github.com/puppetlabs/puppet-module-compat-harness/issues/new?template=module-request.yml) with the module's GitHub repository and Puppet Forge page. That's all we need from you.
+
+**Requirements**
+
+The module must have tests in its repository, and the harness must be able to execute at least some of them. Modules with no tests can't be assessed, so they can't be added.
+
+**What happens next**
+
+1. Requests are handled on a best-effort basis. Maintainers review them weekly, weighing the impact and effort of each one and deciding whether it fits within the harness's existing capabilities. They then inspect the module (its tests, any acceptance-test prerequisites, and its declared Puppet version support) and add it to the harness.
+2. Once added, the module is tested in the next nightly run (02:00 UTC).
+3. Results appear in [STATUS.md](STATUS.md). Fully passing modules are listed in [KNOWN_COMPATIBLE.md](KNOWN_COMPATIBLE.md).
+
+**What gets tested**
+
+- The module's own unit tests, run with the module's source unchanged, against the latest Puppet Core 8 and 9 releases.
+- The module's acceptance tests, when it has them and the harness can run them. These run in Docker, or in a VM for modules that need systemd or SELinux. Some acceptance suites can't be run here (for example, ones that need multiple cooperating hosts). Those modules show as partially covered and aren't listed as fully compatible.
+- A module that doesn't declare a Puppet version requirement in `metadata.json` is still tested. A missing requirement shows as a warning, not a failure.
+
+**Possible outcomes**: compatible, compatible with warnings, or incompatible. Incompatible modules are recorded in [KNOWN_INCOMPATIBLE.md](KNOWN_INCOMPATIBLE.md). Being deprecated or unmaintained doesn't make a module incompatible.
 
 ## Known incompatibilities and deprecations
 
