@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T03:18:39Z",
+  "generated_at": "2026-11-26T02:21:17Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -1364,7 +1364,7 @@
             "targets": {
               "el9-systemd": "warning"
             },
-            "tested_at": "2026-11-25T02:15:09Z"
+            "tested_at": "2026-11-26T02:14:13Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -1374,16 +1374,16 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "d30c5dc",
-            "last_run_id": "45531455980",
-            "tested_at": "2026-11-25T02:15:02Z"
+            "last_harness_sha": "bf05d62",
+            "last_run_id": "45740968562",
+            "tested_at": "2026-11-26T02:14:12Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:36Z",
             "8.21.0": "2026-09-19T02:20:36Z",
             "8.22.0": "2026-10-31T02:13:19Z",
             "8.22.2": "2026-11-19T02:14:05Z",
-            "8.22.3": "2026-11-25T02:15:09Z"
+            "8.22.3": "2026-11-26T02:14:13Z"
           }
         },
         "9": {
@@ -3357,7 +3357,7 @@
             "targets": {
               "el9-gcp": "warning"
             },
-            "tested_at": "2026-11-23T02:15:25Z"
+            "tested_at": "2026-11-26T02:14:20Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -3367,15 +3367,15 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "9424ae8",
-            "last_run_id": "45099056133",
-            "tested_at": "2026-11-23T02:15:20Z"
+            "last_harness_sha": "bf05d62",
+            "last_run_id": "45740968562",
+            "tested_at": "2026-11-26T02:14:17Z"
           },
           "validated_versions": {
             "8.21.0": "2026-09-17T02:21:39Z",
             "8.22.0": "2026-10-18T02:25:05Z",
             "8.22.2": "2026-11-19T02:24:38Z",
-            "8.22.3": "2026-11-23T02:15:25Z"
+            "8.22.3": "2026-11-26T02:14:20Z"
           }
         },
         "9": {
