@@ -1,0 +1,28 @@
+name: Request a module
+description: Ask for a community Puppet module to be added to the compatibility harness
+title: "Add module to harness: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a module! Just give us the repository; maintainers will inspect
+        it (acceptance tests, prerequisites, Puppet version support) and fill in the details here.
+  - type: input
+    id: github
+    attributes:
+      label: GitHub repository
+      placeholder: https://github.com/username/puppet-example
+    validations:
+      required: true
+  - type: input
+    id: forge
+    attributes:
+      label: Puppet Forge page
+      placeholder: https://forge.puppet.com/modules/username/example
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything we should know? (optional)
+      description: Why you want it, a specific version/ref, known problems with Puppet 8/9, etc.
