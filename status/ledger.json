@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-27T03:17:33Z",
+  "generated_at": "2026-11-28T02:16:08Z",
   "modules": {
     "puppet-alternatives": {
       "acceptance_configured": true,
@@ -2632,7 +2632,7 @@
             "targets": {
               "el9": "warning"
             },
-            "tested_at": "2026-11-27T02:14:31Z"
+            "tested_at": "2026-11-28T02:13:35Z"
           },
           "coverage_state": "unit+acceptance",
           "dependency_status": "none",
@@ -2642,16 +2642,16 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "e55c4e3",
-            "last_run_id": "45927077677",
-            "tested_at": "2026-11-27T02:14:30Z"
+            "last_harness_sha": "6a9041e",
+            "last_run_id": "46096918843",
+            "tested_at": "2026-11-28T02:13:31Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:44Z",
             "8.21.0": "2026-09-10T02:21:19Z",
             "8.22.0": "2026-10-18T02:19:32Z",
             "8.22.2": "2026-11-19T02:14:10Z",
-            "8.22.3": "2026-11-27T02:14:31Z"
+            "8.22.3": "2026-11-28T02:13:35Z"
           }
         },
         "9": {
@@ -3309,16 +3309,16 @@
           "unit": {
             "class": "warning",
             "compatibility_state": "conditionally_compatible",
-            "last_harness_sha": "10f7871",
-            "last_run_id": "44975085877",
-            "tested_at": "2026-11-22T02:14:02Z"
+            "last_harness_sha": "6a9041e",
+            "last_run_id": "46096918843",
+            "tested_at": "2026-11-28T02:13:24Z"
           },
           "validated_versions": {
             "8.20.0": "2026-08-02T18:02:41Z",
             "8.21.0": "2026-09-10T02:21:11Z",
             "8.22.0": "2026-10-31T02:13:17Z",
             "8.22.2": "2026-11-19T02:14:05Z",
-            "8.22.3": "2026-11-22T02:14:02Z"
+            "8.22.3": "2026-11-28T02:13:24Z"
           }
         },
         "9": {
